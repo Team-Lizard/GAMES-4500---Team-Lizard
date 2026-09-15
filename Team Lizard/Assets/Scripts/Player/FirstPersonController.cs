@@ -79,12 +79,9 @@ public class FirstPersonController : MonoBehaviour
         {
             HandleJump();
         }
-        else if (m_extraJumps > 0) 
+        else if (m_extraJumps > 0 && HandleJump()) 
         {
-            if (HandleJump()) 
-            {
-                m_extraJumps--;
-            }
+            m_extraJumps--;
             
         }
 
@@ -149,7 +146,7 @@ public class FirstPersonController : MonoBehaviour
     /// -----------------
     
     private void HandleLook() {
-        // Look
+        // Take the movement of the mouse and scale it by the look sensitivity. We'll calculate rotations additively, so we just need to know how far the mouse moved.
         float mouseX = m_lookInput.x * m_lookSensitivity;
         float mouseY = m_lookInput.y * m_lookSensitivity;
 
