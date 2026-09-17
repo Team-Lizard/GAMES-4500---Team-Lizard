@@ -26,11 +26,11 @@ public class FirstPersonController : MonoBehaviour
 
         [SerializeField]
         [Tooltip("Force of ground friction horizontally on player.")]
-        private float m_horzGroundFriction = 17f;
+        private float m_horizontalGroundFriction = 17f;
 
         [SerializeField]
         [Tooltip("Force of air friction horizontally on player.")]
-        private float m_horzAirFriction = 4f;
+        private float m_horizontalAirFriction = 4f;
 
 
     [Header("Camera")]
@@ -49,14 +49,10 @@ public class FirstPersonController : MonoBehaviour
     private bool m_isSprintHeld;
     private bool m_isJumping;
     private int m_extraJumps;
-
     private Vector3 m_playerVelocity;
     private bool m_isGrounded;
     private float m_pitch = 0f;
-
-
     private Vector3 m_inertia;
-    
 
     private void Awake() 
     {
@@ -73,8 +69,6 @@ public class FirstPersonController : MonoBehaviour
     private void Update()
     {
         HandleLook();
-
-       
 
         // Check ground
         m_isGrounded = m_characterController.isGrounded;
@@ -97,12 +91,10 @@ public class FirstPersonController : MonoBehaviour
         else if (m_extraJumps > 0 && HandleJump()) 
         {
             m_extraJumps--;
-            
         }
 
         // Gravity
         m_playerVelocity.y += m_gravity * Time.deltaTime;
-        
 
         // Combine horizontal and vertical movement
         Vector3 finalMove;
@@ -110,19 +102,17 @@ public class FirstPersonController : MonoBehaviour
         {
             float finalSpeed = m_isSprintHeld ? m_moveSpeed * m_sprintMultiplier : m_moveSpeed;
             finalMove = (move * finalSpeed) + (m_playerVelocity.y * Vector3.up);
-            
         }
         else
-        // if not moving, apply friction to inertia and move player by inertia
+        // If not moving, apply friction to inertia and move player by inertia
         {
             if (m_isGrounded)
             {
-                
-                m_inertia = Vector3.MoveTowards(m_inertia, Vector3.zero, m_horzGroundFriction * Time.deltaTime);
+                m_inertia = Vector3.MoveTowards(m_inertia, Vector3.zero, m_horizontalGroundFriction * Time.deltaTime);
             }
             else
             {
-                m_inertia = Vector3.MoveTowards(m_inertia, Vector3.zero, m_horzAirFriction * Time.deltaTime);
+                m_inertia = Vector3.MoveTowards(m_inertia, Vector3.zero, m_horizontalAirFriction * Time.deltaTime);
             }
             finalMove = new Vector3(m_inertia.x, m_playerVelocity.y, m_inertia.z);
         }
@@ -144,7 +134,7 @@ public class FirstPersonController : MonoBehaviour
 
         if (value.canceled)
         {
-            //Set inertia to velocity at moment when player releases movement key
+            // Set inertia to velocity at moment when player releases movement key
             m_inertia = m_characterController.velocity;
         }
     }
@@ -187,7 +177,8 @@ public class FirstPersonController : MonoBehaviour
     /// Helper Functions
     /// -----------------
     
-    private void HandleLook() {
+    private void HandleLook() 
+    {
         // Take the movement of the mouse and scale it by the look sensitivity. We'll calculate rotations additively, so we just need to know how far the mouse moved.
         float mouseX = m_lookInput.x * m_lookSensitivity;
         float mouseY = m_lookInput.y * m_lookSensitivity;
@@ -204,7 +195,8 @@ public class FirstPersonController : MonoBehaviour
     /// Handles jump physics and cancels input. Assumes that the requirements to jump have already been met.
     /// </summary>
     /// <returns>True if the player successfully jumped.</returns>
-    private bool HandleJump() {
+    private bool HandleJump() 
+    {
         if (m_isJumping) 
         {
             // Jump calculation from Unity Documentation for Character Controller
@@ -213,7 +205,7 @@ public class FirstPersonController : MonoBehaviour
 
             return true;
         }
+
         return false;
-        
     }
 }
