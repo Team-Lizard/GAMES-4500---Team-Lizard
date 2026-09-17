@@ -1,0 +1,71 @@
+root = true
+
+[*]
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+charset = utf-8
+
+[*.cs]
+indent_style = space
+indent_size = 4
+
+# Allman Brace Style
+csharp_new_line_before_open_brace = all
+
+# Spacing
+csharp_space_after_keywords_in_control_flow_statements = true
+csharp_space_between_method_call_name_and_opening_parenthesis = false
+csharp_space_between_method_declaration_name_and_open_parenthesis = false
+csharp_space_after_comma = true
+csharp_space_around_binary_operators = before_and_after
+
+# Constant Fields
+dotnet_naming_rule.constant_fields.severity = warning
+dotnet_naming_rule.constant_fields.symbols = constant_fields_symbol
+dotnet_naming_rule.constant_fields.style = constant_style
+dotnet_naming_symbols.constant_fields_symbol.applicable_kinds = field
+dotnet_naming_symbols.constant_fields_symbol.required_modifiers = const
+dotnet_naming_style.constant_style.capitalization = pascal_case
+dotnet_naming_style.constant_style.required_prefix = k_
+
+# Static Fields
+dotnet_naming_rule.static_fields.severity = warning
+dotnet_naming_rule.static_fields.symbols = static_fields_symbol
+dotnet_naming_rule.static_fields.style = static_field_style
+dotnet_naming_symbols.static_fields_symbol.applicable_kinds = field
+dotnet_naming_symbols.static_fields_symbol.required_modifiers = static
+dotnet_naming_style.static_field_style.capitalization = camel_case
+dotnet_naming_style.static_field_style.required_prefix = s_
+
+# Private/Protected Fields
+dotnet_naming_rule.private_fields.severity = warning
+dotnet_naming_rule.private_fields.symbols = private_fields_symbol
+dotnet_naming_rule.private_fields.style = private_field_style
+dotnet_naming_symbols.private_fields_symbol.applicable_kinds = field
+dotnet_naming_symbols.private_fields_symbol.applicable_accessibilities = private, protected
+dotnet_naming_style.private_field_style.capitalization = camel_case
+dotnet_naming_style.private_field_style.required_prefix = m_
+
+# Public Members
+dotnet_naming_rule.public_members_pascal.severity = warning
+dotnet_naming_rule.public_members_pascal.symbols = public_symbols
+dotnet_naming_rule.public_members_pascal.style = pascal_case_style
+dotnet_naming_symbols.public_symbols.applicable_kinds = property,method,class,struct,interface,enum
+dotnet_naming_symbols.public_symbols.applicable_accessibilities = public
+dotnet_naming_style.pascal_case_style.capitalization = pascal_case
+
+# Interfaces
+dotnet_naming_rule.interface_prefix.severity = warning
+dotnet_naming_rule.interface_prefix.symbols = interface_symbols
+dotnet_naming_rule.interface_prefix.style = interface_style
+dotnet_naming_symbols.interface_symbols.applicable_kinds = interface
+dotnet_naming_style.interface_style.capitalization = pascal_case
+dotnet_naming_style.interface_style.required_prefix = I
+
+csharp_prefer_braces = true:warning
+csharp_style_expression_bodied_properties = true:suggestion
+
+[*.json]
+indent_style = space
+indent_size = 2
