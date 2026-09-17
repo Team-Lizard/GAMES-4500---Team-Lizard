@@ -12,7 +12,7 @@ namespace Stamina
         /// Called once when the component is first loaded; sets itself to the singleton instance if no other stamina
         /// bar is set, then initializes values
         /// </summary>
-        void Awake()
+        private void Awake()
         {
             s_instance = Instance();
             m_maxStamina = 100;
