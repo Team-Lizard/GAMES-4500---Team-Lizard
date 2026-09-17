@@ -110,21 +110,21 @@ public class FirstPersonController : MonoBehaviour
         {
             float finalSpeed = m_isSprintHeld ? m_moveSpeed * m_sprintMultiplier : m_moveSpeed;
             finalMove = (move * finalSpeed) + (m_playerVelocity.y * Vector3.up);
-            //Set inertia to current velocity if moving
-            m_inertia = m_characterController.velocity;
+            
         }
         else
         // if not moving, apply friction to inertia and move player by inertia
         {
             if (m_isGrounded)
             {
+                
                 m_inertia = Vector3.MoveTowards(m_inertia, Vector3.zero, m_horzGroundFriction * Time.deltaTime);
             }
             else
             {
                 m_inertia = Vector3.MoveTowards(m_inertia, Vector3.zero, m_horzAirFriction * Time.deltaTime);
             }
-            finalMove = new Vector3(m_inertia.x, 0.0f, m_inertia.z) + (m_playerVelocity.y * Vector3.up);
+            finalMove = new Vector3(m_inertia.x, m_playerVelocity.y, m_inertia.z);
         }
         
         m_characterController.Move(finalMove * Time.deltaTime);
@@ -141,6 +141,12 @@ public class FirstPersonController : MonoBehaviour
     public void OnMove(InputAction.CallbackContext value) 
     {
         m_moveInput = value.ReadValue<Vector2>();
+
+        if (value.canceled)
+        {
+            //Set inertia to velocity at moment when player releases movement key
+            m_inertia = m_characterController.velocity;
+        }
     }
 
     /// <summary>
