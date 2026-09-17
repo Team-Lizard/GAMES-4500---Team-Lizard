@@ -4,7 +4,7 @@ namespace Stamina
 {
     public class Stamina : ScriptableObject
     {
-        private static Stamina m_instance;
+        private static Stamina s_instance;
         private float m_maxStamina;
         private float m_currentStamina;
 
@@ -14,7 +14,7 @@ namespace Stamina
         /// </summary>
         void Awake()
         {
-            m_instance = Instance();
+            s_instance = Instance();
             m_maxStamina = 100;
             m_currentStamina = m_maxStamina;
         }
@@ -50,13 +50,13 @@ namespace Stamina
         /// <returns> the singleton instance of the Stamina class </returns>
         public static Stamina Instance()
         {
-            if (m_instance != null)
+            if (s_instance != null)
             {
-                return m_instance;
+                return s_instance;
             }
 
-            m_instance = ScriptableObject.CreateInstance<Stamina>();
-            return m_instance;
+            s_instance = ScriptableObject.CreateInstance<Stamina>();
+            return s_instance;
         }
     }
 }
