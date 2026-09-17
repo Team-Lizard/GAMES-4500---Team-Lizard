@@ -103,8 +103,8 @@ public class FirstPersonController : MonoBehaviour
             float finalSpeed = m_isSprintHeld ? m_moveSpeed * m_sprintMultiplier : m_moveSpeed;
             finalMove = (move * finalSpeed) + (m_playerVelocity.y * Vector3.up);
         }
-        else
         // If not moving, apply friction to inertia and move player by inertia
+        else
         {
             if (m_isGrounded)
             {
