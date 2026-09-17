@@ -24,6 +24,15 @@ public class FirstPersonController : MonoBehaviour
         [Tooltip("Force of gravity applied to player.")]
         private float m_gravity = -9.81f;
 
+        [SerializeField]
+        [Tooltip("Force of ground friction horizontally on player.")]
+        private float m_horzGroundFriction = 17f;
+
+        [SerializeField]
+        [Tooltip("Force of air friction horizontally on player.")]
+        private float m_horzAirFriction = 4f;
+
+
     [Header("Camera")]
         [SerializeField]
         [Tooltip("Mouse sensitivity when controlling the camera.")]
@@ -45,6 +54,10 @@ public class FirstPersonController : MonoBehaviour
     private bool m_isGrounded;
     private float m_pitch = 0f;
 
+
+    private Vector3 m_inertia;
+    
+
     private void Awake() 
     {
         m_characterController = gameObject.AddComponent<CharacterController>();
@@ -60,6 +73,8 @@ public class FirstPersonController : MonoBehaviour
     private void Update()
     {
         HandleLook();
+
+       
 
         // Check ground
         m_isGrounded = m_characterController.isGrounded;
@@ -87,10 +102,31 @@ public class FirstPersonController : MonoBehaviour
 
         // Gravity
         m_playerVelocity.y += m_gravity * Time.deltaTime;
+        
 
         // Combine horizontal and vertical movement
-        float finalSpeed = m_isSprintHeld ? m_moveSpeed * m_sprintMultiplier : m_moveSpeed;
-        Vector3 finalMove = (move * finalSpeed) + (m_playerVelocity.y * Vector3.up);
+        Vector3 finalMove;
+        if (move != Vector3.zero)
+        {
+            float finalSpeed = m_isSprintHeld ? m_moveSpeed * m_sprintMultiplier : m_moveSpeed;
+            finalMove = (move * finalSpeed) + (m_playerVelocity.y * Vector3.up);
+            //Set inertia to current velocity if moving
+            m_inertia = m_characterController.velocity;
+        }
+        else
+        // if not moving, apply friction to inertia and move player by inertia
+        {
+            if (m_isGrounded)
+            {
+                m_inertia = Vector3.MoveTowards(m_inertia, Vector3.zero, m_horzGroundFriction * Time.deltaTime);
+            }
+            else
+            {
+                m_inertia = Vector3.MoveTowards(m_inertia, Vector3.zero, m_horzAirFriction * Time.deltaTime);
+            }
+            finalMove = new Vector3(m_inertia.x, 0.0f, m_inertia.z) + (m_playerVelocity.y * Vector3.up);
+        }
+        
         m_characterController.Move(finalMove * Time.deltaTime);
     }
 
