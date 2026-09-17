@@ -14,7 +14,7 @@ namespace Stamina
         /// </summary>
         void Awake()
         {
-            m_instance = null;
+            m_instance = Instance();
             m_maxStamina = 100;
             m_currentStamina = m_maxStamina;
         }
