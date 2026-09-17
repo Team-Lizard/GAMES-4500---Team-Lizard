@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Stamina : MonoBehaviour
+public class Stamina : ScriptableObject
 {
     private static Stamina m_instance;
     private float m_maxStamina;
@@ -12,15 +12,6 @@ public class Stamina : MonoBehaviour
     /// </summary>
     void Awake()
     {
-        // if some other instance already exists, this instance should NOT exist
-        if (Instance() != null && Instance() != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-
-        Stamina.m_instance = this;
-
         m_instance = null;
         m_maxStamina = 100;
         m_currentStamina = m_maxStamina;
@@ -46,7 +37,7 @@ public class Stamina : MonoBehaviour
     /// gets the current amount of stamina left as a percentage
     /// </summary>
     /// <returns> the current amount of stamina left as a percentage </returns>
-    public static float getCurrentStaminaPercent()
+    public static float GetCurrentStaminaPercent()
     {
         return Instance().m_currentStamina / Instance().m_maxStamina;
     }
@@ -55,13 +46,14 @@ public class Stamina : MonoBehaviour
     /// Accesses the singleton instance of the Stamina class used in the above functions
     /// </summary>
     /// <returns> the singleton instance of the Stamina class </returns>
-    /// <exception cref="Exception"> Thrown if no Stamina instance is found </exception>
     public static Stamina Instance()
     {
         if (m_instance != null)
         {
             return m_instance;
         }
-        throw new System.Exception("Stamina not found");
+
+        m_instance = ScriptableObject.CreateInstance<Stamina>();
+        return m_instance;
     }
 }
