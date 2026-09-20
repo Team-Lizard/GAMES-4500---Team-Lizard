@@ -636,6 +636,7 @@ GameObject:
   - component: {fileID: 1633818118}
   - component: {fileID: 1633818117}
   - component: {fileID: 1633818116}
+  - component: {fileID: 1633818122}
   - component: {fileID: 1633818114}
   - component: {fileID: 1633818121}
   - component: {fileID: 1633818120}
@@ -869,9 +870,35 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FirstPersonController
   m_gravity: -9.81
-  m_horizontalGroundFriction: 0
-  m_horizontalAirFriction: 1000
+  m_horizontalGroundFriction: 17
+  m_horizontalAirFriction: 4
   m_cameraTransform: {fileID: 316573373}
+  IsGrounded: 0
+--- !u!143 &1633818122
+CharacterController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1633818113}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Height: 2
+  m_Radius: 0.5
+  m_SlopeLimit: 45
+  m_StepOffset: 0.3
+  m_SkinWidth: 0.08
+  m_MinMoveDistance: 0
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1862303419
 GameObject:
   m_ObjectHideFlags: 0

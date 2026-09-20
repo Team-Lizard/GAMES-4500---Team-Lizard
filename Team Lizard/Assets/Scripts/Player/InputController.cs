@@ -41,12 +41,10 @@ public class InputController : MonoBehaviour
     private int m_extraJumps;
     private Vector2 m_moveInput;
     private Vector2 m_lookInput;
-    
+
     private FirstPersonController m_firstPersonController;
 
-
-
-    public MovementRequest MovementRequest;
+    private MovementRequest m_movementRequest;
 
     private void Awake()
     {
@@ -63,42 +61,52 @@ public class InputController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // Reset player's jumps if they are touching the ground.
         if (m_firstPersonController.IsGrounded)
         {
             m_extraJumps = m_maxExtraJumps;
         }
 
+        // Create movement vector based on stored player input.
         Vector3 move = transform.forward * m_moveInput.y + transform.right * m_moveInput.x;
 
         // Make sure diagonal movement isn't faster than unidirectional movement.
         move = Vector3.ClampMagnitude(move, 1f);
 
         float finalSpeed = m_isSprintHeld ? m_moveSpeed * m_sprintMultiplier : m_moveSpeed;
-        Vector3 m_horizontalVelocity = move * finalSpeed;
+        Vector3 horizontalVelocity = move * finalSpeed;
 
-        float m_verticalVelocity = 0;
+
+        float verticalVelocity = 0;
         if (m_isJumping)
         {
             if (m_firstPersonController.IsGrounded)
             {
-                // Jump calculation from Unity Documentation for Character Controller
-                m_verticalVelocity = Mathf.Sqrt(m_jumpHeight * 2.0f);
+                verticalVelocity = HandleJump();
             }
             else if (m_extraJumps > 0) 
             {
-                Debug.Log("Double jump.");
-                // Jump calculation from Unity Documentation for Character Controller
-                m_verticalVelocity = Mathf.Sqrt(m_jumpHeight * 2.0f);
+                verticalVelocity = HandleJump();
                 m_extraJumps--;
             }
         }
         
-
-
-        MovementRequest.DesiredVelocity = m_horizontalVelocity + m_verticalVelocity * Vector3.up;
+        // Combine horizontal and vertical velocities.
+        m_movementRequest.DesiredVelocity = horizontalVelocity + verticalVelocity * Vector3.up;
         
         // Take the movement of the mouse and scale it by the look sensitivity. We'll calculate rotations additively, so we just need to know how far the mouse moved.
-        MovementRequest.LookDelta = new Vector2(m_lookInput.x, m_lookInput.y) * m_lookSensitivity;
+        m_movementRequest.LookDelta = new Vector2(m_lookInput.x, m_lookInput.y) * m_lookSensitivity;
+
+        // Ask player controller to apply the movement the player wants.
+        m_firstPersonController.ApplyMovement(m_movementRequest);
+    }
+
+    private float HandleJump()
+    {
+        // Jump calculation from Unity Documentation for Character Controller
+        float verticalVelocity = Mathf.Sqrt(m_jumpHeight * 2.0f);
+        m_isJumping = false;
+        return verticalVelocity;
     }
 
     /// ---------------
