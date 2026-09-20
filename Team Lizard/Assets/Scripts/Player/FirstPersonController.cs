@@ -1,25 +1,12 @@
+using System;
+using Unity.VisualScripting;
+using UnityEditor.Build.Pipeline;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class FirstPersonController : MonoBehaviour
 {
-    [Header("Movement")]
-        [SerializeField]
-        [Tooltip("Speed at which player should move.")]
-        private float m_moveSpeed = 5.0f;
-
-        [SerializeField]
-        [Tooltip("Amount that speed is multiplied by when player is sprinting.")]
-        private float m_sprintMultiplier = 1.8f;
-
-        [SerializeField]
-        [Tooltip("Height that player can jump.")]
-        private float m_jumpHeight = 1.5f;
-
-        [SerializeField]
-        [Tooltip("Number of jumps the player can perform while not touching the ground.")]
-        private int m_maxExtraJumps = 1;
-
+    [Header("Physics Constants")]
         [SerializeField]
         [Tooltip("Force of gravity applied to player.")]
         private float m_gravity = -9.81f;
@@ -32,180 +19,120 @@ public class FirstPersonController : MonoBehaviour
         [Tooltip("Force of air friction horizontally on player.")]
         private float m_horizontalAirFriction = 4f;
 
-
     [Header("Camera")]
-        [SerializeField]
-        [Tooltip("Mouse sensitivity when controlling the camera.")]
-        private float m_lookSensitivity = 1.5f;
-
         [SerializeField]
         [Tooltip("Transform of object parenting camera.")]
         private Transform m_cameraTransform;
 
+
     private CharacterController m_characterController;
 
-    private Vector2 m_moveInput;
-    private Vector2 m_lookInput;
-    private bool m_isSprintHeld;
-    private bool m_isJumping;
-    private int m_extraJumps;
-    private Vector3 m_playerVelocity;
-    private bool m_isGrounded;
+    private float m_playerVelocityY;
     private float m_pitch = 0f;
     private Vector3 m_inertia;
 
+    /// <summary>
+    /// Is the player currently touching the ground?
+    /// </summary>
+    public bool IsGrounded
+    {
+        get;
+        private set;
+    }
+
     private void Awake() 
     {
-        m_characterController = gameObject.AddComponent<CharacterController>();
+        m_characterController = gameObject.GetComponent<CharacterController>();
     }
 
-    private void Start()
+    /// <summary>
+    /// Attempts to move character according to requested movement and look vectors.
+    /// </summary>
+    /// <param name="request">MovementRequest struct holding a movement vector and a look vector.</param>
+    public void ApplyMovement(MovementRequest request) 
     {
-        Cursor.lockState = CursorLockMode.Locked;
-        m_extraJumps = m_maxExtraJumps;
-    }
+        ApplyLook(request.LookDelta);
 
-    // Update is called once per frame
-    private void Update()
-    {
-        HandleLook();
+        ApplyGravity();
 
-        // Check ground
-        m_isGrounded = m_characterController.isGrounded;
-        if (m_isGrounded && m_playerVelocity.y < 0) 
+        // Apply friction if the player doesn't want to move, apply their movement otherwise.
+        if (request.DesiredVelocity == Vector3.zero) 
         {
-            m_extraJumps = m_maxExtraJumps;
-            m_playerVelocity.y = 0f;
+            ApplyFriction();
         }
-
-        // Movement
-        Vector3 move = transform.forward * m_moveInput.y + transform.right * m_moveInput.x;
-        // Make sure diagonal movement isn't faster than unidirectional movement.
-        move = Vector3.ClampMagnitude(move, 1f);
-
-        // Jump
-        if (m_isGrounded)
-        {
-            HandleJump();
-        }
-        else if (m_extraJumps > 0 && HandleJump()) 
-        {
-            m_extraJumps--;
-        }
-
-        // Gravity
-        m_playerVelocity.y += m_gravity * Time.deltaTime;
-
-        // Combine horizontal and vertical movement
-        Vector3 finalMove;
-        if (move != Vector3.zero)
-        {
-            float finalSpeed = m_isSprintHeld ? m_moveSpeed * m_sprintMultiplier : m_moveSpeed;
-            finalMove = (move * finalSpeed) + (m_playerVelocity.y * Vector3.up);
-        }
-        // If not moving, apply friction to inertia and move player by inertia
         else
         {
-            if (m_isGrounded)
-            {
-                m_inertia = Vector3.MoveTowards(m_inertia, Vector3.zero, m_horizontalGroundFriction * Time.deltaTime);
-            }
-            else
-            {
-                m_inertia = Vector3.MoveTowards(m_inertia, Vector3.zero, m_horizontalAirFriction * Time.deltaTime);
-            }
-            finalMove = new Vector3(m_inertia.x, m_playerVelocity.y, m_inertia.z);
+            ApplyMove(request.DesiredVelocity);
         }
         
-        m_characterController.Move(finalMove * Time.deltaTime);
+        
     }
 
-    /// ---------------
-    /// Input Handling
-    /// ---------------
-
     /// <summary>
-    /// Called whenever movement input is received. Passes movement data to controller.
+    /// Checks if player is touching ground and applies gravity otherwise.
     /// </summary>
-    /// <param name="value">Information about input being passed to controller.</param>
-    public void OnMove(InputAction.CallbackContext value) 
+    private void ApplyGravity() 
     {
-        m_moveInput = value.ReadValue<Vector2>();
-
-        if (value.canceled)
+        IsGrounded = m_characterController.isGrounded;
+        if (IsGrounded && m_playerVelocityY < 0) 
         {
-            // Set inertia to velocity at moment when player releases movement key
-            m_inertia = m_characterController.velocity;
+            // Player needs to be pressed into the ground for isGrounded to work correctly.
+            m_playerVelocityY = m_gravity * Time.deltaTime;
         }
-    }
-
-    /// <summary>
-    /// Called whenever look input is received. Passes look data to controller.
-    /// </summary>
-    /// <param name="value">Information about input being passed to controller.</param>
-    public void OnLook(InputAction.CallbackContext value) 
-    {
-        m_lookInput = value.ReadValue<Vector2>();
-    }
-
-    /// <summary>
-    /// Called whenever sprint input is received. Passes sprint data to controller.
-    /// </summary>
-    /// <param name="value">Information about input being passed to controller.</param>
-    public void OnSprint(InputAction.CallbackContext value)
-    {
-       m_isSprintHeld = value.ReadValueAsButton();
-    }
-
-    /// <summary>
-    /// Called whenever jump input is received. Passes jump data to controller.
-    /// </summary>
-    /// <param name="value">Information about input being passed to controller.</param>
-    public void OnJump(InputAction.CallbackContext value)
-    {
-        if (value.started)
+        else
         {
-            m_isJumping = true;
+            // Player is not on ground, accelerate downwards.
+            m_playerVelocityY += m_gravity * Time.deltaTime;
         }
-        else if (value.canceled)
-        {
-            m_isJumping = false;
-        }
+
+        
     }
 
-    /// -----------------
-    /// Helper Functions
-    /// -----------------
+    /// <summary>
+    /// Player's momentum is preserved after they stop moving. Friction interpolates this momentum down to zero.
+    /// </summary>
+    private void ApplyFriction()
+    {
+        if (IsGrounded)
+        {
+            m_inertia = Vector3.MoveTowards(m_inertia, Vector3.zero, m_horizontalGroundFriction * Time.deltaTime);
+        }
+        else
+        {
+            m_inertia = Vector3.MoveTowards(m_inertia, Vector3.zero, m_horizontalAirFriction * Time.deltaTime);
+        }
+        m_characterController.Move(new Vector3(m_inertia.x, m_playerVelocityY, m_inertia.z) * Time.deltaTime);
     
-    private void HandleLook() 
+    }
+
+    /// <summary>
+    /// Move player according to their requested input, to the best of our ability.
+    /// </summary>
+    /// <param name="moveInput">Vector3 representing requested movement.</param>
+    private void ApplyMove(Vector3 moveInput)
     {
-        // Take the movement of the mouse and scale it by the look sensitivity. We'll calculate rotations additively, so we just need to know how far the mouse moved.
-        float mouseX = m_lookInput.x * m_lookSensitivity;
-        float mouseY = m_lookInput.y * m_lookSensitivity;
+        if (moveInput.y != 0)
+        {
+            // If player wants to jump, override vertical velocity.
+            m_playerVelocityY = moveInput.y * Mathf.Sqrt(-1*m_gravity);
+        }
+        
+        m_characterController.Move(new Vector3(moveInput.x, m_playerVelocityY, moveInput.z) * Time.deltaTime);
+        m_inertia = new Vector3(moveInput.x, 0, moveInput.z);
+    }
 
-        transform.Rotate(Vector3.up * mouseX);
+    /// <summary>
+    /// Rotate player according to their requested input, to the best of our ability.
+    /// </summary>
+    /// <param name="lookInput">Vector2 representing how far the player would like to look in the yaw and pitch directions.</param>
+    private void ApplyLook(Vector2 lookInput) 
+    {
+        transform.Rotate(Vector3.up * lookInput.x);
 
-        m_pitch -= mouseY;
+        m_pitch -= lookInput.y;
         // Camera shouldn't be able to rotate further than straight up or straight down.
         m_pitch = Mathf.Clamp(m_pitch, -85f, 85f);
+
         m_cameraTransform.localRotation = Quaternion.Euler(m_pitch, 0, 0);
-    }
-
-    /// <summary>
-    /// Handles jump physics and cancels input. Assumes that the requirements to jump have already been met.
-    /// </summary>
-    /// <returns>True if the player successfully jumped.</returns>
-    private bool HandleJump() 
-    {
-        if (m_isJumping) 
-        {
-            // Jump calculation from Unity Documentation for Character Controller
-            m_playerVelocity.y = Mathf.Sqrt(m_jumpHeight * -2.0f * m_gravity);
-            m_isJumping = false;
-
-            return true;
-        }
-
-        return false;
     }
 }
