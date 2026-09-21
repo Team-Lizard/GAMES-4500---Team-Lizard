@@ -29,6 +29,14 @@ public class InputController : MonoBehaviour
         private float m_slideMultiplier = 1.8f;
 
         [SerializeField]
+        [Tooltip("Minimium speed while crouched as a multiplier.")]
+        private float m_minimumSlideMultiplier = 0.1f;
+
+        [SerializeField]
+        [Tooltip("How fast slide decays.")]
+        private float m_slideDecay = 0.0025f;
+
+    [SerializeField]
         [Tooltip("Height that player can jump.")]
         private float m_jumpHeight = 1.5f;
 
@@ -121,9 +129,9 @@ public class InputController : MonoBehaviour
 
     private float HandleSlide(float moveSpeed)
     {
-        if (m_currentSlideMultiplier > 0)
+        if (m_currentSlideMultiplier > m_minimumSlideMultiplier)
         {
-            m_currentSlideMultiplier -= 0.0025f;
+            m_currentSlideMultiplier -= m_slideDecay;
         }
 
         return moveSpeed * m_currentSlideMultiplier;
