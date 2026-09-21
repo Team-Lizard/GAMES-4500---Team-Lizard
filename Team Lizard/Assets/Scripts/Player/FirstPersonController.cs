@@ -55,6 +55,9 @@ public class FirstPersonController : MonoBehaviour
     private void Awake() 
     {
         m_characterController = gameObject.GetComponent<CharacterController>();
+        m_standHeight = m_characterController.height;
+        m_standCameraY = m_cameraTransform.localPosition.y;
+        m_standCenter = m_characterController.center;
     }
 
     /// <summary>
