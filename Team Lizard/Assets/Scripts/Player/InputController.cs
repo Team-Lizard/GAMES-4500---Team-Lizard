@@ -30,7 +30,7 @@ public class InputController : MonoBehaviour
 
         [SerializeField]
         [Tooltip("Minimium speed while crouched as a multiplier.")]
-        private float m_minimumSlideMultiplier = 0.1f;
+        private float m_minimumSlideMultiplier = 0.5f;
 
         [SerializeField]
         [Tooltip("How fast slide decays.")]
