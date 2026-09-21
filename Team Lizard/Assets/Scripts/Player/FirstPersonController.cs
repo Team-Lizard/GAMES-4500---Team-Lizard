@@ -66,6 +66,8 @@ public class FirstPersonController : MonoBehaviour
     /// <param name="request">MovementRequest struct holding a movement vector and a look vector.</param>
     public void ApplyMovement(MovementRequest request) 
     {
+        UpdateSlidePose(request.IsSliding);
+
         ApplyLook(request.LookDelta);
 
         ApplyGravity();
