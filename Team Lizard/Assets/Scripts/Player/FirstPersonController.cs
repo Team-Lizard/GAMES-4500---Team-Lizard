@@ -79,8 +79,6 @@ public class FirstPersonController : MonoBehaviour
         {
             ApplyMove(request.DesiredVelocity);
         }
-        
-        
     }
 
     /// <summary>
