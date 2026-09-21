@@ -62,6 +62,7 @@ public class InputController : MonoBehaviour
     {
         Cursor.lockState = CursorLockMode.Locked;
         m_extraJumps = m_maxExtraJumps;
+        m_currentSlideMultiplier = m_slideMultiplier;
     }
 
     // Update is called once per frame
