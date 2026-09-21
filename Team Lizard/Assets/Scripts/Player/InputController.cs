@@ -37,6 +37,7 @@ public class InputController : MonoBehaviour
         private int m_maxExtraJumps = 1;
     
     private bool m_isSprintHeld;
+    private bool m_isSlideHeld;
     private bool m_isJumping;
     private int m_extraJumps;
     private Vector2 m_moveInput;
@@ -156,5 +157,14 @@ public class InputController : MonoBehaviour
         {
             m_isJumping = false;
         }
+    }
+
+    /// <summary>
+    /// Called whenever slide input is received. Passes slide data to controller.
+    /// </summary>
+    /// <param name="value">Information about input being passed to controller.</param>
+    public void OnSlide(InputAction.CallbackContext value)
+    {
+        m_isSlideHeld = value.ReadValueAsButton();
     }
 }
