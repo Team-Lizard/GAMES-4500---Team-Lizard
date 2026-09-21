@@ -736,6 +736,22 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: d57211c2-8033-4b34-9184-9104505167c6
     m_ActionName: 'Player/Sprint[/Keyboard/leftShift]'
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1633818120}
+        m_TargetAssemblyTypeName: InputController, Assembly-CSharp
+        m_MethodName: OnSlide
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 1ad57a8c-5ebc-4d5c-ba25-0f353b86d0ef
+    m_ActionName: 'Player/Slide[/Keyboard/ctrl]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
@@ -854,9 +870,6 @@ MonoBehaviour:
   m_jumpHeight: 1.5
   m_lookSensitivity: 0.5
   m_maxExtraJumps: 1
-  MovementRequest:
-    DesiredVelocity: {x: 0, y: 0, z: 0}
-    LookDelta: {x: 0, y: 0}
 --- !u!114 &1633818121
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -873,7 +886,6 @@ MonoBehaviour:
   m_horizontalGroundFriction: 17
   m_horizontalAirFriction: 4
   m_cameraTransform: {fileID: 316573373}
-  IsGrounded: 0
 --- !u!143 &1633818122
 CharacterController:
   m_ObjectHideFlags: 0
