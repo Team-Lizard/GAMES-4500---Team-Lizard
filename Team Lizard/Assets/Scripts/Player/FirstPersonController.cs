@@ -97,8 +97,6 @@ public class FirstPersonController : MonoBehaviour
             // Player is not on ground, accelerate downwards.
             m_playerVelocityY += m_gravity * Time.deltaTime;
         }
-
-        
     }
 
     /// <summary>
