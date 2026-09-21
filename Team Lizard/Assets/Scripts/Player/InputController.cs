@@ -36,7 +36,7 @@ public class InputController : MonoBehaviour
         [Tooltip("How fast slide decays.")]
         private float m_slideDecay = 0.0025f;
 
-    [SerializeField]
+        [SerializeField]
         [Tooltip("Height that player can jump.")]
         private float m_jumpHeight = 1.5f;
 
