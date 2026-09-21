@@ -80,9 +80,20 @@ public class InputController : MonoBehaviour
         // Make sure diagonal movement isn't faster than unidirectional movement.
         move = Vector3.ClampMagnitude(move, 1f);
 
-        float finalSpeed = m_isSprintHeld ? m_moveSpeed * m_sprintMultiplier : m_moveSpeed;
-        Vector3 horizontalVelocity = move * finalSpeed;
+        float finalSpeed;
 
+        if (m_isSlideHeld && m_firstPersonController.IsGrounded)
+        {
+            m_movementRequest.IsSliding = true;
+            finalSpeed = HandleSlide(m_moveSpeed);
+        }
+        else
+        {
+            m_movementRequest.IsSliding = false;
+            finalSpeed = m_isSprintHeld ? m_moveSpeed * m_sprintMultiplier : m_moveSpeed;
+        }
+
+        Vector3 horizontalVelocity = move * finalSpeed;
 
         float verticalVelocity = 0;
         if (m_isJumping)
