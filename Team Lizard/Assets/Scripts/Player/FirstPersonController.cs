@@ -24,6 +24,14 @@ public class FirstPersonController : MonoBehaviour
         [Tooltip("Transform of object parenting camera.")]
         private Transform m_cameraTransform;
 
+    [Header("Sliding Constants")]
+        [SerializeField]
+        [Tooltip("Height of sliding player in percentage of standing height.")]
+        private float m_slideHeight = 0.5f;
+
+        [SerializeField]
+        [Tooltip("How fast to transition to and from slide.")]
+        private float m_slideCameraLerp = 12f;
 
     private CharacterController m_characterController;
 
