@@ -113,7 +113,6 @@ public class FirstPersonController : MonoBehaviour
             m_inertia = Vector3.MoveTowards(m_inertia, Vector3.zero, m_horizontalAirFriction * Time.deltaTime);
         }
         m_characterController.Move(new Vector3(m_inertia.x, m_playerVelocityY, m_inertia.z) * Time.deltaTime);
-    
     }
 
     /// <summary>
