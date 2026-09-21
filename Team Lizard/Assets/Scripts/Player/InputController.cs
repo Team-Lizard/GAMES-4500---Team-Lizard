@@ -119,6 +119,16 @@ public class InputController : MonoBehaviour
         m_firstPersonController.ApplyMovement(m_movementRequest);
     }
 
+    private float HandleSlide(float moveSpeed)
+    {
+        if (m_currentSlideMultiplier > 0)
+        {
+            m_currentSlideMultiplier -= 0.0025f;
+        }
+
+        return moveSpeed * m_currentSlideMultiplier;
+    }
+
     private float HandleJump()
     {
         // Jump calculation from Unity Documentation for Character Controller
