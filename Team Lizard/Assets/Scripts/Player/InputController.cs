@@ -192,6 +192,14 @@ public class InputController : MonoBehaviour
     /// <param name="value">Information about input being passed to controller.</param>
     public void OnSlide(InputAction.CallbackContext value)
     {
-        m_isSlideHeld = value.ReadValueAsButton();
+        if (value.started)
+        {
+            m_isSlideHeld = true;
+        }
+        else if (value.canceled)
+        {
+            m_isSlideHeld = false;
+            m_currentSlideMultiplier = m_slideMultiplier;
+        }
     }
 }
