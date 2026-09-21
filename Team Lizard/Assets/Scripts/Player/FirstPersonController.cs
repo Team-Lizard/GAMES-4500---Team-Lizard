@@ -38,6 +38,10 @@ public class FirstPersonController : MonoBehaviour
     private float m_playerVelocityY;
     private float m_pitch = 0f;
     private Vector3 m_inertia;
+    private float m_standHeight;
+    private float m_standCameraY;
+    private Vector3 m_standCenter;
+    private bool m_isCrouched = false;
 
     /// <summary>
     /// Is the player currently touching the ground?
