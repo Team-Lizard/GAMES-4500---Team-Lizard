@@ -25,6 +25,10 @@ public class InputController : MonoBehaviour
         private float m_sprintMultiplier = 1.8f;
 
         [SerializeField]
+        [Tooltip("Amount that speed is multiplied by when player is sliding.")]
+        private float m_slideMultiplier = 1.8f;
+
+        [SerializeField]
         [Tooltip("Height that player can jump.")]
         private float m_jumpHeight = 1.5f;
 
@@ -42,6 +46,7 @@ public class InputController : MonoBehaviour
     private int m_extraJumps;
     private Vector2 m_moveInput;
     private Vector2 m_lookInput;
+    private float m_currentSlideMultiplier;
 
     private FirstPersonController m_firstPersonController;
 
