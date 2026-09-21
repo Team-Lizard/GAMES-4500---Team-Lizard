@@ -15,7 +15,6 @@ public struct MovementRequest
 
 public class InputController : MonoBehaviour
 {
-
     [Header("Movement")]
         [SerializeField]
         [Tooltip("Speed at which player should move.")]
