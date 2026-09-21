@@ -145,4 +145,46 @@ public class FirstPersonController : MonoBehaviour
 
         m_cameraTransform.localRotation = Quaternion.Euler(m_pitch, 0, 0);
     }
+
+    /// <summary>
+    /// Puts camera lower to the ground when they are sliding or under a roof.
+    /// </summary>
+    private void UpdateSlidePose(bool isSliding)
+    {
+        bool shouldCrouch = isSliding || (m_isCrouched && !CanStand());
+
+        // If sliding or under a short roof, do not get up.
+        m_isCrouched = shouldCrouch;
+
+        m_characterController.height = m_isCrouched ? m_slideHeight : m_standHeight;
+        m_characterController.center = m_standCenter + Vector3.down * ((m_standHeight - m_characterController.height) * 0.5f);
+
+        float intendedCameraHeight = CalculateIntendedCameraHeight();
+        Vector3 currentCameraPosition = m_cameraTransform.localPosition;
+        currentCameraPosition.y = Mathf.Lerp(currentCameraPosition.y, intendedCameraHeight, m_slideCameraLerp * Time.deltaTime);
+        m_cameraTransform.localPosition = currentCameraPosition;
+    }
+
+    /// <summary>
+    /// Calculate the height of the camera based on if the player is sliding or standing.
+    /// </summary>
+    /// <returns>Height of the camera</returns>
+    private float CalculateIntendedCameraHeight()
+    {
+        float bottomY = m_standCenter.y - m_standHeight * 0.5f;
+        float cameraRelativeToBottom = m_standCameraY - bottomY;
+        float crouchedCameraY = bottomY + cameraRelativeToBottom * (m_slideHeight / m_standHeight);
+        return m_isCrouched ? crouchedCameraY : m_standCameraY;
+    }
+
+    /// <summary>
+    /// Determines if the player can stand or not.
+    /// </summary>
+    /// <returns>True if the player can stand, false otherwise.</returns>
+    private bool CanStand()
+    {
+        Vector3 origin = transform.position + m_characterController.center;
+        float distance = m_standHeight - m_characterController.height * 0.5f + 0.05f;
+        return !Physics.Raycast(origin, Vector3.up, distance);
+    }
 }
