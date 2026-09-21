@@ -10,6 +10,7 @@ public struct MovementRequest
 {
     public Vector3 DesiredVelocity;
     public Vector2 LookDelta;
+    public bool IsSliding;
 }
 
 public class InputController : MonoBehaviour
