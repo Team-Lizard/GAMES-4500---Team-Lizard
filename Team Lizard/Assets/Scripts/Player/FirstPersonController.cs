@@ -40,7 +40,7 @@ public class FirstPersonController : MonoBehaviour
         private set;
     }
 
-    private void Awake() 
+    private void Awake()
     {
         m_characterController = gameObject.GetComponent<CharacterController>();
     }
@@ -49,32 +49,33 @@ public class FirstPersonController : MonoBehaviour
     /// Attempts to move character according to requested movement and look vectors.
     /// </summary>
     /// <param name="request">MovementRequest struct holding a movement vector and a look vector.</param>
-    public void ApplyMovement(MovementRequest request) 
+    public void ApplyMovement(MovementRequest request)
     {
         ApplyLook(request.LookDelta);
 
         ApplyGravity();
 
         // Apply friction if the player doesn't want to move, apply their movement otherwise.
-        if (request.DesiredVelocity == Vector3.zero) 
+        if (request.DesiredVelocity == Vector3.zero)
         {
             ApplyFriction();
         }
         else
         {
             ApplyMove(request.DesiredVelocity);
+            Stamina.Stamina.TrySpendStamina(request.DesiredVelocity.magnitude);
         }
-        
-        
+
+
     }
 
     /// <summary>
     /// Checks if player is touching ground and applies gravity otherwise.
     /// </summary>
-    private void ApplyGravity() 
+    private void ApplyGravity()
     {
         IsGrounded = m_characterController.isGrounded;
-        if (IsGrounded && m_playerVelocityY < 0) 
+        if (IsGrounded && m_playerVelocityY < 0)
         {
             // Player needs to be pressed into the ground for isGrounded to work correctly.
             m_playerVelocityY = m_gravity * Time.deltaTime;
@@ -85,7 +86,7 @@ public class FirstPersonController : MonoBehaviour
             m_playerVelocityY += m_gravity * Time.deltaTime;
         }
 
-        
+
     }
 
     /// <summary>
@@ -102,7 +103,7 @@ public class FirstPersonController : MonoBehaviour
             m_inertia = Vector3.MoveTowards(m_inertia, Vector3.zero, m_horizontalAirFriction * Time.deltaTime);
         }
         m_characterController.Move(new Vector3(m_inertia.x, m_playerVelocityY, m_inertia.z) * Time.deltaTime);
-    
+
     }
 
     /// <summary>
@@ -116,7 +117,7 @@ public class FirstPersonController : MonoBehaviour
             // If player wants to jump, override vertical velocity.
             m_playerVelocityY = moveInput.y * Mathf.Sqrt(-1*m_gravity);
         }
-        
+
         m_characterController.Move(new Vector3(moveInput.x, m_playerVelocityY, moveInput.z) * Time.deltaTime);
         m_inertia = new Vector3(moveInput.x, 0, moveInput.z);
     }
@@ -125,7 +126,7 @@ public class FirstPersonController : MonoBehaviour
     /// Rotate player according to their requested input, to the best of our ability.
     /// </summary>
     /// <param name="lookInput">Vector2 representing how far the player would like to look in the yaw and pitch directions.</param>
-    private void ApplyLook(Vector2 lookInput) 
+    private void ApplyLook(Vector2 lookInput)
     {
         transform.Rotate(Vector3.up * lookInput.x);
 

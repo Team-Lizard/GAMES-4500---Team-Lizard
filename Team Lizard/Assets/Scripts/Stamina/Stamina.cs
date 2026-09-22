@@ -37,8 +37,7 @@ namespace Stamina
             stamina.m_currentStamina -= amount;
 
             // Firing an event that other objects can listen to
-            stamina.StaminaChanged?.Invoke(
-                stamina.m_currentStamina / stamina.m_maxStamina);
+            stamina.StaminaChanged?.Invoke(stamina.m_currentStamina);
 
             return true;
         }
@@ -49,7 +48,7 @@ namespace Stamina
         /// <returns> the current amount of stamina left as a percentage </returns>
         public static float GetCurrentStaminaPercent()
         {
-            return Instance().m_currentStamina / Instance().m_maxStamina;
+            return Instance().m_currentStamina;
         }
 
         /// <summary>
