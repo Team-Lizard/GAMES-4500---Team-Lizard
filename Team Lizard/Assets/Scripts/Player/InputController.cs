@@ -43,12 +43,14 @@ public class InputController : MonoBehaviour
     private Vector2 m_lookInput;
 
     private FirstPersonController m_firstPersonController;
+    private ObjectSensor m_objectSensor;
 
     private MovementRequest m_movementRequest;
 
     private void Awake()
     {
         m_firstPersonController = gameObject.GetComponent<FirstPersonController>();
+        m_objectSensor = gameObject.GetComponent<ObjectSensor>();
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -99,6 +101,8 @@ public class InputController : MonoBehaviour
 
         // Ask player controller to apply the movement the player wants.
         m_firstPersonController.ApplyMovement(m_movementRequest);
+
+        m_objectSensor.ObstacleDetected();
     }
 
     private float HandleJump()

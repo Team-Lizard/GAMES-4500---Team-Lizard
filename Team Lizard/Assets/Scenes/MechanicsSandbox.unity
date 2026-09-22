@@ -524,7 +524,7 @@ GameObject:
   - component: {fileID: 992715059}
   - component: {fileID: 992715058}
   - component: {fileID: 992715057}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Cube (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -640,6 +640,7 @@ GameObject:
   - component: {fileID: 1633818114}
   - component: {fileID: 1633818121}
   - component: {fileID: 1633818120}
+  - component: {fileID: 1633818123}
   m_Layer: 0
   m_Name: Character
   m_TagString: Untagged
@@ -854,9 +855,6 @@ MonoBehaviour:
   m_jumpHeight: 1.5
   m_lookSensitivity: 0.5
   m_maxExtraJumps: 1
-  MovementRequest:
-    DesiredVelocity: {x: 0, y: 0, z: 0}
-    LookDelta: {x: 0, y: 0}
 --- !u!114 &1633818121
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -873,7 +871,6 @@ MonoBehaviour:
   m_horizontalGroundFriction: 17
   m_horizontalAirFriction: 4
   m_cameraTransform: {fileID: 316573373}
-  IsGrounded: 0
 --- !u!143 &1633818122
 CharacterController:
   m_ObjectHideFlags: 0
@@ -899,6 +896,20 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1633818123
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1633818113}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24514e37652a6d743ab7aa666ddde9da, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ObjectSensor
+  m_rayHeight: 0.1
+  m_rayLength: 1.75
 --- !u!1 &1862303419
 GameObject:
   m_ObjectHideFlags: 0
