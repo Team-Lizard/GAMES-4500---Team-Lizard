@@ -38,19 +38,20 @@ public class InputController : MonoBehaviour
     
     private bool m_isSprintHeld;
     private bool m_isJumping;
+    private bool m_isParkouring;
     private int m_extraJumps;
     private Vector2 m_moveInput;
     private Vector2 m_lookInput;
 
     private FirstPersonController m_firstPersonController;
-    private ObjectSensor m_objectSensor;
+    private ParkourManager m_parkourManager;
 
     private MovementRequest m_movementRequest;
 
     private void Awake()
     {
         m_firstPersonController = gameObject.GetComponent<FirstPersonController>();
-        m_objectSensor = gameObject.GetComponent<ObjectSensor>();
+        m_parkourManager = gameObject.GetComponent<ParkourManager>();
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -67,6 +68,12 @@ public class InputController : MonoBehaviour
         if (m_firstPersonController.IsGrounded)
         {
             m_extraJumps = m_maxExtraJumps;
+        }
+
+        if (m_isParkouring)
+        {
+            ParkourBehavior action = m_parkourManager.CheckParkourAction();
+            m_isParkouring = false;
         }
 
         // Calculate movement velocities.
@@ -179,6 +186,18 @@ public class InputController : MonoBehaviour
         else if (value.canceled)
         {
             m_isJumping = false;
+        }
+    }
+
+    public void OnParkour(InputAction.CallbackContext value)
+    {
+        if (value.started)
+        {
+            m_isParkouring = true;
+        }
+        else if (value.canceled)
+        {
+            m_isParkouring = false;
         }
     }
 }

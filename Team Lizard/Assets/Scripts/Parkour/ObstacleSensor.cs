@@ -7,7 +7,7 @@ public struct HitInfo
     public Quaternion targetRotation;
 }
 
-public class ObjectSensor : MonoBehaviour
+public class ObstacleSensor : MonoBehaviour
 {
     [SerializeField]
     [Tooltip("Height to cast ray from.")]
@@ -46,8 +46,6 @@ public class ObjectSensor : MonoBehaviour
             Collider hitCollider = m_hitInfo.hitData.collider;
             m_hitInfo.obstacleHeight = hitCollider.bounds.size.y;
             m_hitInfo.targetRotation = Quaternion.LookRotation(-m_hitInfo.hitData.normal);
-
-            Debug.Log($"Obstacle detected with height: {m_hitInfo.obstacleHeight}");
         }
         else
         {
