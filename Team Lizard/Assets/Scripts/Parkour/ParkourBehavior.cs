@@ -5,6 +5,9 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "ParkourBehavior", menuName = "Scriptable Objects/ParkourBehavior")]
 public class ParkourBehavior : ScriptableObject
 {
+    [Tooltip("Exact string name of the animation we'd like to play.")]
+    public string AnimationName;
+    
     [SerializeField]
     [Tooltip("Minimum height that makes this parkour behavior possible.")]
     private float m_minHeight;

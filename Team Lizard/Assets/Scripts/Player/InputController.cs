@@ -45,6 +45,7 @@ public class InputController : MonoBehaviour
 
     private FirstPersonController m_firstPersonController;
     private ParkourManager m_parkourManager;
+    private Animator m_animator;
 
     private MovementRequest m_movementRequest;
 
@@ -52,6 +53,7 @@ public class InputController : MonoBehaviour
     {
         m_firstPersonController = gameObject.GetComponent<FirstPersonController>();
         m_parkourManager = gameObject.GetComponent<ParkourManager>();
+        m_animator = gameObject.GetComponent<Animator>();
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -73,6 +75,11 @@ public class InputController : MonoBehaviour
         if (m_isParkouring)
         {
             ParkourBehavior action = m_parkourManager.CheckParkourAction();
+            if (action != null)
+            {
+                m_animator.Play(action.AnimationName);
+            }
+            
             m_isParkouring = false;
         }
 

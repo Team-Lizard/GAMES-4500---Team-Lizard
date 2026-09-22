@@ -642,6 +642,7 @@ GameObject:
   - component: {fileID: 1633818120}
   - component: {fileID: 1633818123}
   - component: {fileID: 1633818124}
+  - component: {fileID: 1633818125}
   m_Layer: 0
   m_Name: Character
   m_TagString: Untagged
@@ -941,6 +942,28 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ParkourManager
   m_parkourBehaviors:
   - {fileID: 11400000, guid: 5d5a9a5d4e124894aabc8dc2e03212f5, type: 2}
+--- !u!95 &1633818125
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1633818113}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 274a05281723cc54dae323561c9bd43d, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 1
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &1727344794
 GameObject:
   m_ObjectHideFlags: 0

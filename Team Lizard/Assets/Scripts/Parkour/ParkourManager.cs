@@ -20,7 +20,7 @@ public class ParkourManager : MonoBehaviour
 
         if (hitInfo.hitObstacle)
         {
-            Debug.Log($"Obstacle hit was: {hitInfo.hitData.transform.name}  -   Its height is: {hitInfo.obstacleHeight}");
+            //Debug.Log($"Obstacle hit was: {hitInfo.hitData.transform.name}  -   Its height is: {hitInfo.obstacleHeight}");
 
             foreach (ParkourBehavior action in m_parkourBehaviors)
             {
