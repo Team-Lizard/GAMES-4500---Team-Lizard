@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 
 namespace Stamina
 {
@@ -8,13 +9,14 @@ namespace Stamina
         private float m_maxStamina;
         private float m_currentStamina;
 
+        // Other objects can subscribe to this, but only Stamina can invoke it.
+        public event Action<float> StaminaChanged;
+
         /// <summary>
-        /// Called once when the component is first loaded; sets itself to the singleton instance if no other stamina
-        /// bar is set, then initializes values
+        /// Called once when the component is first loaded; this initializes all needed values
         /// </summary>
         private void Awake()
         {
-            s_instance = Instance();
             m_maxStamina = 100;
             m_currentStamina = m_maxStamina;
         }
@@ -31,7 +33,13 @@ namespace Stamina
                 return false;
             }
 
-            Instance().m_currentStamina -= amount;
+            Stamina stamina = Instance();
+            stamina.m_currentStamina -= amount;
+
+            // Firing an event that other objects can listen to
+            stamina.StaminaChanged?.Invoke(
+                stamina.m_currentStamina / stamina.m_maxStamina);
+
             return true;
         }
 
