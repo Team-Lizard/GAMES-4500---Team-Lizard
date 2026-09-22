@@ -69,16 +69,38 @@ public class InputController : MonoBehaviour
             m_extraJumps = m_maxExtraJumps;
         }
 
-        // Create movement vector based on stored player input.
-        Vector3 move = transform.forward * m_moveInput.y + transform.right * m_moveInput.x;
+        // Calculate movement velocities.
+        Vector3 horizontalVelocity = HandleHorizontalMovement();
+        float verticalVelocity = HandleVerticalMovement();
+        
+        // Combine horizontal and vertical velocities.
+        m_movementRequest.DesiredVelocity = horizontalVelocity + verticalVelocity * Vector3.up;
+        
+        // Take the movement of the mouse and scale it by the look sensitivity. We'll calculate rotations additively, so we just need to know how far the mouse moved.
+        m_movementRequest.LookDelta = new Vector2(m_lookInput.x, m_lookInput.y) * m_lookSensitivity;
 
-        // Make sure diagonal movement isn't faster than unidirectional movement.
-        move = Vector3.ClampMagnitude(move, 1f);
+        // Ask player controller to apply the movement the player wants.
+        m_firstPersonController.ApplyMovement(m_movementRequest);
+    }
 
-        float finalSpeed = m_isSprintHeld ? m_moveSpeed * m_sprintMultiplier : m_moveSpeed;
-        Vector3 horizontalVelocity = move * finalSpeed;
+    /// <summary>
+    /// Handles calculating jump velocity and cancels player input.
+    /// </summary>
+    /// <returns>Float velocity of jump.</returns>
+    private float HandleJump()
+    {
+        // Jump calculation from Unity Documentation for Character Controller
+        float verticalVelocity = Mathf.Sqrt(m_jumpHeight * 2.0f);
+        m_isJumping = false;
+        return verticalVelocity;
+    }
 
-
+    /// <summary>
+    /// Handles permissions for vertical movement.
+    /// </summary>
+    /// <returns>Float vertical velocity.</returns>
+    private float HandleVerticalMovement()
+    {
         float verticalVelocity = 0;
         if (m_isJumping)
         {
@@ -92,25 +114,23 @@ public class InputController : MonoBehaviour
                 m_extraJumps--;
             }
         }
-        
-        // Combine horizontal and vertical velocities.
-        m_movementRequest.DesiredVelocity = horizontalVelocity + verticalVelocity * Vector3.up;
-        
-        // Take the movement of the mouse and scale it by the look sensitivity. We'll calculate rotations additively, so we just need to know how far the mouse moved.
-        m_movementRequest.LookDelta = new Vector2(m_lookInput.x, m_lookInput.y) * m_lookSensitivity;
-
-        // Ask player controller to apply the movement the player wants.
-        m_firstPersonController.ApplyMovement(m_movementRequest);
-
-        m_objectSensor.ObstacleDetected();
+        return verticalVelocity;
     }
 
-    private float HandleJump()
+    /// <summary>
+    /// Calculates movement direction and scales it by speed.
+    /// </summary>
+    /// <returns>Vector3 representing movement velocity.</returns>
+    private Vector3 HandleHorizontalMovement()
     {
-        // Jump calculation from Unity Documentation for Character Controller
-        float verticalVelocity = Mathf.Sqrt(m_jumpHeight * 2.0f);
-        m_isJumping = false;
-        return verticalVelocity;
+        // Create movement vector based on stored player input.
+        Vector3 move = transform.forward * m_moveInput.y + transform.right * m_moveInput.x;
+
+        // Make sure diagonal movement isn't faster than unidirectional movement.
+        move = Vector3.ClampMagnitude(move, 1f);
+
+        float finalSpeed = m_isSprintHeld ? m_moveSpeed * m_sprintMultiplier : m_moveSpeed;
+        return move * finalSpeed;
     }
 
     /// ---------------
