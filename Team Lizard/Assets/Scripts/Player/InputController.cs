@@ -38,17 +38,20 @@ public class InputController : MonoBehaviour
 
     private bool m_isSprintHeld;
     private bool m_isJumping;
+    private bool m_isParkouring;
     private int m_extraJumps;
     private Vector2 m_moveInput;
     private Vector2 m_lookInput;
 
     private FirstPersonController m_firstPersonController;
+    private ParkourManager m_parkourManager;
 
     private MovementRequest m_movementRequest;
 
     private void Awake()
     {
         m_firstPersonController = gameObject.GetComponent<FirstPersonController>();
+        m_parkourManager = gameObject.GetComponent<ParkourManager>();
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -67,16 +70,44 @@ public class InputController : MonoBehaviour
             m_extraJumps = m_maxExtraJumps;
         }
 
-        // Create movement vector based on stored player input.
-        Vector3 move = transform.forward * m_moveInput.y + transform.right * m_moveInput.x;
+        if (m_isParkouring)
+        {
+            ParkourBehavior action = m_parkourManager.CheckParkourAction();
+            m_isParkouring = false;
+        }
 
-        // Make sure diagonal movement isn't faster than unidirectional movement.
-        move = Vector3.ClampMagnitude(move, 1f);
+        // Calculate movement velocities.
+        Vector3 horizontalVelocity = HandleHorizontalMovement();
+        float verticalVelocity = HandleVerticalMovement();
+        
+        // Combine horizontal and vertical velocities.
+        m_movementRequest.DesiredVelocity = horizontalVelocity + verticalVelocity * Vector3.up;
+        
+        // Take the movement of the mouse and scale it by the look sensitivity. We'll calculate rotations additively, so we just need to know how far the mouse moved.
+        m_movementRequest.LookDelta = new Vector2(m_lookInput.x, m_lookInput.y) * m_lookSensitivity;
 
-        float finalSpeed = m_isSprintHeld ? m_moveSpeed * m_sprintMultiplier : m_moveSpeed;
-        Vector3 horizontalVelocity = move * finalSpeed;
+        // Ask player controller to apply the movement the player wants.
+        m_firstPersonController.ApplyMovement(m_movementRequest);
+    }
 
+    /// <summary>
+    /// Handles calculating jump velocity and cancels player input.
+    /// </summary>
+    /// <returns>Float velocity of jump.</returns>
+    private float HandleJump()
+    {
+        // Jump calculation from Unity Documentation for Character Controller
+        float verticalVelocity = Mathf.Sqrt(m_jumpHeight * 2.0f);
+        m_isJumping = false;
+        return verticalVelocity;
+    }
 
+    /// <summary>
+    /// Handles permissions for vertical movement.
+    /// </summary>
+    /// <returns>Float vertical velocity.</returns>
+    private float HandleVerticalMovement()
+    {
         float verticalVelocity = 0;
         if (m_isJumping)
         {
@@ -99,14 +130,23 @@ public class InputController : MonoBehaviour
 
         // Ask player controller to apply the movement the player wants.
         m_firstPersonController.ApplyMovement(m_movementRequest);
+        return verticalVelocity;
     }
 
-    private float HandleJump()
+    /// <summary>
+    /// Calculates movement direction and scales it by speed.
+    /// </summary>
+    /// <returns>Vector3 representing movement velocity.</returns>
+    private Vector3 HandleHorizontalMovement()
     {
-        // Jump calculation from Unity Documentation for Character Controller
-        float verticalVelocity = Mathf.Sqrt(m_jumpHeight * 2.0f);
-        m_isJumping = false;
-        return verticalVelocity;
+        // Create movement vector based on stored player input.
+        Vector3 move = transform.forward * m_moveInput.y + transform.right * m_moveInput.x;
+
+        // Make sure diagonal movement isn't faster than unidirectional movement.
+        move = Vector3.ClampMagnitude(move, 1f);
+
+        float finalSpeed = m_isSprintHeld ? m_moveSpeed * m_sprintMultiplier : m_moveSpeed;
+        return move * finalSpeed;
     }
 
     /// ---------------
@@ -155,6 +195,18 @@ public class InputController : MonoBehaviour
         else if (value.canceled)
         {
             m_isJumping = false;
+        }
+    }
+
+    public void OnParkour(InputAction.CallbackContext value)
+    {
+        if (value.started)
+        {
+            m_isParkouring = true;
+        }
+        else if (value.canceled)
+        {
+            m_isParkouring = false;
         }
     }
 }

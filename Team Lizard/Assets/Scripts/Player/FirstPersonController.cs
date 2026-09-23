@@ -24,7 +24,6 @@ public class FirstPersonController : MonoBehaviour
         [Tooltip("Transform of object parenting camera.")]
         private Transform m_cameraTransform;
 
-
     private CharacterController m_characterController;
 
     private float m_playerVelocityY;
@@ -64,8 +63,6 @@ public class FirstPersonController : MonoBehaviour
         {
             ApplyMove(request.DesiredVelocity);
         }
-
-
     }
 
     /// <summary>
@@ -84,8 +81,6 @@ public class FirstPersonController : MonoBehaviour
             // Player is not on ground, accelerate downwards.
             m_playerVelocityY += m_gravity * Time.deltaTime;
         }
-
-
     }
 
     /// <summary>
