@@ -63,7 +63,6 @@ public class FirstPersonController : MonoBehaviour
         else
         {
             ApplyMove(request.DesiredVelocity);
-            Stamina.Stamina.TrySpendStamina(request.DesiredVelocity.magnitude);
         }
 
 
