@@ -103,7 +103,6 @@ public class InputController : MonoBehaviour
 
     private float HandleJump()
     {
-        Stamina.Instance().TrySpendStamina(20f);
         // Jump calculation from Unity Documentation for Character Controller
         float verticalVelocity = Mathf.Sqrt(m_jumpHeight * 2.0f);
         m_isJumping = false;
