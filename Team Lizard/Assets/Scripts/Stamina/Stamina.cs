@@ -8,7 +8,7 @@ using System;
 public class Stamina : ScriptableObject
 {
     private static Stamina s_instance;
-    private float m_maxStamina;
+    private const float k_maxStamina = 100;
     private float m_currentStamina;
 
     /// <summary>
@@ -25,8 +25,7 @@ public class Stamina : ScriptableObject
     /// </summary>
     private void Awake()
     {
-        m_maxStamina = 100;
-        m_currentStamina = m_maxStamina;
+        m_currentStamina = k_maxStamina;
     }
 
     /// <summary>
@@ -50,12 +49,12 @@ public class Stamina : ScriptableObject
 
     public void RegenerateStamina(float amount)
     {
-        if (m_currentStamina == m_maxStamina)
+        if (m_currentStamina == k_maxStamina)
         {
             return;
         }
 
-        m_currentStamina = Math.Min(m_currentStamina + amount, m_maxStamina);
+        m_currentStamina = Math.Min(m_currentStamina + amount, k_maxStamina);
         StaminaGained?.Invoke(m_currentStamina);
     }
 
