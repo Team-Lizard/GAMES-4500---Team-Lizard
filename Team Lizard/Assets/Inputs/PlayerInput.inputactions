@@ -119,6 +119,17 @@
                 },
                 {
                     "name": "",
+                    "id": "95660cfe-74cd-4100-a3cb-4701f33fb293",
+                    "path": "<Gamepad>/leftStick",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Move",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "f348ee13-1503-45fd-979c-4f53b64b6d78",
                     "path": "<Mouse>/delta",
                     "interactions": "",
@@ -130,8 +141,30 @@
                 },
                 {
                     "name": "",
+                    "id": "59b7cd88-6126-457c-a7de-2fcc6562c135",
+                    "path": "<Gamepad>/rightStick",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Look",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "64981c6a-37c4-40b7-9001-861c9bf04762",
                     "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Jump",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "c2de7c5f-2dc0-4fd7-861d-2ba71e1c0f57",
+                    "path": "<Gamepad>/buttonSouth",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -158,6 +191,12 @@
                     "processors": "",
                     "groups": "",
                     "action": "Slide",
+                    "id": "66d4b78f-6d8f-4d87-aedb-535f3af075e0",
+                    "path": "<Gamepad>/rightTrigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Sprint",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
