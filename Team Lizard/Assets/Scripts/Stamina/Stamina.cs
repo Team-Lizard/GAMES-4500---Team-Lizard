@@ -8,7 +8,7 @@ using System;
 public class Stamina : ScriptableObject
 {
     private static Stamina s_instance;
-    private const float k_maxStamina = 100;
+    private float m_maxStamina = 100;
     private float m_currentStamina;
 
     /// <summary>
@@ -18,6 +18,13 @@ public class Stamina : ScriptableObject
     /// Stamina.Instance().StaminaGained += MyOnGainBehavior
     /// </summary>
     public event Action<float> StaminaGained;
+
+	/// <summary>
+    /// These two actions are invoked by Stamina.cs whenever sees that it has gained or spent some stamina.
+    /// This allows other items (like the StaminaBar UI) to read these events. it's worth noting that other
+    /// items should not be invoking these, only listening to them by calling something like:
+    /// Stamina.Instance().StaminaSpent += MyOnGainBehavior
+    /// </summary>
     public event Action<float> StaminaSpent;
 
     /// <summary>
@@ -25,7 +32,7 @@ public class Stamina : ScriptableObject
     /// </summary>
     private void Awake()
     {
-        m_currentStamina = k_maxStamina;
+        m_currentStamina = m_maxStamina;
     }
 
     /// <summary>
@@ -49,12 +56,12 @@ public class Stamina : ScriptableObject
 
     public void RegenerateStamina(float amount)
     {
-        if (m_currentStamina == k_maxStamina)
+        if (m_currentStamina == m_maxStamina)
         {
             return;
         }
 
-        m_currentStamina = Math.Min(m_currentStamina + amount, k_maxStamina);
+        m_currentStamina = Math.Min(m_currentStamina + amount, m_maxStamina);
         StaminaGained?.Invoke(m_currentStamina);
     }
 
