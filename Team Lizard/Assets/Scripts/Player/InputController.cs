@@ -42,10 +42,11 @@ public class InputController : MonoBehaviour
     private int m_extraJumps;
     private Vector2 m_moveInput;
     private Vector2 m_lookInput;
+    private AnimationCurve m_currentMovementCurve;
+    private float m_animationProgress;
 
     private FirstPersonController m_firstPersonController;
     private ParkourManager m_parkourManager;
-    private Animator m_animator;
 
     private MovementRequest m_movementRequest;
 
@@ -53,7 +54,6 @@ public class InputController : MonoBehaviour
     {
         m_firstPersonController = gameObject.GetComponent<FirstPersonController>();
         m_parkourManager = gameObject.GetComponent<ParkourManager>();
-        m_animator = gameObject.GetComponent<Animator>();
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -66,27 +66,46 @@ public class InputController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // Reset player's jumps if they are touching the ground.
-        if (m_firstPersonController.IsGrounded)
-        {
-            m_extraJumps = m_maxExtraJumps;
-        }
+        Vector3 horizontalVelocity = Vector3.zero;
+        float verticalVelocity;
 
-        if (m_isParkouring)
+        if (m_currentMovementCurve != null)
         {
-            ParkourBehavior action = m_parkourManager.CheckParkourAction();
-            if (action != null)
-            {
-                m_animator.Play(action.AnimationName);
-            }
+            float curveValue = m_currentMovementCurve.Evaluate(m_animationProgress);
+            verticalVelocity = curveValue;
+            horizontalVelocity = Vector3.forward * curveValue;
+            m_animationProgress += Time.deltaTime;
             
-            m_isParkouring = false;
+            if (m_animationProgress > 1)
+            {
+                m_currentMovementCurve = null;
+            }
+        }
+        else
+        {
+            // Reset player's jumps if they are touching the ground.
+            if (m_firstPersonController.IsGrounded)
+            {
+                m_extraJumps = m_maxExtraJumps;
+            }
+
+            if (m_isParkouring)
+            {
+                ParkourBehavior action = m_parkourManager.CheckParkourAction();
+                if (action != null)
+                {
+                    m_currentMovementCurve = action.AnimationCurve;
+                    m_isParkouring = false;
+                    m_animationProgress = 0f;
+                    return;
+                }
+            }
+
+            // Calculate movement velocities.
+            horizontalVelocity = HandleHorizontalMovement();
+            verticalVelocity = HandleVerticalMovement();
         }
 
-        // Calculate movement velocities.
-        Vector3 horizontalVelocity = HandleHorizontalMovement();
-        float verticalVelocity = HandleVerticalMovement();
-        
         // Combine horizontal and vertical velocities.
         m_movementRequest.DesiredVelocity = horizontalVelocity + verticalVelocity * Vector3.up;
         

@@ -6,7 +6,7 @@ using UnityEngine;
 public class ParkourBehavior : ScriptableObject
 {
     [Tooltip("Exact string name of the animation we'd like to play.")]
-    public string AnimationName;
+    public AnimationCurve AnimationCurve;
     
     [SerializeField]
     [Tooltip("Minimum height that makes this parkour behavior possible.")]
