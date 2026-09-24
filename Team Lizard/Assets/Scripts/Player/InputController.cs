@@ -34,7 +34,7 @@ public class InputController : MonoBehaviour
 
         [SerializeField]
         [Tooltip("How fast slide decays.")]
-        private float m_slideDecay = 0.0025f;
+        private float m_slideDecay = 0.0005f;
 
         [SerializeField]
         [Tooltip("Height that player can jump.")]
@@ -114,7 +114,7 @@ public class InputController : MonoBehaviour
     {
         if (m_currentSlideMultiplier > m_minimumSlideMultiplier)
         {
-            m_currentSlideMultiplier -= m_slideDecay;
+            m_currentSlideMultiplier -= m_slideDecay * (1 / Time.deltaTime);
         }
 
         return moveSpeed * m_currentSlideMultiplier;
