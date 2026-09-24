@@ -106,6 +106,21 @@ public class InputController : MonoBehaviour
     }
 
     /// <summary>
+    /// Handles calculating slide speed.
+    /// </summary>
+    /// <param name="moveSpeed">How fast the player is moving originally.</param>
+    /// <returns>Float representing slide speed.</returns>
+    private float HandleSlide(float moveSpeed)
+    {
+        if (m_currentSlideMultiplier > m_minimumSlideMultiplier)
+        {
+            m_currentSlideMultiplier -= m_slideDecay;
+        }
+
+        return moveSpeed * m_currentSlideMultiplier;
+    }
+
+    /// <summary>
     /// Handles calculating jump velocity and cancels player input.
     /// </summary>
     /// <returns>Float velocity of jump.</returns>
@@ -151,24 +166,19 @@ public class InputController : MonoBehaviour
         // Make sure diagonal movement isn't faster than unidirectional movement.
         move = Vector3.ClampMagnitude(move, 1f);
 
-        float finalSpeed = m_isSprintHeld ? m_moveSpeed * m_sprintMultiplier : m_moveSpeed;
-        return move * finalSpeed;
-    private float HandleSlide(float moveSpeed)
-    {
-        if (m_currentSlideMultiplier > m_minimumSlideMultiplier)
+        float finalSpeed;
+        if (m_isSlideHeld && m_firstPersonController.IsGrounded)
         {
-            m_currentSlideMultiplier -= m_slideDecay;
+            m_movementRequest.IsSliding = true;
+            finalSpeed = HandleSlide(m_moveSpeed);
+        }
+        else
+        {
+            m_movementRequest.IsSliding = false;
+            finalSpeed = m_isSprintHeld ? m_moveSpeed * m_sprintMultiplier : m_moveSpeed;
         }
 
-        return moveSpeed * m_currentSlideMultiplier;
-    }
-
-    private float HandleJump()
-    {
-        // Jump calculation from Unity Documentation for Character Controller
-        float verticalVelocity = Mathf.Sqrt(m_jumpHeight * 2.0f);
-        m_isJumping = false;
-        return verticalVelocity;
+        return move * finalSpeed;
     }
 
     /// ---------------
