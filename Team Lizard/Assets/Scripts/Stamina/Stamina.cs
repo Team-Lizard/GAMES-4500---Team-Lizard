@@ -11,8 +11,12 @@ public class Stamina : ScriptableObject
     private float m_maxStamina;
     private float m_currentStamina;
 
-
-    // Other objects can subscribe to this, but only Stamina can invoke it.
+    /// <summary>
+    /// These two actions are invoked by Stamina.cs whenever sees that it has gained or spent some stamina.
+    /// This allows other items (like the StaminaBar UI) to read these events. it's worth noting that other
+    /// items should not be invoking these, only listening to them by calling something like:
+    /// Stamina.Instance().StaminaGained += MyOnGainBehavior
+    /// </summary>
     public event Action<float> StaminaGained;
     public event Action<float> StaminaSpent;
 

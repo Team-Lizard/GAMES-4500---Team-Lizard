@@ -79,10 +79,10 @@ public class InputController : MonoBehaviour
         // Calculate movement velocities.
         Vector3 horizontalVelocity = HandleHorizontalMovement();
         float verticalVelocity = HandleVerticalMovement();
-        
+
         // Combine horizontal and vertical velocities.
         m_movementRequest.DesiredVelocity = horizontalVelocity + verticalVelocity * Vector3.up;
-        
+
         // Take the movement of the mouse and scale it by the look sensitivity. We'll calculate rotations additively, so we just need to know how far the mouse moved.
         m_movementRequest.LookDelta = new Vector2(m_lookInput.x, m_lookInput.y) * m_lookSensitivity;
 
@@ -122,14 +122,6 @@ public class InputController : MonoBehaviour
             }
         }
 
-        // Combine horizontal and vertical velocities.
-        m_movementRequest.DesiredVelocity = horizontalVelocity + verticalVelocity * Vector3.up;
-
-        // Take the movement of the mouse and scale it by the look sensitivity. We'll calculate rotations additively, so we just need to know how far the mouse moved.
-        m_movementRequest.LookDelta = new Vector2(m_lookInput.x, m_lookInput.y) * m_lookSensitivity;
-
-        // Ask player controller to apply the movement the player wants.
-        m_firstPersonController.ApplyMovement(m_movementRequest);
         return verticalVelocity;
     }
 
@@ -160,7 +152,6 @@ public class InputController : MonoBehaviour
     public void OnMove(InputAction.CallbackContext value)
     {
         m_moveInput = value.ReadValue<Vector2>();
-
     }
 
     /// <summary>
@@ -190,7 +181,6 @@ public class InputController : MonoBehaviour
         if (value.started)
         {
             m_isJumping = true;
-
         }
         else if (value.canceled)
         {

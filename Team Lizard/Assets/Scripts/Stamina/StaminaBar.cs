@@ -30,7 +30,6 @@ public class StaminaBar : MonoBehaviour
 
         // represents the regain in stamina/sec -> 50 = 50%
         m_regenRate = 50f;
-
     }
 
     void Update()
@@ -39,8 +38,7 @@ public class StaminaBar : MonoBehaviour
         {
             m_stamina.RegenerateStamina(Time.deltaTime * m_regenRate);
         }
-
-
+        
         m_timeSinceSpending += Time.deltaTime;
     }
 
