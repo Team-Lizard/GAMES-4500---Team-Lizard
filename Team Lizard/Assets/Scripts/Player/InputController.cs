@@ -47,7 +47,7 @@ public class InputController : MonoBehaviour
         [SerializeField]
         [Tooltip("Number of jumps the player can perform while not touching the ground.")]
         private int m_maxExtraJumps = 1;
-    
+
     private bool m_isSprintHeld;
     private bool m_isSlideHeld;
     private bool m_isJumping;
@@ -94,10 +94,10 @@ public class InputController : MonoBehaviour
         // Calculate movement velocities.
         Vector3 horizontalVelocity = HandleHorizontalMovement();
         float verticalVelocity = HandleVerticalMovement();
-        
+
         // Combine horizontal and vertical velocities.
         m_movementRequest.DesiredVelocity = horizontalVelocity + verticalVelocity * Vector3.up;
-        
+
         // Take the movement of the mouse and scale it by the look sensitivity. We'll calculate rotations additively, so we just need to know how far the mouse moved.
         m_movementRequest.LookDelta = new Vector2(m_lookInput.x, m_lookInput.y) * m_lookSensitivity;
 
@@ -145,12 +145,13 @@ public class InputController : MonoBehaviour
             {
                 verticalVelocity = HandleJump();
             }
-            else if (m_extraJumps > 0) 
+            else if (m_extraJumps > 0)
             {
                 verticalVelocity = HandleJump();
                 m_extraJumps--;
             }
         }
+
         return verticalVelocity;
     }
 
@@ -189,17 +190,16 @@ public class InputController : MonoBehaviour
     /// Called whenever movement input is received. Passes movement data to controller.
     /// </summary>
     /// <param name="value">Information about input being passed to controller.</param>
-    public void OnMove(InputAction.CallbackContext value) 
+    public void OnMove(InputAction.CallbackContext value)
     {
         m_moveInput = value.ReadValue<Vector2>();
-        
     }
 
     /// <summary>
     /// Called whenever look input is received. Passes look data to controller.
     /// </summary>
     /// <param name="value">Information about input being passed to controller.</param>
-    public void OnLook(InputAction.CallbackContext value) 
+    public void OnLook(InputAction.CallbackContext value)
     {
         m_lookInput = value.ReadValue<Vector2>();
     }
@@ -222,7 +222,6 @@ public class InputController : MonoBehaviour
         if (value.started)
         {
             m_isJumping = true;
-            
         }
         else if (value.canceled)
         {
