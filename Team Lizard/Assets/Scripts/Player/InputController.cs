@@ -48,6 +48,10 @@ public class InputController : MonoBehaviour
         [Tooltip("Number of jumps the player can perform while not touching the ground.")]
         private int m_maxExtraJumps = 1;
 
+        [SerializeField]
+        [Tooltip("Time in seconds after leaving the ground where the player can still jump.")]
+        private float m_coyoteTime = 0.15f;
+
     private bool m_isSprintHeld;
     private bool m_isSlideHeld;
     private bool m_isJumping;
@@ -56,6 +60,7 @@ public class InputController : MonoBehaviour
     private Vector2 m_moveInput;
     private Vector2 m_lookInput;
     private float m_currentSlideMultiplier;
+    private float m_coyoteTimer;
 
     private FirstPersonController m_firstPersonController;
     private ParkourManager m_parkourManager;
@@ -83,6 +88,11 @@ public class InputController : MonoBehaviour
         if (m_firstPersonController.IsGrounded)
         {
             m_extraJumps = m_maxExtraJumps;
+            m_coyoteTimer = m_coyoteTime;
+        }
+        else
+        {
+            m_coyoteTimer -= Time.deltaTime;
         }
 
         if (m_isParkouring)
@@ -141,7 +151,7 @@ public class InputController : MonoBehaviour
         float verticalVelocity = 0;
         if (m_isJumping)
         {
-            if (m_firstPersonController.IsGrounded)
+            if (m_firstPersonController.IsGrounded || m_coyoteTimer > 0f)
             {
                 verticalVelocity = HandleJump();
             }
