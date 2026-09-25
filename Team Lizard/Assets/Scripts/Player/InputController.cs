@@ -10,11 +10,11 @@ public struct MovementRequest
 {
     public Vector3 DesiredVelocity;
     public Vector2 LookDelta;
+    public bool IsSliding;
 }
 
 public class InputController : MonoBehaviour
 {
-
     [Header("Movement")]
         [SerializeField]
         [Tooltip("Speed at which player should move.")]
@@ -23,6 +23,18 @@ public class InputController : MonoBehaviour
         [SerializeField]
         [Tooltip("Amount that speed is multiplied by when player is sprinting.")]
         private float m_sprintMultiplier = 1.8f;
+
+        [SerializeField]
+        [Tooltip("Amount that speed is multiplied by when player is sliding.")]
+        private float m_slideMultiplier = 1.8f;
+
+        [SerializeField]
+        [Tooltip("Minimium speed while crouched as a multiplier.")]
+        private float m_minimumSlideMultiplier = 0.5f;
+
+        [SerializeField]
+        [Tooltip("How fast slide decays.")]
+        private float m_slideDecay = 1.8f;
 
         [SerializeField]
         [Tooltip("Height that player can jump.")]
@@ -37,11 +49,13 @@ public class InputController : MonoBehaviour
         private int m_maxExtraJumps = 1;
 
     private bool m_isSprintHeld;
+    private bool m_isSlideHeld;
     private bool m_isJumping;
     private bool m_isParkouring;
     private int m_extraJumps;
     private Vector2 m_moveInput;
     private Vector2 m_lookInput;
+    private float m_currentSlideMultiplier;
 
     private FirstPersonController m_firstPersonController;
     private ParkourManager m_parkourManager;
@@ -59,6 +73,7 @@ public class InputController : MonoBehaviour
     {
         Cursor.lockState = CursorLockMode.Locked;
         m_extraJumps = m_maxExtraJumps;
+        m_currentSlideMultiplier = m_slideMultiplier;
     }
 
     // Update is called once per frame
@@ -88,6 +103,21 @@ public class InputController : MonoBehaviour
 
         // Ask player controller to apply the movement the player wants.
         m_firstPersonController.ApplyMovement(m_movementRequest);
+    }
+
+    /// <summary>
+    /// Handles calculating slide speed.
+    /// </summary>
+    /// <param name="moveSpeed">How fast the player is moving originally.</param>
+    /// <returns>Float representing slide speed.</returns>
+    private float HandleSlide(float moveSpeed)
+    {
+        if (m_currentSlideMultiplier > m_minimumSlideMultiplier)
+        {
+            m_currentSlideMultiplier -= m_slideDecay * Time.deltaTime;
+        }
+
+        return moveSpeed * m_currentSlideMultiplier;
     }
 
     /// <summary>
@@ -137,7 +167,18 @@ public class InputController : MonoBehaviour
         // Make sure diagonal movement isn't faster than unidirectional movement.
         move = Vector3.ClampMagnitude(move, 1f);
 
-        float finalSpeed = m_isSprintHeld ? m_moveSpeed * m_sprintMultiplier : m_moveSpeed;
+        float finalSpeed;
+        if (m_isSlideHeld && m_firstPersonController.IsGrounded)
+        {
+            m_movementRequest.IsSliding = true;
+            finalSpeed = HandleSlide(m_moveSpeed);
+        }
+        else
+        {
+            m_movementRequest.IsSliding = false;
+            finalSpeed = m_isSprintHeld ? m_moveSpeed * m_sprintMultiplier : m_moveSpeed;
+        }
+
         return move * finalSpeed;
     }
 
@@ -197,6 +238,23 @@ public class InputController : MonoBehaviour
         else if (value.canceled)
         {
             m_isParkouring = false;
+        }
+    }
+
+    /// <summary>
+    /// Called whenever slide input is received. Passes slide data to controller.
+    /// </summary>
+    /// <param name="value">Information about input being passed to controller.</param>
+    public void OnSlide(InputAction.CallbackContext value)
+    {
+        if (value.started)
+        {
+            m_isSlideHeld = true;
+        }
+        else if (value.canceled)
+        {
+            m_isSlideHeld = false;
+            m_currentSlideMultiplier = m_slideMultiplier;
         }
     }
 }

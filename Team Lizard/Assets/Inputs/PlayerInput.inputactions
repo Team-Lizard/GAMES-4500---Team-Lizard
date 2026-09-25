@@ -43,6 +43,15 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "Slide",
+                    "type": "Button",
+                    "id": "1ad57a8c-5ebc-4d5c-ba25-0f353b86d0ef",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "Parkour",
                     "type": "Button",
                     "id": "4898d7c8-d66e-4d21-8be8-66c1b1878ae7",
@@ -176,6 +185,12 @@
                 },
                 {
                     "name": "",
+                    "id": "e8c4878e-fb41-4e70-b244-ceab3bb1e168",
+                    "path": "<Keyboard>/ctrl",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Slide",
                     "id": "66d4b78f-6d8f-4d87-aedb-535f3af075e0",
                     "path": "<Gamepad>/rightTrigger",
                     "interactions": "",
