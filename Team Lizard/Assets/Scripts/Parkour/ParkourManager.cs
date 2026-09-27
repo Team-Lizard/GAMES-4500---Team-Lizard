@@ -1,5 +1,18 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
+
+[Serializable]
+public struct ParkourState
+{
+    public ParkourBehavior CurrentAction;
+    public float AnimationTime;
+    public float AnimationLength;
+    public Vector3 StartingPosition;
+    public Vector3 EndingPosition;
+    public float ObstacleHeight;
+
+}
 
 public class ParkourManager : MonoBehaviour
 {
@@ -14,24 +27,38 @@ public class ParkourManager : MonoBehaviour
         m_obstacleSensor = GetComponent<ObstacleSensor>();
     }
 
-    public ParkourBehavior CheckParkourAction()
+    /// <summary>
+    /// Check whether a parkour action is possible.
+    /// </summary>
+    /// <returns>ParkourState struct representing what action should be performed. The CurrentAction field will be null is no action is possible.</returns>
+    public ParkourState CheckParkourAction()
     {
-        HitInfo hitInfo = m_obstacleSensor.ObstacleDetected();
-
-        if (hitInfo.hitObstacle)
+        ParkourState parkourState = new ParkourState
         {
-            //Debug.Log($"Obstacle hit was: {hitInfo.hitData.transform.name}  -   Its height is: {hitInfo.obstacleHeight}");
+            AnimationTime = 0f,
+            StartingPosition = transform.position
+        };
 
+        HitInfo hitInfo = m_obstacleSensor.DetectObstacle();
+
+        if (hitInfo.HitObstacle)
+        {
             foreach (ParkourBehavior action in m_parkourBehaviors)
             {
-                if (action.IsParkourActionPossible(hitInfo, transform))
+                if (action.IsParkourActionPossible(hitInfo))
                 {
-                    Debug.Log($"Parkour action is possible.");
-                    return action;
+                    // Parkour action is possible, fill in data about action.
+                    parkourState.CurrentAction = action;
+                    parkourState.ObstacleHeight = hitInfo.ObstacleHeight;
+                    parkourState.AnimationLength = action.AnimationLength;
+
+                    // We want to end up on other side of the object. This code could be adjusted if we want different behavior.
+                    parkourState.EndingPosition = parkourState.StartingPosition + action.HorizontalDistance * hitInfo.ForwardDirection;
+                    
                 }
             }
         }
 
-        return null;
+        return parkourState;
     }
 }

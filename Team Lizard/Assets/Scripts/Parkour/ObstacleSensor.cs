@@ -1,17 +1,18 @@
+using Unity.VisualScripting;
 using UnityEngine;
 public struct HitInfo
 {
-    public bool hitObstacle;
-    public RaycastHit hitData;
-    public float obstacleHeight;
-    public Quaternion targetRotation;
+    public bool HitObstacle;
+    public RaycastHit HitData;
+    public float ObstacleHeight;
+    public Vector3 ForwardDirection;
 }
 
 public class ObstacleSensor : MonoBehaviour
 {
     [SerializeField]
     [Tooltip("Height to cast ray from.")]
-    private float m_rayHeight = 0.1f;
+    private float m_rayHeight = -0.5f;
 
     [SerializeField]
     [Tooltip("Length of the ray in the forward direction.")]
@@ -27,30 +28,25 @@ public class ObstacleSensor : MonoBehaviour
         m_obstacleLayerMask = LayerMask.GetMask("Obstacle");
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
-    public HitInfo ObstacleDetected()
+    /// <summary>
+    /// Checks if an obstacle is in front of the player.
+    /// </summary>
+    /// <returns>HitInfo struct representing info about what obstacle is in front of the player.</returns>
+    public HitInfo DetectObstacle()
     {
         m_rayOrigin = transform.position + Vector3.up * m_rayHeight;
 
-        m_hitInfo.hitObstacle = Physics.Raycast(m_rayOrigin, transform.forward, out m_hitInfo.hitData, m_rayLength, m_obstacleLayerMask);
+        m_hitInfo.HitObstacle = Physics.Raycast(m_rayOrigin, transform.forward, out m_hitInfo.HitData, m_rayLength, m_obstacleLayerMask);
 
-        if (m_hitInfo.hitObstacle)
+        if (m_hitInfo.HitObstacle)
         {
-            Debug.DrawRay(m_rayOrigin, transform.forward * m_rayLength, Color.green);
+            Collider hitCollider = m_hitInfo.HitData.collider;
+            float distanceToTop = hitCollider.bounds.max.y - transform.position.y - m_rayHeight;
+            Debug.Log(distanceToTop);
+            m_hitInfo.ObstacleHeight = distanceToTop;
+            m_hitInfo.ForwardDirection = -m_hitInfo.HitData.normal;
+        }
 
-            Collider hitCollider = m_hitInfo.hitData.collider;
-            m_hitInfo.obstacleHeight = hitCollider.bounds.size.y;
-            m_hitInfo.targetRotation = Quaternion.LookRotation(-m_hitInfo.hitData.normal);
-        }
-        else
-        {
-            Debug.DrawRay(m_rayOrigin, transform.forward * m_rayLength, Color.red);
-        }
         return m_hitInfo;
     }
 }

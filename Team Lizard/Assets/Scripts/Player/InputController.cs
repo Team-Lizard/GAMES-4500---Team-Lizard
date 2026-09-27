@@ -42,8 +42,7 @@ public class InputController : MonoBehaviour
     private int m_extraJumps;
     private Vector2 m_moveInput;
     private Vector2 m_lookInput;
-    private AnimationCurve m_currentMovementCurve;
-    private float m_animationProgress;
+    private ParkourState m_parkourState;
 
     private FirstPersonController m_firstPersonController;
     private ParkourManager m_parkourManager;
@@ -66,21 +65,32 @@ public class InputController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Vector3 horizontalVelocity = Vector3.zero;
+        Vector3 horizontalVelocity;
         float verticalVelocity;
 
-        if (m_currentMovementCurve != null)
+        // If player is currently parkouring, override input and use input from parkour curve.
+        if (m_parkourState.CurrentAction != null)
         {
-            float curveValue = m_currentMovementCurve.Evaluate(m_animationProgress);
-            verticalVelocity = curveValue;
-            horizontalVelocity = Vector3.forward * curveValue;
-            m_animationProgress += Time.deltaTime;
+            Vector3 curveDirection = m_parkourState.CurrentAction.Evaluate(
+                m_parkourState.StartingPosition, 
+                m_parkourState.EndingPosition, 
+                m_parkourState.ObstacleHeight, 
+                m_parkourState.AnimationTime);
+
+            // Split found velocity into horizontal and vertical velocity (this will be recombined later.)
+            horizontalVelocity = Vector3.forward * curveDirection.z + Vector3.right * curveDirection.x;
+            verticalVelocity = curveDirection.y;
+
+            // Step animation forward.
+            m_parkourState.AnimationTime += Time.deltaTime;
             
-            if (m_animationProgress > 1)
+            // Once the animation has played, clear the current parkour state.
+            if (m_parkourState.AnimationTime > m_parkourState.AnimationLength)
             {
-                m_currentMovementCurve = null;
+                m_parkourState.CurrentAction = null;
             }
         }
+        // Otherwise, read player movement input.
         else
         {
             // Reset player's jumps if they are touching the ground.
@@ -91,12 +101,10 @@ public class InputController : MonoBehaviour
 
             if (m_isParkouring)
             {
-                ParkourBehavior action = m_parkourManager.CheckParkourAction();
-                if (action != null)
+                m_parkourState = m_parkourManager.CheckParkourAction();
+                if (m_parkourState.CurrentAction != null)
                 {
-                    m_currentMovementCurve = action.AnimationCurve;
                     m_isParkouring = false;
-                    m_animationProgress = 0f;
                     return;
                 }
             }
@@ -215,6 +223,10 @@ public class InputController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Called whenever parkour input is received. Passes parkour data to controller.
+    /// </summary>
+    /// <param name="value">Information about input being passed to controller.</param>
     public void OnParkour(InputAction.CallbackContext value)
     {
         if (value.started)
