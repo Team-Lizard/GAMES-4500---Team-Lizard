@@ -117,17 +117,12 @@ public class InputController : MonoBehaviour
             if (m_firstPersonController.IsGrounded)
             {
                 m_extraJumps = m_maxExtraJumps;
+                m_coyoteTimer = m_coyoteTime;
             }
-        // Reset player's jumps if they are touching the ground.
-        if (m_firstPersonController.IsGrounded)
-        {
-            m_extraJumps = m_maxExtraJumps;
-            m_coyoteTimer = m_coyoteTime;
-        }
-        else
-        {
-            m_coyoteTimer -= Time.deltaTime;
-        }
+            else
+            {
+                m_coyoteTimer -= Time.deltaTime;
+            }
 
             if (m_isParkouring)
             {
