@@ -275,7 +275,7 @@ GameObject:
   - component: {fileID: 549297909}
   - component: {fileID: 549297908}
   - component: {fileID: 549297907}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Cube (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -369,8 +369,8 @@ Transform:
   m_GameObject: {fileID: 549297906}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.7071, y: -2, z: -32.14}
-  m_LocalScale: {x: 20, y: 1, z: 20}
+  m_LocalPosition: {x: 0.7071, y: -50, z: -32.14}
+  m_LocalScale: {x: 20, y: 100, z: 20}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -1050,7 +1050,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ObjectSensor
   m_rayHeight: -0.5
-  m_rayLength: 1.75
+  m_rayLength: 1
 --- !u!114 &1633818124
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1065,6 +1065,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ParkourManager
   m_parkourBehaviors:
   - {fileID: 11400000, guid: 5d5a9a5d4e124894aabc8dc2e03212f5, type: 2}
+  - {fileID: 11400000, guid: 35a69e3a6fc49db43a01a9a49716bc7c, type: 2}
 --- !u!1 &1727344794
 GameObject:
   m_ObjectHideFlags: 0
