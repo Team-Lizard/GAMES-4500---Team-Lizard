@@ -420,6 +420,22 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: 4898d7c8-d66e-4d21-8be8-66c1b1878ae7
     m_ActionName: 'Player/Parkour[/Keyboard/c]'
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 3848311692467163602}
+        m_TargetAssemblyTypeName: InputController, Assembly-CSharp
+        m_MethodName: OnSlide
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument:
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 1ad57a8c-5ebc-4d5c-ba25-0f353b86d0ef
+    m_ActionName: 'Player/Slide[/Keyboard/ctrl]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
@@ -441,6 +457,8 @@ MonoBehaviour:
   m_horizontalGroundFriction: 17
   m_horizontalAirFriction: 4
   m_cameraTransform: {fileID: 3842612233710885895}
+  m_slideHeight: 0.5
+  m_slideCameraLerp: 12
 --- !u!114 &3848311692467163602
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -455,6 +473,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::InputController
   m_moveSpeed: 5
   m_sprintMultiplier: 1.8
+  m_slideMultiplier: 1.8
+  m_minimumSlideMultiplier: 0.5
+  m_slideDecay: 1.8
   m_jumpHeight: 1.5
   m_lookSensitivity: 0.5
   m_maxExtraJumps: 1
