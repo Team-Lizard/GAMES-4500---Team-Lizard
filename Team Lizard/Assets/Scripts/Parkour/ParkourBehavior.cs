@@ -27,7 +27,11 @@ public abstract class ParkourBehavior : ScriptableObject
     /// <returns>True if this parkour action is valid for the given object.</returns>
     public virtual bool IsParkourActionPossible(HitInfo hitInfo)
     {
-        return hitInfo.ObstacleHeight < m_minHeight || hitInfo.ObstacleHeight > m_maxHeight;
+        if (hitInfo.ObstacleHeight < m_minHeight || hitInfo.ObstacleHeight > m_maxHeight)
+        {
+            return false;
+        }
+        return true;
     }
 
     /// <summary>
@@ -51,7 +55,7 @@ public abstract class ParkourBehavior : ScriptableObject
     protected Vector3 EvaluateBezierDerivative(Vector3 start, Vector3 end, Vector3 control, float t)
     {
         // Scale t to animation length
-        t /= AnimationLength;
+        t = t / AnimationLength;
 
         return  ((1f - t) * (control - start) + t * (end - control)) / AnimationLength;
     }
