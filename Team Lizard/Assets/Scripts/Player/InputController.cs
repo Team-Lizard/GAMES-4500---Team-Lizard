@@ -59,6 +59,7 @@ public class InputController : MonoBehaviour
     private int m_extraJumps;
     private Vector2 m_moveInput;
     private Vector2 m_lookInput;
+    private ParkourState m_parkourState;
     private float m_currentSlideMultiplier;
     private float m_coyoteTimer;
 
@@ -84,26 +85,60 @@ public class InputController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // Reset player's jumps if they are touching the ground.
-        if (m_firstPersonController.IsGrounded)
+        Vector3 horizontalVelocity;
+        float verticalVelocity;
+
+        // If player is currently parkouring, override input and use input from parkour curve.
+        if (m_parkourState.CurrentAction != null)
         {
-            m_extraJumps = m_maxExtraJumps;
-            m_coyoteTimer = m_coyoteTime;
+            Vector3 curveDirection = m_parkourState.CurrentAction.Evaluate(
+                m_parkourState.StartingPosition, 
+                m_parkourState.EndingPosition, 
+                m_parkourState.ObstacleHeight, 
+                m_parkourState.AnimationTime);
+
+            // Split found velocity into horizontal and vertical velocity (this will be recombined later.)
+            horizontalVelocity = Vector3.forward * curveDirection.z + Vector3.right * curveDirection.x;
+            verticalVelocity = curveDirection.y;
+
+            // Step animation forward.
+            m_parkourState.AnimationTime += Time.deltaTime;
+            
+            // Once the animation has played, clear the current parkour state.
+            if (m_parkourState.AnimationTime > m_parkourState.AnimationLength)
+            {
+                m_parkourState.CurrentAction = null;
+            }
+            
         }
+        // Otherwise, read player movement input.
         else
         {
-            m_coyoteTimer -= Time.deltaTime;
-        }
+            // Reset player's jumps if they are touching the ground.
+            if (m_firstPersonController.IsGrounded)
+            {
+                m_extraJumps = m_maxExtraJumps;
+                m_coyoteTimer = m_coyoteTime;
+            }
+            else
+            {
+                m_coyoteTimer -= Time.deltaTime;
+            }
 
-        if (m_isParkouring)
-        {
-            ParkourBehavior action = m_parkourManager.CheckParkourAction();
-            m_isParkouring = false;
-        }
+            if (m_isParkouring)
+            {
+                m_parkourState = m_parkourManager.CheckParkourAction();
+                if (m_parkourState.CurrentAction != null)
+                {
+                    m_isParkouring = false;
+                    return;
+                }
+            }
 
-        // Calculate movement velocities.
-        Vector3 horizontalVelocity = HandleHorizontalMovement();
-        float verticalVelocity = HandleVerticalMovement();
+            // Calculate movement velocities.
+            horizontalVelocity = HandleHorizontalMovement();
+            verticalVelocity = HandleVerticalMovement();
+        }
 
         // Combine horizontal and vertical velocities.
         m_movementRequest.DesiredVelocity = horizontalVelocity + verticalVelocity * Vector3.up;
@@ -239,6 +274,10 @@ public class InputController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Called whenever parkour input is received. Passes parkour data to controller.
+    /// </summary>
+    /// <param name="value">Information about input being passed to controller.</param>
     public void OnParkour(InputAction.CallbackContext value)
     {
         if (value.started)
