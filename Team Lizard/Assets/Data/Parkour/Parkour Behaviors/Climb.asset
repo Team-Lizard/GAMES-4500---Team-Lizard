@@ -9,11 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ea089af40b328f047b47790033af9883, type: 3}
-  m_Name: Vault
-  m_EditorClassIdentifier: Assembly-CSharp::VaultBehavior
-  m_minHeight: 0
-  m_maxHeight: 0.5
-  AnimationLength: 0.25
-  HorizontalDistance: 5
-  m_obstacleClearance: 0.5
+  m_Script: {fileID: 11500000, guid: 590aa7e588c625e4c8083121830ddd00, type: 3}
+  m_Name: Climb
+  m_EditorClassIdentifier: Assembly-CSharp::ClimbBehavior
+  m_minHeight: 0.5
+  m_maxHeight: 3
+  AnimationLength: 0.5
+  HorizontalDistance: 2
+  m_obstacleClearance: 1

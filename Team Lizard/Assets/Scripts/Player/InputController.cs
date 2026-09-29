@@ -10,11 +10,11 @@ public struct MovementRequest
 {
     public Vector3 DesiredVelocity;
     public Vector2 LookDelta;
+    public bool IsSliding;
 }
 
 public class InputController : MonoBehaviour
 {
-
     [Header("Movement")]
         [SerializeField]
         [Tooltip("Speed at which player should move.")]
@@ -23,6 +23,18 @@ public class InputController : MonoBehaviour
         [SerializeField]
         [Tooltip("Amount that speed is multiplied by when player is sprinting.")]
         private float m_sprintMultiplier = 1.8f;
+
+        [SerializeField]
+        [Tooltip("Amount that speed is multiplied by when player is sliding.")]
+        private float m_slideMultiplier = 1.8f;
+
+        [SerializeField]
+        [Tooltip("Minimium speed while crouched as a multiplier.")]
+        private float m_minimumSlideMultiplier = 0.5f;
+
+        [SerializeField]
+        [Tooltip("How fast slide decays.")]
+        private float m_slideDecay = 1.8f;
 
         [SerializeField]
         [Tooltip("Height that player can jump.")]
@@ -35,13 +47,21 @@ public class InputController : MonoBehaviour
         [SerializeField]
         [Tooltip("Number of jumps the player can perform while not touching the ground.")]
         private int m_maxExtraJumps = 1;
-    
+
+        [SerializeField]
+        [Tooltip("Time in seconds after leaving the ground where the player can still jump.")]
+        private float m_coyoteTime = 0.15f;
+
     private bool m_isSprintHeld;
+    private bool m_isSlideHeld;
     private bool m_isJumping;
     private bool m_isParkouring;
     private int m_extraJumps;
     private Vector2 m_moveInput;
     private Vector2 m_lookInput;
+    private ParkourState m_parkourState;
+    private float m_currentSlideMultiplier;
+    private float m_coyoteTimer;
 
     private FirstPersonController m_firstPersonController;
     private ParkourManager m_parkourManager;
@@ -59,35 +79,90 @@ public class InputController : MonoBehaviour
     {
         Cursor.lockState = CursorLockMode.Locked;
         m_extraJumps = m_maxExtraJumps;
+        m_currentSlideMultiplier = m_slideMultiplier;
     }
 
     // Update is called once per frame
     void Update()
     {
-        // Reset player's jumps if they are touching the ground.
-        if (m_firstPersonController.IsGrounded)
+        Vector3 horizontalVelocity;
+        float verticalVelocity;
+
+        // If player is currently parkouring, override input and use input from parkour curve.
+        if (m_parkourState.CurrentAction != null)
         {
-            m_extraJumps = m_maxExtraJumps;
+            Vector3 curveDirection = m_parkourState.CurrentAction.Evaluate(
+                m_parkourState.StartingPosition, 
+                m_parkourState.EndingPosition, 
+                m_parkourState.ObstacleHeight, 
+                m_parkourState.AnimationTime);
+
+            // Split found velocity into horizontal and vertical velocity (this will be recombined later.)
+            horizontalVelocity = Vector3.forward * curveDirection.z + Vector3.right * curveDirection.x;
+            verticalVelocity = curveDirection.y;
+
+            // Step animation forward.
+            m_parkourState.AnimationTime += Time.deltaTime;
+            
+            // Once the animation has played, clear the current parkour state.
+            if (m_parkourState.AnimationTime > m_parkourState.AnimationLength)
+            {
+                m_parkourState.CurrentAction = null;
+            }
+            
+        }
+        // Otherwise, read player movement input.
+        else
+        {
+            // Reset player's jumps if they are touching the ground.
+            if (m_firstPersonController.IsGrounded)
+            {
+                m_extraJumps = m_maxExtraJumps;
+                m_coyoteTimer = m_coyoteTime;
+            }
+            else
+            {
+                m_coyoteTimer -= Time.deltaTime;
+            }
+
+            if (m_isParkouring)
+            {
+                m_parkourState = m_parkourManager.CheckParkourAction();
+                if (m_parkourState.CurrentAction != null)
+                {
+                    m_isParkouring = false;
+                    return;
+                }
+            }
+
+            // Calculate movement velocities.
+            horizontalVelocity = HandleHorizontalMovement();
+            verticalVelocity = HandleVerticalMovement();
         }
 
-        if (m_isParkouring)
-        {
-            ParkourBehavior action = m_parkourManager.CheckParkourAction();
-            m_isParkouring = false;
-        }
-
-        // Calculate movement velocities.
-        Vector3 horizontalVelocity = HandleHorizontalMovement();
-        float verticalVelocity = HandleVerticalMovement();
-        
         // Combine horizontal and vertical velocities.
         m_movementRequest.DesiredVelocity = horizontalVelocity + verticalVelocity * Vector3.up;
-        
+
         // Take the movement of the mouse and scale it by the look sensitivity. We'll calculate rotations additively, so we just need to know how far the mouse moved.
         m_movementRequest.LookDelta = new Vector2(m_lookInput.x, m_lookInput.y) * m_lookSensitivity;
 
         // Ask player controller to apply the movement the player wants.
         m_firstPersonController.ApplyMovement(m_movementRequest);
+    }
+
+    /// <summary>
+    /// Handles calculating slide speed.
+    /// </summary>
+    /// <param name="moveSpeed">How fast the player is moving originally.</param>
+    /// <returns>Float representing slide speed.</returns>
+    private float HandleSlide(float moveSpeed)
+    {
+        if (m_currentSlideMultiplier > m_minimumSlideMultiplier)
+        {
+            m_currentSlideMultiplier -= m_slideDecay * Time.deltaTime;
+        }
+
+        return moveSpeed * m_currentSlideMultiplier;
     }
 
     /// <summary>
@@ -111,16 +186,17 @@ public class InputController : MonoBehaviour
         float verticalVelocity = 0;
         if (m_isJumping)
         {
-            if (m_firstPersonController.IsGrounded)
+            if (m_firstPersonController.IsGrounded || m_coyoteTimer > 0f)
             {
                 verticalVelocity = HandleJump();
             }
-            else if (m_extraJumps > 0) 
+            else if (m_extraJumps > 0)
             {
                 verticalVelocity = HandleJump();
                 m_extraJumps--;
             }
         }
+
         return verticalVelocity;
     }
 
@@ -136,7 +212,18 @@ public class InputController : MonoBehaviour
         // Make sure diagonal movement isn't faster than unidirectional movement.
         move = Vector3.ClampMagnitude(move, 1f);
 
-        float finalSpeed = m_isSprintHeld ? m_moveSpeed * m_sprintMultiplier : m_moveSpeed;
+        float finalSpeed;
+        if (m_isSlideHeld && m_firstPersonController.IsGrounded)
+        {
+            m_movementRequest.IsSliding = true;
+            finalSpeed = HandleSlide(m_moveSpeed);
+        }
+        else
+        {
+            m_movementRequest.IsSliding = false;
+            finalSpeed = m_isSprintHeld ? m_moveSpeed * m_sprintMultiplier : m_moveSpeed;
+        }
+
         return move * finalSpeed;
     }
 
@@ -148,17 +235,16 @@ public class InputController : MonoBehaviour
     /// Called whenever movement input is received. Passes movement data to controller.
     /// </summary>
     /// <param name="value">Information about input being passed to controller.</param>
-    public void OnMove(InputAction.CallbackContext value) 
+    public void OnMove(InputAction.CallbackContext value)
     {
         m_moveInput = value.ReadValue<Vector2>();
-        
     }
 
     /// <summary>
     /// Called whenever look input is received. Passes look data to controller.
     /// </summary>
     /// <param name="value">Information about input being passed to controller.</param>
-    public void OnLook(InputAction.CallbackContext value) 
+    public void OnLook(InputAction.CallbackContext value)
     {
         m_lookInput = value.ReadValue<Vector2>();
     }
@@ -181,7 +267,6 @@ public class InputController : MonoBehaviour
         if (value.started)
         {
             m_isJumping = true;
-            
         }
         else if (value.canceled)
         {
@@ -189,6 +274,10 @@ public class InputController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Called whenever parkour input is received. Passes parkour data to controller.
+    /// </summary>
+    /// <param name="value">Information about input being passed to controller.</param>
     public void OnParkour(InputAction.CallbackContext value)
     {
         if (value.started)
@@ -198,6 +287,23 @@ public class InputController : MonoBehaviour
         else if (value.canceled)
         {
             m_isParkouring = false;
+        }
+    }
+
+    /// <summary>
+    /// Called whenever slide input is received. Passes slide data to controller.
+    /// </summary>
+    /// <param name="value">Information about input being passed to controller.</param>
+    public void OnSlide(InputAction.CallbackContext value)
+    {
+        if (value.started)
+        {
+            m_isSlideHeld = true;
+        }
+        else if (value.canceled)
+        {
+            m_isSlideHeld = false;
+            m_currentSlideMultiplier = m_slideMultiplier;
         }
     }
 }
