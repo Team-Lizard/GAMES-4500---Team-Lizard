@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<WwiseDocument Type="WorkUnit" ID="{22A59A7D-BFF8-4CED-8277-7E1059D9FA5A}" SchemaVersion="133">
+	<Events>
+		<WorkUnit Name="Default Work Unit" ID="{22A59A7D-BFF8-4CED-8277-7E1059D9FA5A}" PersistMode="Standalone">
+			<ChildrenList>
+				<Event Name="Play_Synth_practice_1" ID="{937F6783-CF27-4B79-9EAE-2488DA0775F5}">
+					<ChildrenList>
+						<Action Name="" ID="{4A654D2E-6C92-4415-BC0D-FE2FB15DE93A}" ShortID="940437030">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="Synth practice-1" ID="{99E7CF27-82D7-46BA-BC20-1D780CD21264}" WorkUnitID="{391F5712-5924-478F-990E-957D4C6F6DF3}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+					</ChildrenList>
+				</Event>
+				<Event Name="Play_Synth_practice_2" ID="{FC3ACDE6-9C34-453F-9101-20293FDDC9EF}">
+					<ChildrenList>
+						<Action Name="" ID="{0040F659-2EC7-4E62-8F4E-429B6C14BF9A}" ShortID="326651742">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="Synth practice-2" ID="{92E32DCF-0291-4751-95A1-ABD4B98AB42F}" WorkUnitID="{391F5712-5924-478F-990E-957D4C6F6DF3}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+					</ChildrenList>
+				</Event>
+			</ChildrenList>
+		</WorkUnit>
+	</Events>
+</WwiseDocument>

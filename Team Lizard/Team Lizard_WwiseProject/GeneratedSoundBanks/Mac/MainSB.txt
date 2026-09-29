@@ -1,0 +1,8 @@
+Event	ID	Name			Wwise Object Path	Notes
+	3874450860	Play_Synth_practice_1			\Default Work Unit\Play_Synth_practice_1	
+	3874450863	Play_Synth_practice_2			\Default Work Unit\Play_Synth_practice_2	
+
+In Memory Audio	ID	Name	Audio source file		Wwise Object Path	Notes	Data Size
+	375308905	Synth practice-2	.cache\02\{0287E230-0E0B-F983-82E1-BB0664DA3C2D}.wem		\Containers\Default Work Unit\Synth practice-2		617544
+	584248227	Synth practice-1	.cache\92\{9201488C-0EA3-ABCB-73F4-A78C5F2453F2}.wem		\Containers\Default Work Unit\Synth practice-1		721008
+
