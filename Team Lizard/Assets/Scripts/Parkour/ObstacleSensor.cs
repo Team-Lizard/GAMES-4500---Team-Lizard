@@ -42,7 +42,6 @@ public class ObstacleSensor : MonoBehaviour
         {
             Collider hitCollider = m_hitInfo.HitData.collider;
             float distanceToTop = hitCollider.bounds.max.y - transform.position.y - m_rayHeight;
-            Debug.Log(distanceToTop);
             m_hitInfo.ObstacleHeight = distanceToTop;
             m_hitInfo.ForwardDirection = -m_hitInfo.HitData.normal;
         }

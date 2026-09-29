@@ -109,12 +109,7 @@ public class InputController : MonoBehaviour
             {
                 m_parkourState.CurrentAction = null;
             }
-            m_extraJumps = m_maxExtraJumps;
-            m_coyoteTimer = m_coyoteTime;
-        }
-        else
-        {
-            m_coyoteTimer -= Time.deltaTime;
+            
         }
         // Otherwise, read player movement input.
         else
@@ -123,6 +118,11 @@ public class InputController : MonoBehaviour
             if (m_firstPersonController.IsGrounded)
             {
                 m_extraJumps = m_maxExtraJumps;
+                m_coyoteTimer = m_coyoteTime;
+            }
+            else
+            {
+                m_coyoteTimer -= Time.deltaTime;
             }
 
             if (m_isParkouring)
@@ -139,10 +139,6 @@ public class InputController : MonoBehaviour
             horizontalVelocity = HandleHorizontalMovement();
             verticalVelocity = HandleVerticalMovement();
         }
-
-        // Calculate movement velocities.
-        Vector3 horizontalVelocity = HandleHorizontalMovement();
-        float verticalVelocity = HandleVerticalMovement();
 
         // Combine horizontal and vertical velocities.
         m_movementRequest.DesiredVelocity = horizontalVelocity + verticalVelocity * Vector3.up;
