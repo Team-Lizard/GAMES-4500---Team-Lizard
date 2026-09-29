@@ -28,7 +28,6 @@ public abstract class ParkourBehavior : ScriptableObject
     public virtual bool IsParkourActionPossible(HitInfo hitInfo)
     {
         return !(hitInfo.ObstacleHeight < m_minHeight || hitInfo.ObstacleHeight > m_maxHeight);
-
     }
 
     /// <summary>

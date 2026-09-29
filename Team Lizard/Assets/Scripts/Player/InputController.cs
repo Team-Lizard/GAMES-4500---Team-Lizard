@@ -131,7 +131,6 @@ public class InputController : MonoBehaviour
                 if (m_parkourState.CurrentAction != null)
                 {
                     m_isJumping = false;
-                    Debug.Log("Next parkour action is " + m_parkourState.CurrentAction);
                     return;
                 }
             }

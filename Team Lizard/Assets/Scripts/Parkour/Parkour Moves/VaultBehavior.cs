@@ -12,7 +12,7 @@ public class VaultBehavior : ParkourBehavior
     public override Vector3 Evaluate(Vector3 start, Vector3 end, float obstacleHeight, float t)
     {
         Vector3 control = Vector3.Lerp(start, end, 0.5f) + Vector3.up * (obstacleHeight + m_obstacleClearance);
-        end.y = m_obstacleClearance;
+        end.y += obstacleHeight;
 
         return EvaluateBezierDerivative(start, end, control, t );
     }
