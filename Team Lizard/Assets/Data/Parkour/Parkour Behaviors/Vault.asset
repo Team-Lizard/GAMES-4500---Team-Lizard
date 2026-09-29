@@ -15,5 +15,5 @@ MonoBehaviour:
   m_minHeight: 0
   m_maxHeight: 0.5
   AnimationLength: 0.25
-  HorizontalDistance: 5
-  m_obstacleClearance: 0.5
+  HorizontalDistance: 3
+  m_obstacleClearance: 0
