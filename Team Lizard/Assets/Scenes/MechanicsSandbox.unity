@@ -944,6 +944,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2351986856077383698, guid: 55d28c6e4ca51ab49aa8d59553278bef, type: 3}
+      propertyPath: m_parkourBehaviors.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2351986856077383698, guid: 55d28c6e4ca51ab49aa8d59553278bef, type: 3}
+      propertyPath: 'm_parkourBehaviors.Array.data[1]'
+      value: 
+      objectReference: {fileID: 11400000, guid: 35a69e3a6fc49db43a01a9a49716bc7c, type: 2}
     - target: {fileID: 8985268930540334528, guid: 55d28c6e4ca51ab49aa8d59553278bef, type: 3}
       propertyPath: m_Name
       value: Character
