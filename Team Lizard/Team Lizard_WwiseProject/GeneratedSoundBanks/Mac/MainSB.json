@@ -10,11 +10,19 @@
     "Type": "User",
     "GUID": "{CD3D6455-DCC1-4237-9C61-032794AC3DF0}",
     "Language": "SFX",
-    "Hash": "{D80A5AB3-FF52-5AC5-CD3E-C15402855CB1}",
+    "Hash": "{E21EB49C-35A8-5360-D210-0322E5AC9C9F}",
     "ObjectPath": "\\SoundBanks\\Default Work Unit\\MainSB",
     "ShortName": "MainSB",
     "Path": "MainSB.bnk",
     "Media": [
+     {
+      "Id": "274940980",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Memory",
+      "ShortName": "Steps2.wav",
+      "CachePath": "7F/{7F697676-D69B-0675-8194-4A267ECA9389}.wem"
+     },
      {
       "Id": "375308905",
       "Language": "SFX",
@@ -24,15 +32,51 @@
       "CachePath": "02/{0287E230-0E0B-F983-82E1-BB0664DA3C2D}.wem"
      },
      {
+      "Id": "375769755",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Memory",
+      "ShortName": "Steps1.wav",
+      "CachePath": "A6/{A6D14A52-A041-1678-FB35-3853345B81FB}.wem"
+     },
+     {
       "Id": "584248227",
       "Language": "SFX",
       "Streaming": "false",
       "Location": "Memory",
       "ShortName": "Synth practice-1.wav",
       "CachePath": "92/{9201488C-0EA3-ABCB-73F4-A78C5F2453F2}.wem"
+     },
+     {
+      "Id": "858705555",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Memory",
+      "ShortName": "Steps3.wav",
+      "CachePath": "B6/{B61B77A4-22F2-04DF-4B64-165E58F81834}.wem"
      }
     ],
     "Events": [
+     {
+      "Id": "2600469463",
+      "Name": "Play_steps",
+      "ObjectPath": "\\Events\\Default Work Unit\\Play_steps",
+      "GUID": "{B25E7231-474D-482D-8C2A-15E7D649C0FC}",
+      "DurationType": "OneShot",
+      "DurationMin": "0.96875286",
+      "DurationMax": "1.7187529",
+      "MediaRefs": [
+       {
+        "Id": "274940980"
+       },
+       {
+        "Id": "375769755"
+       },
+       {
+        "Id": "858705555"
+       }
+      ]
+     },
      {
       "Id": "3874450860",
       "Name": "Play_Synth_practice_1",
@@ -64,6 +108,6 @@
     ]
    }
   ],
-  "FileHash": "{68B5BC0B-3FBA-7064-D94C-89BD77C7E144}"
+  "FileHash": "{D3A6F95B-E803-1D2E-3EC2-B8611A58D5FB}"
  }
 }

@@ -1,8 +1,12 @@
 Event	ID	Name			Wwise Object Path	Notes
+	2600469463	Play_steps			\Default Work Unit\Play_steps	
 	3874450860	Play_Synth_practice_1			\Default Work Unit\Play_Synth_practice_1	
 	3874450863	Play_Synth_practice_2			\Default Work Unit\Play_Synth_practice_2	
 
 In Memory Audio	ID	Name	Audio source file		Wwise Object Path	Notes	Data Size
+	274940980	Steps2	.cache\7F\{7F697676-D69B-0675-8194-4A267ECA9389}.wem		\Containers\Default Work Unit\steps\Steps2		171032
 	375308905	Synth practice-2	.cache\02\{0287E230-0E0B-F983-82E1-BB0664DA3C2D}.wem		\Containers\Default Work Unit\Synth practice-2		617544
+	375769755	Steps1	.cache\A6\{A6D14A52-A041-1678-FB35-3853345B81FB}.wem		\Containers\Default Work Unit\steps\Steps1		303332
 	584248227	Synth practice-1	.cache\92\{9201488C-0EA3-ABCB-73F4-A78C5F2453F2}.wem		\Containers\Default Work Unit\Synth practice-1		721008
+	858705555	Steps3	.cache\B6\{B61B77A4-22F2-04DF-4B64-165E58F81834}.wem		\Containers\Default Work Unit\steps\Steps3		171032
 
