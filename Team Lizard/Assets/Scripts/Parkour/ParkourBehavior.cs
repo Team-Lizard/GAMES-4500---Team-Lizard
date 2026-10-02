@@ -51,9 +51,6 @@ public abstract class ParkourBehavior : ScriptableObject
     /// <returns>Derivative of the bezier curve at point t.</returns>
     protected Vector3 EvaluateBezierDerivative(Vector3 start, Vector3 end, Vector3 control, float t)
     {
-        // Scale t to animation length
-        t /= AnimationLength;
-
-        return  ((1f - t) * (control - start) + t * (end - control)) / AnimationLength;
+        return BezierCurve.EvaluateDerivative(start, end, control, t / AnimationLength) / AnimationLength;
     }
 }
