@@ -49,5 +49,20 @@ public class InputBindingsMenu : MonoBehaviour
                 list.Add(binding);
             }
         }
+
+        if (panelRenderer.enabled)
+        {
+            ToggleVisibility();
+        }
+    }
+
+    public void OnPause(InputAction.CallbackContext value)
+    {
+        ToggleVisibility();
+    }
+
+    private void ToggleVisibility()
+    {
+        m_panelRenderer.enabled = !m_panelRenderer.enabled;
     }
 }
