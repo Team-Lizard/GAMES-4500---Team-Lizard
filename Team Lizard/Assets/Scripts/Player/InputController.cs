@@ -125,12 +125,12 @@ public class InputController : MonoBehaviour
                 m_coyoteTimer -= Time.deltaTime;
             }
 
-            if (m_isParkouring)
+            if (m_isJumping)
             {
                 m_parkourState = m_parkourManager.CheckParkourAction();
                 if (m_parkourState.CurrentAction != null)
                 {
-                    m_isParkouring = false;
+                    m_isJumping = false;
                     return;
                 }
             }
@@ -271,22 +271,6 @@ public class InputController : MonoBehaviour
         else if (value.canceled)
         {
             m_isJumping = false;
-        }
-    }
-
-    /// <summary>
-    /// Called whenever parkour input is received. Passes parkour data to controller.
-    /// </summary>
-    /// <param name="value">Information about input being passed to controller.</param>
-    public void OnParkour(InputAction.CallbackContext value)
-    {
-        if (value.started)
-        {
-            m_isParkouring = true;
-        }
-        else if (value.canceled)
-        {
-            m_isParkouring = false;
         }
     }
 
