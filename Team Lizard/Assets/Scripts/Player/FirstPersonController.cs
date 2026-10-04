@@ -1,4 +1,5 @@
 using System;
+using Unity.Multiplayer.PlayMode;
 using Unity.VisualScripting;
 using UnityEditor.Build.Pipeline;
 using UnityEngine;
@@ -42,6 +43,7 @@ public class FirstPersonController : MonoBehaviour
     private float m_standCameraY;
     private Vector3 m_standCenter;
     private bool m_isCrouched = false;
+    private MovingPlatform m_currentPlatform;
 
     /// <summary>
     /// Is the player currently touching the ground?
@@ -72,6 +74,12 @@ public class FirstPersonController : MonoBehaviour
 
         ApplyGravity();
 
+        // If player is standing on a moving platform, apply that platform's movement to the player.
+        if (m_currentPlatform != null)
+        {
+            ApplyPlatformMovement();
+        }
+        
         // Apply friction if the player doesn't want to move, apply their movement otherwise.
         if (request.DesiredVelocity == Vector3.zero)
         {
@@ -93,12 +101,25 @@ public class FirstPersonController : MonoBehaviour
         {
             // Player needs to be pressed into the ground for isGrounded to work correctly.
             m_playerVelocityY = m_gravity * Time.deltaTime;
+
         }
         else
         {
             // Player is not on ground, accelerate downwards.
             m_playerVelocityY += m_gravity * Time.deltaTime;
+
+            // Player also isn't touching a platform
+            m_currentPlatform = null;
         }
+    }
+
+    /// <summary>
+    /// Move player by whatever amount the platform they're standing on is moving.
+    /// </summary>
+    private void ApplyPlatformMovement()
+    {
+        Vector3 delta = m_currentPlatform.GetTotalDelta();
+        m_characterController.Move(delta);
     }
 
     /// <summary>
@@ -188,5 +209,19 @@ public class FirstPersonController : MonoBehaviour
         Vector3 origin = transform.position + m_characterController.center;
         float distance = m_standHeight - m_characterController.height * 0.5f + 0.05f;
         return !Physics.Raycast(origin, Vector3.up, distance);
+    }
+
+    /// <summary>
+    /// When the player touches a platform, check if that platform is moving and assign it to the player if so.
+    /// </summary>
+    /// <param name="hit">Collider that was just touched.</param>
+    private void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        MovingPlatform platform = hit.collider.GetComponent<MovingPlatform>();
+        if (platform != null)
+        {
+            m_currentPlatform = platform;
+            m_currentPlatform.GetTotalDelta();
+        }
     }
 }
