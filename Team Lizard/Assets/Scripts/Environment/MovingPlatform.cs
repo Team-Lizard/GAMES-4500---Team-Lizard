@@ -33,14 +33,12 @@ public class MovingPlatform : MonoBehaviour
     private int m_moveDirection;
     private ObjectMoveState m_moveState;
     private Vector3 m_lastPosition;
-    private Rigidbody m_rigidbody;
 
     private Vector3 m_delta;
     private Vector3 m_totalDelta;
 
     void Awake()
     {
-        m_rigidbody = GetComponent<Rigidbody>();
     }
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -55,8 +53,8 @@ public class MovingPlatform : MonoBehaviour
     private void FixedUpdate()
     {
         // Update delta by however much platform moved last physics frame.
-        m_delta = m_rigidbody.position - m_lastPosition;
-        m_lastPosition = m_rigidbody.position;
+        m_delta = transform.position - m_lastPosition;
+        m_lastPosition = transform.position;
 
         // Accumulate movement to be applied all at once.
         m_totalDelta += m_delta;
@@ -83,7 +81,7 @@ public class MovingPlatform : MonoBehaviour
                 // Invert t if platform is moving backwards.
                 scaledT = m_moveDirection > 0 ?  scaledT : 1 - scaledT;
 
-                m_rigidbody.MovePosition(BezierCurve.EvaluatePoint(m_initialPosition, m_finalPosition, m_controlPosition, scaledT));
+                transform.position = (BezierCurve.EvaluatePoint(m_initialPosition, m_finalPosition, m_controlPosition, scaledT));
                 
                 if (m_currentTime > m_transitTime)
                 {
