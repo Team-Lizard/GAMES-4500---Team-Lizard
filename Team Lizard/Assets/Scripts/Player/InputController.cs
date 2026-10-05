@@ -171,7 +171,8 @@ public class InputController : MonoBehaviour
         }
 
         // Combine horizontal and vertical velocities.
-        m_movementRequest.DesiredVelocity = horizontalVelocity + verticalVelocity * Vector3.up;
+        m_wallJumpVelocity = Vector3.MoveTowards(m_wallJumpVelocity, Vector3.zero, 10f * Time.deltaTime);
+        m_movementRequest.DesiredVelocity = horizontalVelocity + m_wallJumpVelocity + verticalVelocity * Vector3.up;
 
         // Take the movement of the mouse and scale it by the look sensitivity. We'll calculate rotations additively, so we just need to know how far the mouse moved.
         m_movementRequest.LookDelta = new Vector2(m_lookInput.x, m_lookInput.y) * m_lookSensitivity;
