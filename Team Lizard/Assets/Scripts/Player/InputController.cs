@@ -11,6 +11,8 @@ public struct MovementRequest
     public Vector3 DesiredVelocity;
     public Vector2 LookDelta;
     public bool IsSliding;
+    public bool IsWallRunning;
+    public Vector3 WallNormal;
 }
 
 public class InputController : MonoBehaviour
@@ -52,6 +54,32 @@ public class InputController : MonoBehaviour
         [Tooltip("Time in seconds after leaving the ground where the player can still jump.")]
         private float m_coyoteTime = 0.15f;
 
+    [Header("Wall Running")]
+        [SerializeField]
+        [Tooltip("Speed multiplier applied while wall running.")]
+        private float m_wallRunSpeedMultiplier = 1.2f;
+
+        [SerializeField]
+        [Tooltip("Outward force applied when jumping off a wall.")]
+        private float m_wallJumpSideForce = 6f;
+
+        [SerializeField]
+        [Tooltip("Minimum forward input required to start or sustain a wall run.")]
+        private float m_wallRunMinForwardInput = 0.3f;
+
+        [SerializeField]
+        [Tooltip("How long a wall run continues after the wall ray stops hitting.")]
+        private float m_wallRunGraceTime = 0.2f;
+
+        [SerializeField]
+        [Tooltip("Time after a wall jump before the player can latch onto a wall again.")]
+        private float m_wallJumpLockoutTime = 0.25f;
+
+    private float m_wallGraceTimer;
+    private float m_wallLockoutTimer;
+    private bool m_isWallRunning;
+    private Vector3 m_wallNormal;
+    private Vector3 m_wallJumpVelocity;
     private bool m_isSprintHeld;
     private bool m_isSlideHeld;
     private bool m_isJumping;
