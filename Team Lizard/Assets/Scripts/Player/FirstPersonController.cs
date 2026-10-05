@@ -95,7 +95,7 @@ public class FirstPersonController : MonoBehaviour
 
         ApplyLook(request.LookDelta);
 
-        ApplyGravity();
+        ApplyGravity(request.IsWallRunning);
 
         // Apply friction if the player doesn't want to move, apply their movement otherwise.
         if (request.DesiredVelocity == Vector3.zero)
@@ -111,8 +111,27 @@ public class FirstPersonController : MonoBehaviour
     /// <summary>
     /// Checks if player is touching ground and applies gravity otherwise.
     /// </summary>
-    private void ApplyGravity()
+    private void ApplyGravity(bool isWallRunning)
     {
+        float gravity = m_gravity;
+
+        if (isWallRunning)
+        {
+            if (!m_wasWallRunning)
+            {
+                // Just latched: stop all vertical motion and restart the timer.
+                m_playerVelocityY = 0f;
+                m_wallRunTimer = 0f;
+            }
+
+            m_wallRunTimer += Time.deltaTime;
+
+            // 0 during the hang, then ramps up to the wall-run multiplier.
+            float wallRunProgress = Mathf.InverseLerp(m_wallRunHangTime, m_wallRunHangTime + m_wallRunSlideRampTime, m_wallRunTimer);
+            gravity = m_gravity * Mathf.Lerp(0f, m_wallRunGravityMultiplier, wallRunProgress);
+        }
+        m_wasWallRunning = isWallRunning;
+
         IsGrounded = m_characterController.isGrounded;
         if (IsGrounded && m_playerVelocityY < 0)
         {
@@ -122,7 +141,7 @@ public class FirstPersonController : MonoBehaviour
         else
         {
             // Player is not on ground, accelerate downwards.
-            m_playerVelocityY += m_gravity * Time.deltaTime;
+            m_playerVelocityY += gravity * Time.deltaTime;
         }
     }
 
