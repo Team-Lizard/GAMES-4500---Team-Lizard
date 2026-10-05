@@ -8,6 +8,12 @@ public struct HitInfo
     public Vector3 ForwardDirection;
 }
 
+public struct WallHitInfo
+{
+    public bool HitWall;
+    public Vector3 Normal;
+}
+
 public class ObstacleSensor : MonoBehaviour
 {
     [SerializeField]
@@ -18,9 +24,15 @@ public class ObstacleSensor : MonoBehaviour
     [Tooltip("Length of the ray in the forward direction.")]
     private float m_rayLength = 1.75f;
 
+    [Header("Wall Running")]
+        [SerializeField]
+        [Tooltip("Distance to check for a wall to the player's side.")]
+        private float m_wallCheckDistance = 0.7f;
+
     private Vector3 m_rayOrigin;
     private LayerMask m_obstacleLayerMask;
     private HitInfo m_hitInfo = new HitInfo();
+    private WallHitInfo m_wallHitInfo = new WallHitInfo();
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
