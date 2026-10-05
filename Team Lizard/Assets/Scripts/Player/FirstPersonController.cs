@@ -33,6 +33,31 @@ public class FirstPersonController : MonoBehaviour
         [Tooltip("How fast to transition to and from slide.")]
         private float m_slideCameraLerp = 12f;
 
+    [Header("Wall Running")]
+        [SerializeField]
+        [Tooltip("Multiplier applied to gravity while wall running (lower = floatier).")]
+        private float m_wallRunGravityMultiplier = 0.2f;
+
+        [SerializeField]
+        [Tooltip("Degrees to roll the camera while wall running.")]
+        private float m_wallRunCameraRoll = 15f;
+
+        [SerializeField]
+        [Tooltip("How fast the camera rolls into/out of a wall run.")]
+        private float m_wallRunRollLerp = 10f;
+
+        [SerializeField]
+        [Tooltip("Seconds the player holds their height after latching onto a wall.")]
+        private float m_wallRunHangTime = 0.7f;
+
+        [SerializeField]
+        [Tooltip("Seconds over which gravity ramps from zero to full wall-run gravity after the hang.")]
+        private float m_wallRunSlideRampTime = 0.5f;
+
+    private float m_wallRunTimer;
+    private bool m_wasWallRunning;
+    private float m_roll;
+
     private CharacterController m_characterController;
 
     private float m_playerVelocityY;
