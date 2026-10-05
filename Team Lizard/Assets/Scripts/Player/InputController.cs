@@ -255,7 +255,20 @@ public class InputController : MonoBehaviour
         float verticalVelocity = 0;
         if (m_isJumping)
         {
-            if (m_firstPersonController.IsGrounded || m_coyoteTimer > 0f)
+
+            if (m_isWallRunning)
+            {
+                m_wallJumpVelocity = m_wallNormal * m_wallJumpSideForce;
+                m_extraJumps = m_maxExtraJumps;
+
+                // End the wall run and briefly prevent re-latching.
+                m_isWallRunning = false;
+                m_wallGraceTimer = 0f;
+                m_wallLockoutTimer = m_wallJumpLockoutTime;
+
+                return HandleJump();
+            }
+            else if (m_firstPersonController.IsGrounded || m_coyoteTimer > 0f)
             {
                 verticalVelocity = HandleJump();
             }
