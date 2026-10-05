@@ -62,4 +62,27 @@ public class ObstacleSensor : MonoBehaviour
 
         return m_hitInfo;
     }
+
+    /// <summary>
+    /// Checks for a wall-runnable surface on either side of the player.
+    /// </summary>
+    /// <param name="right">The player's right-facing direction.</param>
+    /// <returns>WallHitInfo struct representing info about a nearby wall.</returns>
+    public WallHitInfo DetectWall(Vector3 right)
+    {
+        if (Physics.Raycast(transform.position, right, out RaycastHit rightHit, m_wallCheckDistance, m_wallRunnableLayerMask))
+        {
+            m_wallHitInfo.HitWall = true;
+            m_wallHitInfo.Normal = rightHit.normal;
+            return m_wallHitInfo;
+        }
+        if (Physics.Raycast(transform.position, -right, out RaycastHit leftHit, m_wallCheckDistance, m_wallRunnableLayerMask))
+        {
+            m_wallHitInfo.HitWall = true;
+            m_wallHitInfo.Normal = leftHit.normal;
+            return m_wallHitInfo;
+        }
+        m_wallHitInfo.HitWall = false;
+        return m_wallHitInfo;
+    }
 }
