@@ -163,6 +163,8 @@ public class InputController : MonoBehaviour
                 }
             }
 
+            HandleWallRun();
+
             // Calculate movement velocities.
             horizontalVelocity = HandleHorizontalMovement();
             verticalVelocity = HandleVerticalMovement();
@@ -176,6 +178,45 @@ public class InputController : MonoBehaviour
 
         // Ask player controller to apply the movement the player wants.
         m_firstPersonController.ApplyMovement(m_movementRequest);
+    }
+
+    /// <summary>
+    /// Handles wall running logic by calculating variables.
+    /// </summary>
+    private void HandleWallRun()
+    {
+        m_wallLockoutTimer -= Time.deltaTime;
+
+        bool canWallRun = !m_firstPersonController.IsGrounded
+                          && m_moveInput.y >= m_wallRunMinForwardInput
+                          && m_wallLockoutTimer <= 0f;
+
+        if (canWallRun)
+        {
+            WallHitInfo wall = m_parkourManager.CheckWall();
+            if (wall.HitWall)
+            {
+                m_wallGraceTimer = m_wallRunGraceTime;
+                m_wallNormal = wall.Normal;
+            }
+            else
+            {
+                m_wallGraceTimer -= Time.deltaTime;
+            }
+        }
+        else
+        {
+            m_wallGraceTimer = 0f;
+        }
+
+        m_isWallRunning = m_wallGraceTimer > 0f;
+        if (!m_isWallRunning)
+        {
+            m_wallNormal = Vector3.zero;
+        }
+
+        m_movementRequest.IsWallRunning = m_isWallRunning;
+        m_movementRequest.WallNormal = m_wallNormal;
     }
 
     /// <summary>
