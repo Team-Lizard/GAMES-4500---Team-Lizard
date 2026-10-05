@@ -288,6 +288,20 @@ public class InputController : MonoBehaviour
     /// <returns>Vector3 representing movement velocity.</returns>
     private Vector3 HandleHorizontalMovement()
     {
+        // Calculate wall running horizontal speed.
+        if (m_isWallRunning)
+        {
+            // Direction along the wall, facing the way the player is looking.
+            Vector3 along = Vector3.Cross(m_wallNormal, Vector3.up);
+            if (Vector3.Dot(along, transform.forward) < 0f)
+            {
+                along = -along;
+            }
+
+            m_movementRequest.IsSliding = false;
+            return along * (m_moveSpeed * m_wallRunSpeedMultiplier);
+        }
+
         // Create movement vector based on stored player input.
         Vector3 move = transform.forward * m_moveInput.y + transform.right * m_moveInput.x;
 
