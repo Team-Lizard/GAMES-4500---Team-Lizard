@@ -189,7 +189,22 @@ public class FirstPersonController : MonoBehaviour
         // Camera shouldn't be able to rotate further than straight up or straight down.
         m_pitch = Mathf.Clamp(m_pitch, -85f, 85f);
 
-        m_cameraTransform.localRotation = Quaternion.Euler(m_pitch, 0, 0);
+        m_cameraTransform.localRotation = Quaternion.Euler(m_pitch, 0, m_roll);
+    }
+
+    /// <summary>
+    /// Rolls the camera toward or away from the wall while wall running.
+    /// </summary>
+    private void UpdateWallRunRoll(bool isWallRunning, Vector3 wallNormal)
+    {
+        float targetRoll = 0f;
+        if (isWallRunning)
+        {
+            float side = Vector3.Dot(wallNormal, transform.right);
+            targetRoll = -side * m_wallRunCameraRoll;
+        }
+
+        m_roll = Mathf.Lerp(m_roll, targetRoll, m_wallRunRollLerp * Time.deltaTime);
     }
 
     /// <summary>
