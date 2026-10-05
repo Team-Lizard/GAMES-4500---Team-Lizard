@@ -137,7 +137,10 @@ public class InputController : MonoBehaviour
             {
                 m_parkourState.CurrentAction = null;
             }
-            
+
+            // Clear wall running and sliding variables if a parkour action is taken.
+            m_movementRequest.IsWallRunning = false;
+            m_movementRequest.IsSliding = false;
         }
         // Otherwise, read player movement input.
         else
