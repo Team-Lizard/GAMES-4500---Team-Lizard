@@ -31,6 +31,7 @@ public class ObstacleSensor : MonoBehaviour
 
     private Vector3 m_rayOrigin;
     private LayerMask m_obstacleLayerMask;
+    private LayerMask m_wallRunnableLayerMask;
     private HitInfo m_hitInfo = new HitInfo();
     private WallHitInfo m_wallHitInfo = new WallHitInfo();
 
@@ -38,6 +39,7 @@ public class ObstacleSensor : MonoBehaviour
     void Start()
     {
         m_obstacleLayerMask = LayerMask.GetMask("Obstacle");
+        m_wallRunnableLayerMask = LayerMask.GetMask("Wallrunnable");
     }
 
     /// <summary>
