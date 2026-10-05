@@ -93,6 +93,8 @@ public class FirstPersonController : MonoBehaviour
     {
         UpdateSlidePose(request.IsSliding);
 
+        UpdateWallRunRoll(request.IsWallRunning, request.WallNormal);
+
         ApplyLook(request.LookDelta);
 
         ApplyGravity(request.IsWallRunning);
