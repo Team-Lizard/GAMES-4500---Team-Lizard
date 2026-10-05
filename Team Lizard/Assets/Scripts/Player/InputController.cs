@@ -253,6 +253,7 @@ public class InputController : MonoBehaviour
     private float HandleVerticalMovement()
     {
         float verticalVelocity = 0;
+
         if (m_isJumping)
         {
 
