@@ -36,10 +36,6 @@ public class MovingPlatform : MonoBehaviour
 
     private Vector3 m_delta;
     private Vector3 m_totalDelta;
-
-    void Awake()
-    {
-    }
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void Start()
@@ -81,7 +77,7 @@ public class MovingPlatform : MonoBehaviour
                 // Invert t if platform is moving backwards.
                 scaledT = m_moveDirection > 0 ?  scaledT : 1 - scaledT;
 
-                transform.position = (BezierCurve.EvaluatePoint(m_initialPosition, m_finalPosition, m_controlPosition, scaledT));
+                transform.position = BezierCurve.EvaluatePoint(m_initialPosition, m_finalPosition, m_controlPosition, scaledT);
                 
                 if (m_currentTime > m_transitTime)
                 {

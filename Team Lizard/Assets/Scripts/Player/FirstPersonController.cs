@@ -101,7 +101,6 @@ public class FirstPersonController : MonoBehaviour
         {
             // Player needs to be pressed into the ground for isGrounded to work correctly.
             m_playerVelocityY = m_gravity * Time.deltaTime;
-
         }
         else
         {
