@@ -9,17 +9,15 @@ public class MovingPlatform : MonoBehaviour
         Moving
     }
 
-    [Tooltip("Ending position of object in world space.")]
-    [SerializeField]
-    private Vector3 m_initialPosition;
+    
 
-    [Tooltip("Ending position of object in world space.")]
+    [Tooltip("Total movement of object in local space.")]
     [SerializeField]
-    private Vector3 m_finalPosition;
+    private Vector3 m_movementAmount;
 
-    [Tooltip("Position of control point along line.")]
+    [Tooltip("Position of control point along line in local space.")]
     [SerializeField]
-    private Vector3 m_controlPosition;
+    private Vector3 m_curveAmount;
 
     [Tooltip("Time it should take for object to get from one point to another.")]
     [SerializeField]
@@ -29,17 +27,24 @@ public class MovingPlatform : MonoBehaviour
     [SerializeField]
     private float m_waitTime;
 
+    private Vector3 m_initialPosition;
+    private Vector3 m_finalPosition;
+    private Vector3 m_controlPosition;
+
     private float m_currentTime;
     private int m_moveDirection;
     private ObjectMoveState m_moveState;
     private Vector3 m_lastPosition;
-
     private Vector3 m_delta;
     private Vector3 m_totalDelta;
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void Start()
     {
+        m_initialPosition = transform.position;
+        m_finalPosition = m_initialPosition + m_movementAmount;
+        m_controlPosition = m_initialPosition + m_curveAmount;
+        
         m_currentTime = 0;
         m_moveDirection = -1;
         m_moveState = ObjectMoveState.Waiting;

@@ -689,9 +689,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62d239c5565ba0d40996846135047230, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MoveBetween
-  m_initialPosition: {x: 3, y: 0, z: -3}
-  m_finalPosition: {x: 3, y: 10, z: -3}
-  m_controlPosition: {x: -1, y: 5, z: 1}
+  m_movementAmount: {x: 0, y: 10, z: 0}
+  m_curveAmount: {x: 2, y: 5, z: 2}
   m_transitTime: 5
   m_waitTime: 2
 --- !u!65 &1274805225
