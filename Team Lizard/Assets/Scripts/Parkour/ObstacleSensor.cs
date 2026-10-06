@@ -8,6 +8,12 @@ public struct HitInfo
     public Vector3 ForwardDirection;
 }
 
+public struct WallHitInfo
+{
+    public bool HitWall;
+    public Vector3 Normal;
+}
+
 public class ObstacleSensor : MonoBehaviour
 {
     [SerializeField]
@@ -18,14 +24,22 @@ public class ObstacleSensor : MonoBehaviour
     [Tooltip("Length of the ray in the forward direction.")]
     private float m_rayLength = 1.75f;
 
+    [Header("Wall Running")]
+        [SerializeField]
+        [Tooltip("Distance to check for a wall to the player's side.")]
+        private float m_wallCheckDistance = 0.7f;
+
     private Vector3 m_rayOrigin;
     private LayerMask m_obstacleLayerMask;
+    private LayerMask m_wallRunnableLayerMask;
     private HitInfo m_hitInfo = new HitInfo();
+    private WallHitInfo m_wallHitInfo = new WallHitInfo();
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         m_obstacleLayerMask = LayerMask.GetMask("Obstacle");
+        m_wallRunnableLayerMask = LayerMask.GetMask("Wallrunnable");
     }
 
     /// <summary>
@@ -47,5 +61,28 @@ public class ObstacleSensor : MonoBehaviour
         }
 
         return m_hitInfo;
+    }
+
+    /// <summary>
+    /// Checks for a wall-runnable surface on either side of the player.
+    /// </summary>
+    /// <param name="right">The player's right-facing direction.</param>
+    /// <returns>WallHitInfo struct representing info about a nearby wall.</returns>
+    public WallHitInfo DetectWall(Vector3 right)
+    {
+        if (Physics.Raycast(transform.position, right, out RaycastHit rightHit, m_wallCheckDistance, m_wallRunnableLayerMask))
+        {
+            m_wallHitInfo.HitWall = true;
+            m_wallHitInfo.Normal = rightHit.normal;
+            return m_wallHitInfo;
+        }
+        if (Physics.Raycast(transform.position, -right, out RaycastHit leftHit, m_wallCheckDistance, m_wallRunnableLayerMask))
+        {
+            m_wallHitInfo.HitWall = true;
+            m_wallHitInfo.Normal = leftHit.normal;
+            return m_wallHitInfo;
+        }
+        m_wallHitInfo.HitWall = false;
+        return m_wallHitInfo;
     }
 }
