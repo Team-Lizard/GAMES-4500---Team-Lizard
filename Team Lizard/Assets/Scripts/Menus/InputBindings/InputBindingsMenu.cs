@@ -19,28 +19,11 @@ public class InputBindingsMenu : MonoBehaviour
     /// </summary>
     private PanelRenderer m_panelRenderer;
 
-    /// <summary>
-    /// a small enum representing the type of input the menu should be showing bindings of
-    /// </summary>
-    enum InputActionType
-    {
-        KBM,
-        CONTROLLER
-
-    }
-
-    /// <summary>
-    /// which InputActionType is currently being displayed on the menu
-    /// </summary>
-    private InputActionType m_inputActionType;
-
-
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void Start()
     {
         m_panelRenderer = GetComponent<PanelRenderer>();
         m_panelRenderer.RegisterUIReloadCallback(OnUIReload);
-        m_inputActionType = InputActionType.KBM;
     }
 
     /// <summary>
@@ -84,7 +67,6 @@ public class InputBindingsMenu : MonoBehaviour
                 list.Add(bindingElement);
             }
         }
-
 
         // making sure that the menu is disabled whenever it's first loaded
         if (panelRenderer.enabled)
