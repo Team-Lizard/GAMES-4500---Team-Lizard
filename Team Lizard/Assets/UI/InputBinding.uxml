@@ -1,0 +1,6 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:VisualElement style="flex-grow: 1; width: 100%; height: 100%;">
+        <ui:Button text="Rebind" style="right: 0; left: auto; -unity-text-align: middle-center; width: 50%; top: auto; align-self: flex-end;"/>
+        <ui:Label text="Label" style="left: 0; width: 50%; align-self: flex-end; position: absolute; right: auto; -unity-text-align: upper-center;"/>
+    </ui:VisualElement>
+</ui:UXML>

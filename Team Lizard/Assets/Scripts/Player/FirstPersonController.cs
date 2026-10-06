@@ -34,6 +34,31 @@ public class FirstPersonController : MonoBehaviour
         [Tooltip("How fast to transition to and from slide.")]
         private float m_slideCameraLerp = 12f;
 
+    [Header("Wall Running")]
+        [SerializeField]
+        [Tooltip("Multiplier applied to gravity while wall running (lower = floatier).")]
+        private float m_wallRunGravityMultiplier = 0.2f;
+
+        [SerializeField]
+        [Tooltip("Degrees to roll the camera while wall running.")]
+        private float m_wallRunCameraRoll = 15f;
+
+        [SerializeField]
+        [Tooltip("How fast the camera rolls into/out of a wall run.")]
+        private float m_wallRunRollLerp = 10f;
+
+        [SerializeField]
+        [Tooltip("Seconds the player holds their height after latching onto a wall.")]
+        private float m_wallRunHangTime = 0.7f;
+
+        [SerializeField]
+        [Tooltip("Seconds over which gravity ramps from zero to full wall-run gravity after the hang.")]
+        private float m_wallRunSlideRampTime = 0.5f;
+
+    private float m_wallRunTimer;
+    private bool m_wasWallRunning;
+    private float m_roll;
+
     private CharacterController m_characterController;
 
     private float m_playerVelocityY;
@@ -70,9 +95,11 @@ public class FirstPersonController : MonoBehaviour
     {
         UpdateSlidePose(request.IsSliding);
 
+        UpdateWallRunRoll(request.IsWallRunning, request.WallNormal);
+
         ApplyLook(request.LookDelta);
 
-        ApplyGravity();
+        ApplyGravity(request.IsWallRunning);
 
         // If player is standing on a moving platform, apply that platform's movement to the player.
         if (m_currentPlatform != null)
@@ -94,8 +121,27 @@ public class FirstPersonController : MonoBehaviour
     /// <summary>
     /// Checks if player is touching ground and applies gravity otherwise.
     /// </summary>
-    private void ApplyGravity()
+    private void ApplyGravity(bool isWallRunning)
     {
+        float gravity = m_gravity;
+
+        if (isWallRunning)
+        {
+            if (!m_wasWallRunning)
+            {
+                // Just latched: stop all vertical motion and restart the timer.
+                m_playerVelocityY = 0f;
+                m_wallRunTimer = 0f;
+            }
+
+            m_wallRunTimer += Time.deltaTime;
+
+            // 0 during the hang, then ramps up to the wall-run multiplier.
+            float wallRunProgress = Mathf.InverseLerp(m_wallRunHangTime, m_wallRunHangTime + m_wallRunSlideRampTime, m_wallRunTimer);
+            gravity = m_gravity * Mathf.Lerp(0f, m_wallRunGravityMultiplier, wallRunProgress);
+        }
+        m_wasWallRunning = isWallRunning;
+
         IsGrounded = m_characterController.isGrounded;
         if (IsGrounded && m_playerVelocityY < 0)
         {
@@ -105,8 +151,8 @@ public class FirstPersonController : MonoBehaviour
         else
         {
             // Player is not on ground, accelerate downwards.
-            m_playerVelocityY += m_gravity * Time.deltaTime;
-
+            m_playerVelocityY += gravity * Time.deltaTime;
+            
             // Player also isn't touching a platform
             m_currentPlatform = null;
         }
@@ -165,7 +211,22 @@ public class FirstPersonController : MonoBehaviour
         // Camera shouldn't be able to rotate further than straight up or straight down.
         m_pitch = Mathf.Clamp(m_pitch, -85f, 85f);
 
-        m_cameraTransform.localRotation = Quaternion.Euler(m_pitch, 0, 0);
+        m_cameraTransform.localRotation = Quaternion.Euler(m_pitch, 0, m_roll);
+    }
+
+    /// <summary>
+    /// Rolls the camera toward or away from the wall while wall running.
+    /// </summary>
+    private void UpdateWallRunRoll(bool isWallRunning, Vector3 wallNormal)
+    {
+        float targetRoll = 0f;
+        if (isWallRunning)
+        {
+            float side = Vector3.Dot(wallNormal, transform.right);
+            targetRoll = -side * m_wallRunCameraRoll;
+        }
+
+        m_roll = Mathf.Lerp(m_roll, targetRoll, m_wallRunRollLerp * Time.deltaTime);
     }
 
     /// <summary>
