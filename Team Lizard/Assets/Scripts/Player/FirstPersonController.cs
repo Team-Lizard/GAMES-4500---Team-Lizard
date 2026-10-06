@@ -66,6 +66,7 @@ public class FirstPersonController : MonoBehaviour
     private Vector3 m_inertia;
     private float m_standHeight;
     private float m_standCameraY;
+    private float m_standRadius;
     private Vector3 m_standCenter;
     private bool m_isCrouched = false;
     private MovingPlatform m_currentPlatform;
@@ -83,6 +84,7 @@ public class FirstPersonController : MonoBehaviour
     {
         m_characterController = gameObject.GetComponent<CharacterController>();
         m_standHeight = m_characterController.height;
+        m_standRadius = m_characterController.radius;
         m_standCameraY = m_cameraTransform.localPosition.y;
         m_standCenter = m_characterController.center;
     }
@@ -240,6 +242,7 @@ public class FirstPersonController : MonoBehaviour
         m_isCrouched = shouldCrouch;
 
         m_characterController.height = m_isCrouched ? m_slideHeight : m_standHeight;
+        m_characterController.radius = Math.Min(m_characterController.height, m_standRadius);
         m_characterController.center = m_standCenter + Vector3.down * ((m_standHeight - m_characterController.height) * 0.5f);
 
         float intendedCameraHeight = CalculateIntendedCameraHeight();
