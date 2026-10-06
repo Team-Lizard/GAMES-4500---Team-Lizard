@@ -11,6 +11,8 @@ public struct MovementRequest
     public Vector3 DesiredVelocity;
     public Vector2 LookDelta;
     public bool IsSliding;
+    public bool IsWallRunning;
+    public Vector3 WallNormal;
 }
 
 public class InputController : MonoBehaviour
@@ -52,6 +54,32 @@ public class InputController : MonoBehaviour
         [Tooltip("Time in seconds after leaving the ground where the player can still jump.")]
         private float m_coyoteTime = 0.15f;
 
+    [Header("Wall Running")]
+        [SerializeField]
+        [Tooltip("Speed multiplier applied while wall running.")]
+        private float m_wallRunSpeedMultiplier = 1.2f;
+
+        [SerializeField]
+        [Tooltip("Outward force applied when jumping off a wall.")]
+        private float m_wallJumpSideForce = 6f;
+
+        [SerializeField]
+        [Tooltip("Minimum forward input required to start or sustain a wall run.")]
+        private float m_wallRunMinForwardInput = 0.3f;
+
+        [SerializeField]
+        [Tooltip("How long a wall run continues after the wall ray stops hitting.")]
+        private float m_wallRunGraceTime = 0.2f;
+
+        [SerializeField]
+        [Tooltip("Time after a wall jump before the player can latch onto a wall again.")]
+        private float m_wallJumpLockoutTime = 0.25f;
+
+    private float m_wallGraceTimer;
+    private float m_wallLockoutTimer;
+    private bool m_isWallRunning;
+    private Vector3 m_wallNormal;
+    private Vector3 m_wallJumpVelocity;
     private bool m_isSprintHeld;
     private bool m_isSlideHeld;
     private bool m_isJumping;
@@ -109,7 +137,10 @@ public class InputController : MonoBehaviour
             {
                 m_parkourState.CurrentAction = null;
             }
-            
+
+            // Clear wall running and sliding variables if a parkour action is taken.
+            m_movementRequest.IsWallRunning = false;
+            m_movementRequest.IsSliding = false;
         }
         // Otherwise, read player movement input.
         else
@@ -125,15 +156,17 @@ public class InputController : MonoBehaviour
                 m_coyoteTimer -= Time.deltaTime;
             }
 
-            if (m_isParkouring)
+            if (m_isJumping)
             {
                 m_parkourState = m_parkourManager.CheckParkourAction();
                 if (m_parkourState.CurrentAction != null)
                 {
-                    m_isParkouring = false;
+                    m_isJumping = false;
                     return;
                 }
             }
+
+            HandleWallRun();
 
             // Calculate movement velocities.
             horizontalVelocity = HandleHorizontalMovement();
@@ -141,13 +174,53 @@ public class InputController : MonoBehaviour
         }
 
         // Combine horizontal and vertical velocities.
-        m_movementRequest.DesiredVelocity = horizontalVelocity + verticalVelocity * Vector3.up;
+        m_wallJumpVelocity = Vector3.MoveTowards(m_wallJumpVelocity, Vector3.zero, 10f * Time.deltaTime);
+        m_movementRequest.DesiredVelocity = horizontalVelocity + m_wallJumpVelocity + verticalVelocity * Vector3.up;
 
         // Take the movement of the mouse and scale it by the look sensitivity. We'll calculate rotations additively, so we just need to know how far the mouse moved.
         m_movementRequest.LookDelta = new Vector2(m_lookInput.x, m_lookInput.y) * m_lookSensitivity;
 
         // Ask player controller to apply the movement the player wants.
         m_firstPersonController.ApplyMovement(m_movementRequest);
+    }
+
+    /// <summary>
+    /// Handles wall running logic by calculating variables.
+    /// </summary>
+    private void HandleWallRun()
+    {
+        m_wallLockoutTimer -= Time.deltaTime;
+
+        bool canWallRun = !m_firstPersonController.IsGrounded
+                          && m_moveInput.y >= m_wallRunMinForwardInput
+                          && m_wallLockoutTimer <= 0f;
+
+        if (canWallRun)
+        {
+            WallHitInfo wall = m_parkourManager.CheckWall();
+            if (wall.HitWall)
+            {
+                m_wallGraceTimer = m_wallRunGraceTime;
+                m_wallNormal = wall.Normal;
+            }
+            else
+            {
+                m_wallGraceTimer -= Time.deltaTime;
+            }
+        }
+        else
+        {
+            m_wallGraceTimer = 0f;
+        }
+
+        m_isWallRunning = m_wallGraceTimer > 0f;
+        if (!m_isWallRunning)
+        {
+            m_wallNormal = Vector3.zero;
+        }
+
+        m_movementRequest.IsWallRunning = m_isWallRunning;
+        m_movementRequest.WallNormal = m_wallNormal;
     }
 
     /// <summary>
@@ -184,9 +257,23 @@ public class InputController : MonoBehaviour
     private float HandleVerticalMovement()
     {
         float verticalVelocity = 0;
+
         if (m_isJumping)
         {
-            if (m_firstPersonController.IsGrounded || m_coyoteTimer > 0f)
+
+            if (m_isWallRunning)
+            {
+                m_wallJumpVelocity = m_wallNormal * m_wallJumpSideForce;
+                m_extraJumps = m_maxExtraJumps;
+
+                // End the wall run and briefly prevent re-latching.
+                m_isWallRunning = false;
+                m_wallGraceTimer = 0f;
+                m_wallLockoutTimer = m_wallJumpLockoutTime;
+
+                return HandleJump();
+            }
+            else if (m_firstPersonController.IsGrounded || m_coyoteTimer > 0f)
             {
                 verticalVelocity = HandleJump();
             }
@@ -206,6 +293,20 @@ public class InputController : MonoBehaviour
     /// <returns>Vector3 representing movement velocity.</returns>
     private Vector3 HandleHorizontalMovement()
     {
+        // Calculate wall running horizontal speed.
+        if (m_isWallRunning)
+        {
+            // Direction along the wall, facing the way the player is looking.
+            Vector3 along = Vector3.Cross(m_wallNormal, Vector3.up);
+            if (Vector3.Dot(along, transform.forward) < 0f)
+            {
+                along = -along;
+            }
+
+            m_movementRequest.IsSliding = false;
+            return along * (m_moveSpeed * m_wallRunSpeedMultiplier);
+        }
+
         // Create movement vector based on stored player input.
         Vector3 move = transform.forward * m_moveInput.y + transform.right * m_moveInput.x;
 
@@ -271,22 +372,6 @@ public class InputController : MonoBehaviour
         else if (value.canceled)
         {
             m_isJumping = false;
-        }
-    }
-
-    /// <summary>
-    /// Called whenever parkour input is received. Passes parkour data to controller.
-    /// </summary>
-    /// <param name="value">Information about input being passed to controller.</param>
-    public void OnParkour(InputAction.CallbackContext value)
-    {
-        if (value.started)
-        {
-            m_isParkouring = true;
-        }
-        else if (value.canceled)
-        {
-            m_isParkouring = false;
         }
     }
 

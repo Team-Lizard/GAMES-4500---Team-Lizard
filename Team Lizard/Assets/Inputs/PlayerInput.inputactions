@@ -52,9 +52,9 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Parkour",
+                    "name": "Pause",
                     "type": "Button",
-                    "id": "4898d7c8-d66e-4d21-8be8-66c1b1878ae7",
+                    "id": "f09c2d4f-6e82-4d51-a432-5179ed6a26d1",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -191,23 +191,28 @@
                     "processors": "",
                     "groups": "",
                     "action": "Slide",
-                    "id": "66d4b78f-6d8f-4d87-aedb-535f3af075e0",
-                    "path": "<Gamepad>/rightTrigger",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Sprint",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
-                    "id": "d186526a-2bbc-43bb-87ce-798ed1ca2517",
-                    "path": "<Keyboard>/c",
+                    "id": "f48dc2b8-d54d-490b-ac66-69a825e64474",
+                    "path": "<Gamepad>/start",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Parkour",
+                    "action": "Pause",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "de7babd9-c3c6-4cc7-8bb7-6d8156eb2c27",
+                    "path": "<Keyboard>/escape",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Pause",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
