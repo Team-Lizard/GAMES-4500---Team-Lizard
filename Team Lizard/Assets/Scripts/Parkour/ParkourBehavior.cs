@@ -1,5 +1,4 @@
 using Unity.VisualScripting;
-using UnityEditor.EditorTools;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "ParkourBehavior", menuName = "Scriptable Objects/ParkourBehavior")]
