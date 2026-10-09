@@ -425,6 +425,7 @@ MonoBehaviour:
       - m_Target: {fileID: 3848311692467163602}
         m_TargetAssemblyTypeName: InputController, Assembly-CSharp
         m_MethodName: OnSlide
+        m_MethodName: OnInteract
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -436,6 +437,12 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: 1ad57a8c-5ebc-4d5c-ba25-0f353b86d0ef
     m_ActionName: 'Player/Slide[/Keyboard/ctrl]'
+    m_ActionId: 467bf20c-12fb-484c-bad1-8456cf4e49a6
+    m_ActionName: 'Player/Interact[/Keyboard/e]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: f09c2d4f-6e82-4d51-a432-5179ed6a26d1
+    m_ActionName: 'Player/Pause[/Keyboard/escape]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player

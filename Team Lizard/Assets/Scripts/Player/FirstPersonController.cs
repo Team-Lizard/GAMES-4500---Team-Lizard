@@ -306,7 +306,10 @@ public class FirstPersonController : MonoBehaviour
     }
 
 
-    // ReSharper disable Unity.PerformanceAnalysis
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="isInteracting"></param>
     private void HandleInteractions(bool isInteracting)
     {
         if (isInteracting)
