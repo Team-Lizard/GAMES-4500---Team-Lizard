@@ -121,6 +121,15 @@ public class FirstPersonController : MonoBehaviour
     }
 
     /// <summary>
+    /// Reset velocity of player for when they die.
+    /// </summary>
+    public void ResetVelocity()
+    {
+        m_inertia = Vector3.zero;
+        m_playerVelocityY = 0f;
+    }
+
+    /// <summary>
     /// Checks if player is touching ground and applies gravity otherwise.
     /// </summary>
     private void ApplyGravity(bool isWallRunning)
