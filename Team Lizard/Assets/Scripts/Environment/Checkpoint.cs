@@ -3,14 +3,18 @@ using UnityEngine;
 public class Checkpoint : MonoBehaviour
 {
     [SerializeField]
-    [Tooltip("Order of this checkpoint in the level. Higher values override lower ones.")]
+    [Tooltip("Where the player respawns. If unset, uses this object's own transform.")]
+    private Transform m_spawnpoint;
+
+    [SerializeField]
     private int m_order;
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.TryGetComponent(out CheckpointManager manager))
         {
-            manager.SetCheckpoint(transform.position, transform.rotation, m_order);
+            Transform spawn = m_spawnpoint != null ? m_spawnpoint : transform;
+            manager.SetCheckpoint(spawn.position, spawn.rotation, m_order);
         }
     }
 }
