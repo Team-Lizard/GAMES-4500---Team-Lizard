@@ -42,6 +42,7 @@ public class CheckpointManager : MonoBehaviour
     /// </summary>
     public void Respawn()
     {
+        GetComponent<FirstPersonController>().ResetVelocity();
         m_characterController.enabled = false;
         transform.SetPositionAndRotation(m_checkpointPosition, m_checkpointRotation);
         m_characterController.enabled = true;
