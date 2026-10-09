@@ -296,11 +296,10 @@ public class FirstPersonController : MonoBehaviour
         }
     }
 
-
     /// <summary>
-    /// 
+    /// If the player is currently pressing the interact key, we try to interact with our environment
     /// </summary>
-    /// <param name="isInteracting"></param>
+    /// <param name="isInteracting"> whether or not the player is trying to interact </param>
     private void HandleInteractions(bool isInteracting)
     {
         if (isInteracting)
