@@ -1214,6 +1214,24 @@ MonoBehaviour:
   m_ShadowLayerMask: 1
   m_RenderingLayers: 1
   m_ShadowRenderingLayers: 1
+--- !u!1 &1985400455 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8985268930540334528, guid: 55d28c6e4ca51ab49aa8d59553278bef, type: 3}
+  m_PrefabInstance: {fileID: 612956581187901175}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1985400466
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1985400455}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 14001fdd7a2ed524c844bf6af7cebf66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CheckpointManager
+  m_spawnPoint: {fileID: 0}
 --- !u!1001 &612956581187901175
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1274,6 +1292,30 @@ PrefabInstance:
       propertyPath: m_StepOffset
       value: 0.1
       objectReference: {fileID: 0}
+    - target: {fileID: 7380285322809941162, guid: 55d28c6e4ca51ab49aa8d59553278bef, type: 3}
+      propertyPath: m_ActionEvents.Array.data[4].m_ActionId
+      value: 1ad57a8c-5ebc-4d5c-ba25-0f353b86d0ef
+      objectReference: {fileID: 0}
+    - target: {fileID: 7380285322809941162, guid: 55d28c6e4ca51ab49aa8d59553278bef, type: 3}
+      propertyPath: m_ActionEvents.Array.data[5].m_ActionId
+      value: f09c2d4f-6e82-4d51-a432-5179ed6a26d1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7380285322809941162, guid: 55d28c6e4ca51ab49aa8d59553278bef, type: 3}
+      propertyPath: m_ActionEvents.Array.data[4].m_ActionName
+      value: 'Player/Slide[/Keyboard/ctrl]'
+      objectReference: {fileID: 0}
+    - target: {fileID: 7380285322809941162, guid: 55d28c6e4ca51ab49aa8d59553278bef, type: 3}
+      propertyPath: m_ActionEvents.Array.data[5].m_ActionName
+      value: 'Player/Pause[/Keyboard/escape]'
+      objectReference: {fileID: 0}
+    - target: {fileID: 7380285322809941162, guid: 55d28c6e4ca51ab49aa8d59553278bef, type: 3}
+      propertyPath: m_ActionEvents.Array.data[5].m_PersistentCalls.m_Calls.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7380285322809941162, guid: 55d28c6e4ca51ab49aa8d59553278bef, type: 3}
+      propertyPath: m_ActionEvents.Array.data[4].m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnSlide
+      objectReference: {fileID: 0}
     - target: {fileID: 8985268930540334528, guid: 55d28c6e4ca51ab49aa8d59553278bef, type: 3}
       propertyPath: m_Name
       value: Character
@@ -1281,7 +1323,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8985268930540334528, guid: 55d28c6e4ca51ab49aa8d59553278bef, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1985400466}
   m_SourcePrefab: {fileID: 100100000, guid: 55d28c6e4ca51ab49aa8d59553278bef, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
