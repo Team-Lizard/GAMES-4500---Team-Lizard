@@ -2,11 +2,13 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
+using Button = UnityEngine.UIElements.Button;
 
 public class InputBindingsMenu : MonoBehaviour
 {
     [SerializeField]
-    [Tooltip("Asset containing all InputActions (player run, player jump, pause, etc)")]    InputActionAsset m_inputActionAsset;
+    [Tooltip("Asset containing all InputActions (player run, player jump, pause, etc)")]
+    private InputActionAsset m_inputActionAsset;
 
     [SerializeField]
     [Tooltip("The UI for a single input binding (likely containing the name of the input and some way to change it)")]
@@ -32,6 +34,7 @@ public class InputBindingsMenu : MonoBehaviour
     private void OnUIReload(PanelRenderer panelRenderer, VisualElement root)
     {
         ScrollView list = root.Q<ScrollView>("BindingScrollView");
+        list.Clear();
 
         // adding every single input across all InputActionMaps to a single menu.
         // this way, if the input set ever changes or if we have different maps for gameplay, menus, etc.
@@ -40,16 +43,32 @@ public class InputBindingsMenu : MonoBehaviour
         {
             foreach (InputAction action in map.actions)
             {
+
                 // making a new BindingUI, updating the information it shows, and displays it
-                TemplateContainer binding = m_bindingUI.Instantiate();
+                TemplateContainer bindingElement = m_bindingUI.Instantiate();
 
-                binding.name = action.name;
-                binding.Q<Label>().text = action.name;
+                bindingElement.name = action.name;
+                bindingElement.Q<Label>().text = action.name;
 
-                list.Add(binding);
+                Button button = bindingElement.Q<Button>();
+                button.clicked += Onclicked;
+
+                // when clicking a binding button, we'll show the screen to rebind the input; the screen
+                // will be responsible for overriding the current binding and destroying itself
+                void Onclicked()
+                {
+                    button.text = "Waiting for new input:";
+                    action.Disable();
+                    action.RemoveAllBindingOverrides();
+                    action.PerformInteractiveRebinding().OnComplete(_ => button.text = "Rebind").Start();
+                    action.Enable();
+                }
+
+                list.Add(bindingElement);
             }
         }
 
+        // making sure that the menu is disabled whenever it's first loaded
         if (panelRenderer.enabled)
         {
             ToggleVisibility();
