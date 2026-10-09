@@ -82,10 +82,9 @@ public class InputController : MonoBehaviour
     private bool m_isWallRunning;
     private Vector3 m_wallNormal;
     private Vector3 m_wallJumpVelocity;
-    private bool m_isSprintHeld;
-    private bool m_isSlideHeld;
+    private bool m_isSprintToggled;
+    private bool m_isSlideToggled;
     private bool m_isJumping;
-    private bool m_isParkouring;
     private int m_extraJumps;
     private Vector2 m_moveInput;
     private Vector2 m_lookInput;
@@ -316,7 +315,7 @@ public class InputController : MonoBehaviour
         move = Vector3.ClampMagnitude(move, 1f);
 
         float finalSpeed;
-        if (m_isSlideHeld && m_firstPersonController.IsGrounded)
+        if (m_isSlideToggled && m_firstPersonController.IsGrounded)
         {
             m_movementRequest.IsSliding = true;
             finalSpeed = HandleSlide(m_moveSpeed);
@@ -324,7 +323,7 @@ public class InputController : MonoBehaviour
         else
         {
             m_movementRequest.IsSliding = false;
-            finalSpeed = m_isSprintHeld ? m_moveSpeed * m_sprintMultiplier : m_moveSpeed;
+            finalSpeed = m_isSprintToggled ? m_moveSpeed * m_sprintMultiplier : m_moveSpeed;
         }
 
         return move * finalSpeed;
@@ -358,7 +357,11 @@ public class InputController : MonoBehaviour
     /// <param name="value">Information about input being passed to controller.</param>
     public void OnSprint(InputAction.CallbackContext value)
     {
-       m_isSprintHeld = value.ReadValueAsButton();
+        if (value.started)
+        {
+            m_isSprintToggled = !m_isSprintToggled;
+        }
+      
     }
 
     /// <summary>
@@ -385,12 +388,12 @@ public class InputController : MonoBehaviour
     {
         if (value.started)
         {
-            m_isSlideHeld = true;
-        }
-        else if (value.canceled)
-        {
-            m_isSlideHeld = false;
-            m_currentSlideMultiplier = m_slideMultiplier;
+            m_isSlideToggled = !m_isSlideToggled;
+
+            if (!m_isSlideToggled)
+            {
+                m_currentSlideMultiplier = m_slideMultiplier;
+            }
         }
     }
 
