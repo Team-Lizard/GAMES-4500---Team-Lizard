@@ -189,7 +189,7 @@ GameObject:
   - component: {fileID: 2351986856077383698}
   m_Layer: 0
   m_Name: Character
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -408,7 +408,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 3848311692467163602}
         m_TargetAssemblyTypeName: InputController, Assembly-CSharp
-        m_MethodName: OnParkour
+        m_MethodName: OnSlide
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -418,24 +418,28 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-    m_ActionId: 4898d7c8-d66e-4d21-8be8-66c1b1878ae7
-    m_ActionName: 'Player/Parkour[/Keyboard/c]'
+    m_ActionId: 1ad57a8c-5ebc-4d5c-ba25-0f353b86d0ef
+    m_ActionName: 'Player/Slide[/Keyboard/ctrl]'
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: f09c2d4f-6e82-4d51-a432-5179ed6a26d1
+    m_ActionName: 'Player/Pause[/Keyboard/escape]'
   - m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 3848311692467163602}
         m_TargetAssemblyTypeName: InputController, Assembly-CSharp
-        m_MethodName: OnSlide
+        m_MethodName: OnInteract
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument:
+          m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-    m_ActionId: 1ad57a8c-5ebc-4d5c-ba25-0f353b86d0ef
-    m_ActionName: 'Player/Slide[/Keyboard/ctrl]'
+    m_ActionId: 467bf20c-12fb-484c-bad1-8456cf4e49a6
+    m_ActionName: 'Player/Interact[/Keyboard/e]'
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Player
@@ -459,6 +463,11 @@ MonoBehaviour:
   m_cameraTransform: {fileID: 3842612233710885895}
   m_slideHeight: 0.5
   m_slideCameraLerp: 12
+  m_wallRunGravityMultiplier: 0.2
+  m_wallRunCameraRoll: 15
+  m_wallRunRollLerp: 10
+  m_wallRunHangTime: 0.7
+  m_wallRunSlideRampTime: 0.5
 --- !u!114 &3848311692467163602
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -479,6 +488,12 @@ MonoBehaviour:
   m_jumpHeight: 1.5
   m_lookSensitivity: 0.5
   m_maxExtraJumps: 1
+  m_coyoteTime: 0.15
+  m_wallRunSpeedMultiplier: 1.2
+  m_wallJumpSideForce: 6
+  m_wallRunMinForwardInput: 0.3
+  m_wallRunGraceTime: 0.2
+  m_wallJumpLockoutTime: 0.25
 --- !u!114 &7984297794713564900
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -493,6 +508,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ObjectSensor
   m_rayHeight: -0.5
   m_rayLength: 1.75
+  m_wallCheckDistance: 0.7
 --- !u!114 &2351986856077383698
 MonoBehaviour:
   m_ObjectHideFlags: 0
