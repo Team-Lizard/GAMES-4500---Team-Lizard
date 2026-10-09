@@ -69,7 +69,10 @@ public class FirstPersonController : MonoBehaviour
     private float m_standRadius;
     private Vector3 m_standCenter;
     private bool m_isCrouched = false;
+
+    // item-specific data
     private MovingPlatform m_currentPlatform;
+    private event Action m_interactableAction;
 
     /// <summary>
     /// Is the player currently touching the ground?
@@ -87,6 +90,9 @@ public class FirstPersonController : MonoBehaviour
         m_standRadius = m_characterController.radius;
         m_standCameraY = m_cameraTransform.localPosition.y;
         m_standCenter = m_characterController.center;
+
+        // empty action initialization
+        m_interactableAction = new Action(() => { });
     }
 
     /// <summary>
@@ -108,7 +114,7 @@ public class FirstPersonController : MonoBehaviour
         {
             ApplyPlatformMovement();
         }
-        
+
         // Apply friction if the player doesn't want to move, apply their movement otherwise.
         if (request.DesiredVelocity == Vector3.zero)
         {
@@ -118,6 +124,8 @@ public class FirstPersonController : MonoBehaviour
         {
             ApplyMove(request.DesiredVelocity);
         }
+
+        HandleInteractions(request.IsInteracting);
     }
 
     /// <summary>
@@ -154,7 +162,7 @@ public class FirstPersonController : MonoBehaviour
         {
             // Player is not on ground, accelerate downwards.
             m_playerVelocityY += gravity * Time.deltaTime;
-            
+
             // Player also isn't touching a platform
             m_currentPlatform = null;
         }
@@ -286,5 +294,35 @@ public class FirstPersonController : MonoBehaviour
             m_currentPlatform = platform;
             m_currentPlatform.GetTotalDelta();
         }
+    }
+
+
+    // ReSharper disable Unity.PerformanceAnalysis
+    private void HandleInteractions(bool isInteracting)
+    {
+        if (isInteracting)
+        {
+            m_interactableAction?.Invoke();
+        }
+    }
+
+    /// <summary>
+    /// CALLED FROM ANOTHER OBJECT!!!!!!!!!!
+    /// passes in a new behavior that should be run when the interact input is pressed.
+    /// </summary>
+    /// <param name="action"> the new behavior to be executed if the interact input is pressed. </param>
+    public void SubscribeToOnInteract(Action action)
+    {
+        m_interactableAction += action;
+    }
+
+    /// <summary>
+    /// CALLED FROM ANOTHER OBJECT!!!!!!!!!!
+    /// passes in a behavior that should be no longer run when the interact input is pressed.
+    /// </summary>
+    /// <param name="action"> the new behavior to be no longer executed if the interact input is pressed. </param>
+    public void UnsubscribeToOnInteract(Action action)
+    {
+        m_interactableAction -= action;
     }
 }

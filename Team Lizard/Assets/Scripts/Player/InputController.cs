@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Specialized;
+using System.Net.Http.Headers;
 using Unity.VisualScripting;
 using UnityEditor.Build.Pipeline;
 using UnityEngine;
@@ -13,6 +14,7 @@ public struct MovementRequest
     public bool IsSliding;
     public bool IsWallRunning;
     public Vector3 WallNormal;
+    public bool IsInteracting;
 }
 
 public class InputController : MonoBehaviour
@@ -120,9 +122,9 @@ public class InputController : MonoBehaviour
         if (m_parkourState.CurrentAction != null)
         {
             Vector3 curveDirection = m_parkourState.CurrentAction.Evaluate(
-                m_parkourState.StartingPosition, 
-                m_parkourState.EndingPosition, 
-                m_parkourState.ObstacleHeight, 
+                m_parkourState.StartingPosition,
+                m_parkourState.EndingPosition,
+                m_parkourState.ObstacleHeight,
                 m_parkourState.AnimationTime);
 
             // Split found velocity into horizontal and vertical velocity (this will be recombined later.)
@@ -131,7 +133,7 @@ public class InputController : MonoBehaviour
 
             // Step animation forward.
             m_parkourState.AnimationTime += Time.deltaTime;
-            
+
             // Once the animation has played, clear the current parkour state.
             if (m_parkourState.AnimationTime > m_parkourState.AnimationLength)
             {
@@ -389,6 +391,18 @@ public class InputController : MonoBehaviour
         {
             m_isSlideHeld = false;
             m_currentSlideMultiplier = m_slideMultiplier;
+        }
+    }
+
+    public void OnInteract(InputAction.CallbackContext value)
+    {
+        if (value.started)
+        {
+            m_movementRequest.IsInteracting = true;
+        }
+        else if (value.canceled)
+        {
+            m_movementRequest.IsInteracting = false;
         }
     }
 }
