@@ -6,6 +6,8 @@
 				<SoundBank Name="MainSB" ID="{CD3D6455-DCC1-4237-9C61-032794AC3DF0}">
 					<ObjectInclusionList>
 						<ObjectRef Name="Play_Synth_practice_2" ID="{FC3ACDE6-9C34-453F-9101-20293FDDC9EF}" WorkUnitID="{22A59A7D-BFF8-4CED-8277-7E1059D9FA5A}" Origin="Manual" Filter="7"/>
+						<ObjectRef Name="Play_steps" ID="{B25E7231-474D-482D-8C2A-15E7D649C0FC}" WorkUnitID="{22A59A7D-BFF8-4CED-8277-7E1059D9FA5A}" Origin="Manual" Filter="7"/>
+						<ObjectRef Name="Play_Landing" ID="{0CCFF376-2940-4881-BF0C-7EFC7B921DB4}" WorkUnitID="{22A59A7D-BFF8-4CED-8277-7E1059D9FA5A}" Origin="Manual" Filter="7"/>
 						<ObjectRef Name="Play_Synth_practice_1" ID="{937F6783-CF27-4B79-9EAE-2488DA0775F5}" WorkUnitID="{22A59A7D-BFF8-4CED-8277-7E1059D9FA5A}" Origin="Manual" Filter="7"/>
 					</ObjectInclusionList>
 					<ObjectExclusionList/>

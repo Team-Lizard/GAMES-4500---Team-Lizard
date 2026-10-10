@@ -25,6 +25,42 @@
 						</Action>
 					</ChildrenList>
 				</Event>
+				<Event Name="Play_steps" ID="{B25E7231-474D-482D-8C2A-15E7D649C0FC}">
+					<ChildrenList>
+						<Action Name="" ID="{5E314C15-47DB-4CC8-80E5-7BBD1EE6675D}" ShortID="688298168">
+							<ReferenceList>
+								<Reference Name="Target">
+									<ObjectRef Name="steps" ID="{0DD7D75A-695F-453B-A8F4-6C27C77C885D}" WorkUnitID="{391F5712-5924-478F-990E-957D4C6F6DF3}"/>
+								</Reference>
+							</ReferenceList>
+						</Action>
+					</ChildrenList>
+				</Event>
+				<Folder Name="Landing" ID="{1C43320F-C3EC-445A-A983-1FA5CF99468D}" ShortID="998777579">
+					<ChildrenList>
+						<Event Name="Play_Landing" ID="{0CCFF376-2940-4881-BF0C-7EFC7B921DB4}">
+							<ChildrenList>
+								<Action Name="" ID="{891F5E83-883E-497D-8F1B-527F6FA740CD}" ShortID="990888107">
+									<ReferenceList>
+										<Reference Name="Target">
+											<ObjectRef Name="Steps1" ID="{BFD084A7-7495-4935-93D6-10A9E68009E3}" WorkUnitID="{391F5712-5924-478F-990E-957D4C6F6DF3}"/>
+										</Reference>
+									</ReferenceList>
+								</Action>
+								<Action Name="" ID="{14D8AA67-7F08-46B2-BED6-0DE6A8C8A201}" ShortID="414808559">
+									<PropertyList>
+										<Property Name="Delay" Type="Real64" Value="0.05"/>
+									</PropertyList>
+									<ReferenceList>
+										<Reference Name="Target">
+											<ObjectRef Name="Steps2" ID="{8340E723-A10B-4021-9AEF-F1A7954C195E}" WorkUnitID="{391F5712-5924-478F-990E-957D4C6F6DF3}"/>
+										</Reference>
+									</ReferenceList>
+								</Action>
+							</ChildrenList>
+						</Event>
+					</ChildrenList>
+				</Folder>
 			</ChildrenList>
 		</WorkUnit>
 	</Events>

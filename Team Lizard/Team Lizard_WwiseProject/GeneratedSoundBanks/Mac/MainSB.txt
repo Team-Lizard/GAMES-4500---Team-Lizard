@@ -1,12 +1,13 @@
 Event	ID	Name			Wwise Object Path	Notes
+	2323405115	Play_Landing			\Default Work Unit\Landing\Play_Landing	
 	2600469463	Play_steps			\Default Work Unit\Play_steps	
 	3874450860	Play_Synth_practice_1			\Default Work Unit\Play_Synth_practice_1	
 	3874450863	Play_Synth_practice_2			\Default Work Unit\Play_Synth_practice_2	
 
 In Memory Audio	ID	Name	Audio source file		Wwise Object Path	Notes	Data Size
-	274940980	Steps2	.cache\7F\{7F697676-D69B-0675-8194-4A267ECA9389}.wem		\Containers\Default Work Unit\steps\Steps2		171032
-	375308905	Synth practice-2	.cache\02\{0287E230-0E0B-F983-82E1-BB0664DA3C2D}.wem		\Containers\Default Work Unit\Synth practice-2		617544
-	375769755	Steps1	.cache\A6\{A6D14A52-A041-1678-FB35-3853345B81FB}.wem		\Containers\Default Work Unit\steps\Steps1		303332
+	274940980	Steps2	.cache\52\{52072137-7B25-C395-29C3-BB8DB573FF43}.wem		\Containers\Default Work Unit\Landing Sound\Steps2		43144
+	375308905	Synth practice-2	.cache\25\{25E12934-2E7A-DE8D-AF2B-C2560DF6EE02}.wem		\Containers\Default Work Unit\Synth practice-2		617544
+	375769755	Steps1	.cache\FA\{FACF3EBE-7E8D-6549-FEFD-BDD8221AEDA1}.wem		\Containers\Default Work Unit\steps\Steps1		58656
 	584248227	Synth practice-1	.cache\92\{9201488C-0EA3-ABCB-73F4-A78C5F2453F2}.wem		\Containers\Default Work Unit\Synth practice-1		721008
-	858705555	Steps3	.cache\B6\{B61B77A4-22F2-04DF-4B64-165E58F81834}.wem		\Containers\Default Work Unit\steps\Steps3		171032
+	858705555	Steps3	.cache\DC\{DCD64649-83B7-555F-5675-59BE62CB2689}.wem		\Containers\Default Work Unit\steps\Steps3		37272
 

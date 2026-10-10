@@ -2,6 +2,7 @@ using System;
 using Unity.VisualScripting;
 using UnityEditor.Build.Pipeline;
 using UnityEngine;
+using UnityEngine.Assemblies;
 using UnityEngine.InputSystem;
 
 public class FirstPersonController : MonoBehaviour
@@ -18,7 +19,9 @@ public class FirstPersonController : MonoBehaviour
         [SerializeField]
         [Tooltip("Force of air friction horizontally on player.")]
         private float m_horizontalAirFriction = 4f;
-
+    [Header("Wwise Object")]
+    public AK.Wwise.Event MyFootStep;
+    public AK.Wwise.Event MyLanding;
     [Header("Camera")]
         [SerializeField]
         [Tooltip("Transform of object parenting camera.")]
@@ -43,6 +46,14 @@ public class FirstPersonController : MonoBehaviour
     private Vector3 m_standCenter;
     private bool m_isCrouched = false;
 
+    //Wwise variables
+    private bool m_footstepIsPlaying = false;
+    private float m_footstepTime = 0;
+    public float m_speed { get; private set; }
+    private Vector3 m_lastPosition;
+    private bool m_isgrounded = false;
+    private bool m_isjumping = false;
+
     /// <summary>
     /// Is the player currently touching the ground?
     /// </summary>
@@ -58,6 +69,16 @@ public class FirstPersonController : MonoBehaviour
         m_standHeight = m_characterController.height;
         m_standCameraY = m_cameraTransform.localPosition.y;
         m_standCenter = m_characterController.center;
+        m_footstepTime = Time.time;
+        m_lastPosition = transform.position;
+    }
+
+    private void Update()
+    {
+        Vector3 delta = transform.position - m_lastPosition;
+        delta.y = 0f;
+        m_speed = delta.magnitude / Time.deltaTime;
+        m_lastPosition = transform.position;
     }
 
     /// <summary>
@@ -93,6 +114,13 @@ public class FirstPersonController : MonoBehaviour
         {
             // Player needs to be pressed into the ground for isGrounded to work correctly.
             m_playerVelocityY = m_gravity * Time.deltaTime;
+            if (m_isjumping)
+            {
+                m_isgrounded = true;
+                m_isjumping = false;
+                MyLanding.Post(gameObject);
+            }
+            ;
         }
         else
         {
@@ -127,10 +155,33 @@ public class FirstPersonController : MonoBehaviour
         {
             // If player wants to jump, override vertical velocity.
             m_playerVelocityY = moveInput.y * Mathf.Sqrt(-1*m_gravity);
+
+            MyFootStep.Post(gameObject);
+            m_isgrounded = false;
+            m_isjumping = true;
+
         }
 
         m_characterController.Move(new Vector3(moveInput.x, m_playerVelocityY, moveInput.z) * Time.deltaTime);
         m_inertia = new Vector3(moveInput.x, 0, moveInput.z);
+        if(!m_footstepIsPlaying && m_isgrounded)
+        {
+            MyFootStep.Post(gameObject);
+            m_footstepTime = Time.time;
+            m_footstepIsPlaying = true;
+        }
+        else
+        {
+            if (m_speed > 1)
+            {
+                if (Time.time - m_footstepTime > 500 / m_speed * Time.deltaTime)
+                {
+                    m_footstepIsPlaying = false;
+                }
+            }
+        }
+
+            
     }
 
     /// <summary>
