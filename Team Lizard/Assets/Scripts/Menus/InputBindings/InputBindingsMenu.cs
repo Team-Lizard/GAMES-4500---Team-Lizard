@@ -24,6 +24,13 @@ public class InputBindingsMenu : MonoBehaviour
     {
         m_panelRenderer = GetComponent<PanelRenderer>();
         m_panelRenderer.RegisterUIReloadCallback(OnUIReload);
+
+        if (PlayerPrefs.HasKey("rebinds"))
+        {
+            m_inputActionAsset.LoadBindingOverridesFromJson(
+                PlayerPrefs.GetString("rebinds")
+            );
+        }
     }
 
     /// <summary>
@@ -33,6 +40,8 @@ public class InputBindingsMenu : MonoBehaviour
     /// <param name="root"> the root element of the panelRenderer's UI tree </param>
     private void OnUIReload(PanelRenderer panelRenderer, VisualElement root)
     {
+        SyncBindings();
+
         ScrollView list = root.Q<ScrollView>("BindingScrollView");
         list.Clear();
 
@@ -59,9 +68,16 @@ public class InputBindingsMenu : MonoBehaviour
                 {
                     button.text = "Waiting for new input:";
                     action.Disable();
-                    action.RemoveAllBindingOverrides();
-                    action.PerformInteractiveRebinding().OnComplete(_ => button.text = "Rebind").Start();
-                    action.Enable();
+
+                    action.PerformInteractiveRebinding()
+                        .OnComplete(operation =>
+                        {
+                            operation.Dispose();
+                            action.Enable();
+                            button.text = "Rebind";
+                            SyncBindings();
+                        })
+                        .Start();
                 }
 
                 list.Add(bindingElement);
@@ -73,6 +89,32 @@ public class InputBindingsMenu : MonoBehaviour
         {
             ToggleVisibility();
         }
+    }
+
+    /// <summary>
+    /// Modifying input bindings through unity's input manager updates the PlayerInput instance, but because a player
+    /// instance creates a copy of the input bindings, those bindings will become stale. This aims to sync the two.
+    ///
+    /// This function will also save the input bindings ot the playerPrefs, which should allow us to save between
+    /// closing and re-opening the game
+    /// </summary>
+    private void SyncBindings()
+    {
+        // getting the input bindings
+        string bindingOverrides = m_inputActionAsset.SaveBindingOverridesAsJson();
+
+        // loops over all instances of the player class (idk why there'd be more than one, but for sake of avoiding weird multi-level shenanigans)
+        foreach (PlayerInput playerInput in PlayerInput.all)
+        {
+            // replaces the bindings currently on the player with the updated ones
+            playerInput.actions.RemoveAllBindingOverrides();
+            playerInput.actions.LoadBindingOverridesFromJson(bindingOverrides);
+        }
+
+        // saving the bindings to PlayerPrefs
+        PlayerPrefs.SetString("rebinds", bindingOverrides);
+        PlayerPrefs.Save();
+
     }
 
     public void OnPause(InputAction.CallbackContext value)
