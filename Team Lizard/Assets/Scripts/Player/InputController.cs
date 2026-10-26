@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Specialized;
+using System.Net.Http.Headers;
 using Unity.VisualScripting;
 using UnityEditor.Build.Pipeline;
 using UnityEngine;
@@ -13,6 +14,7 @@ public struct MovementRequest
     public bool IsSliding;
     public bool IsWallRunning;
     public Vector3 WallNormal;
+    public bool IsInteracting;
 }
 
 public class InputController : MonoBehaviour
@@ -80,10 +82,9 @@ public class InputController : MonoBehaviour
     private bool m_isWallRunning;
     private Vector3 m_wallNormal;
     private Vector3 m_wallJumpVelocity;
-    private bool m_isSprintHeld;
-    private bool m_isSlideHeld;
+    private bool m_isSprintToggled;
+    private bool m_isSlideToggled;
     private bool m_isJumping;
-    private bool m_isParkouring;
     private int m_extraJumps;
     private Vector2 m_moveInput;
     private Vector2 m_lookInput;
@@ -120,9 +121,9 @@ public class InputController : MonoBehaviour
         if (m_parkourState.CurrentAction != null)
         {
             Vector3 curveDirection = m_parkourState.CurrentAction.Evaluate(
-                m_parkourState.StartingPosition, 
-                m_parkourState.EndingPosition, 
-                m_parkourState.ObstacleHeight, 
+                m_parkourState.StartingPosition,
+                m_parkourState.EndingPosition,
+                m_parkourState.ObstacleHeight,
                 m_parkourState.AnimationTime);
 
             // Split found velocity into horizontal and vertical velocity (this will be recombined later.)
@@ -131,7 +132,7 @@ public class InputController : MonoBehaviour
 
             // Step animation forward.
             m_parkourState.AnimationTime += Time.deltaTime;
-            
+
             // Once the animation has played, clear the current parkour state.
             if (m_parkourState.AnimationTime > m_parkourState.AnimationLength)
             {
@@ -314,7 +315,7 @@ public class InputController : MonoBehaviour
         move = Vector3.ClampMagnitude(move, 1f);
 
         float finalSpeed;
-        if (m_isSlideHeld && m_firstPersonController.IsGrounded)
+        if (m_isSlideToggled && m_firstPersonController.IsGrounded)
         {
             m_movementRequest.IsSliding = true;
             finalSpeed = HandleSlide(m_moveSpeed);
@@ -322,7 +323,7 @@ public class InputController : MonoBehaviour
         else
         {
             m_movementRequest.IsSliding = false;
-            finalSpeed = m_isSprintHeld ? m_moveSpeed * m_sprintMultiplier : m_moveSpeed;
+            finalSpeed = m_isSprintToggled ? m_moveSpeed * m_sprintMultiplier : m_moveSpeed;
         }
 
         return move * finalSpeed;
@@ -356,7 +357,11 @@ public class InputController : MonoBehaviour
     /// <param name="value">Information about input being passed to controller.</param>
     public void OnSprint(InputAction.CallbackContext value)
     {
-       m_isSprintHeld = value.ReadValueAsButton();
+        if (value.started)
+        {
+            m_isSprintToggled = !m_isSprintToggled;
+        }
+      
     }
 
     /// <summary>
@@ -383,12 +388,24 @@ public class InputController : MonoBehaviour
     {
         if (value.started)
         {
-            m_isSlideHeld = true;
+            m_isSlideToggled = !m_isSlideToggled;
+
+            if (!m_isSlideToggled)
+            {
+                m_currentSlideMultiplier = m_slideMultiplier;
+            }
+        }
+    }
+
+    public void OnInteract(InputAction.CallbackContext value)
+    {
+        if (value.started)
+        {
+            m_movementRequest.IsInteracting = true;
         }
         else if (value.canceled)
         {
-            m_isSlideHeld = false;
-            m_currentSlideMultiplier = m_slideMultiplier;
+            m_movementRequest.IsInteracting = false;
         }
     }
 }
