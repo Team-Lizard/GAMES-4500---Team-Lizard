@@ -12,13 +12,23 @@ public class FirstPersonController : MonoBehaviour
         [Tooltip("Force of gravity applied to player.")]
         private float m_gravity = -9.81f;
 
+    [Header("Friction")]
         [SerializeField]
         [Tooltip("Force of ground friction horizontally on player.")]
-        private float m_horizontalGroundFriction = 17f;
+        private float m_groundFriction = 17f;
 
         [SerializeField]
         [Tooltip("Force of air friction horizontally on player.")]
-        private float m_horizontalAirFriction = 4f;
+        private float m_airFriction = 4f;
+
+    [Header("Acceleration")]
+        [SerializeField]
+        [Tooltip("Speed of acceleration when on ground.")]
+        private float m_groundAcceleration = 60f;
+
+        [SerializeField]
+        [Tooltip("Speed of acceleration when in air.")]
+        private float m_airAcceleration = 20f;
 
     [Header("Camera")]
         [SerializeField]
@@ -61,9 +71,9 @@ public class FirstPersonController : MonoBehaviour
 
     private CharacterController m_characterController;
 
-    private float m_playerVelocityY;
+    private float m_verticalVelocity;
     private float m_pitch = 0f;
-    private Vector3 m_inertia;
+    private Vector3 m_horizontalVelocity;
     private float m_standHeight;
     private float m_standCameraY;
     private float m_standRadius;
@@ -109,21 +119,23 @@ public class FirstPersonController : MonoBehaviour
 
         ApplyGravity(request.IsWallRunning);
 
-        // If player is standing on a moving platform, apply that platform's movement to the player.
-        if (m_currentPlatform != null)
+        Vector3 desired = request.DesiredVelocity;
+        UpdateHorizontalVelocity(new Vector3(desired.x, 0f, desired.z));
+
+        // If player wants to jump, override vertical velocity.
+        if (desired.y != 0)
         {
-            ApplyPlatformMovement();
+            m_verticalVelocity = desired.y * Mathf.Sqrt(-1*m_gravity);
         }
 
-        // Apply friction if the player doesn't want to move, apply their movement otherwise.
-        if (request.DesiredVelocity == Vector3.zero)
+        // Inertia comes from player input and friction.
+        Vector3 displacement = new Vector3(m_horizontalVelocity.x, m_verticalVelocity, m_horizontalVelocity.z) * Time.deltaTime;
+        if (m_currentPlatform != null)
         {
-            ApplyFriction();
+            displacement += m_currentPlatform.GetTotalDelta();
         }
-        else
-        {
-            ApplyMove(request.DesiredVelocity);
-        }
+
+        m_characterController.Move(displacement);
 
         HandleInteractions(request.IsInteracting);
     }
@@ -133,8 +145,8 @@ public class FirstPersonController : MonoBehaviour
     /// </summary>
     public void ResetVelocity()
     {
-        m_inertia = Vector3.zero;
-        m_playerVelocityY = 0f;
+        m_horizontalVelocity = Vector3.zero;
+        m_verticalVelocity = 0f;
     }
 
     /// <summary>
@@ -149,7 +161,7 @@ public class FirstPersonController : MonoBehaviour
             if (!m_wasWallRunning)
             {
                 // Just latched: stop all vertical motion and restart the timer.
-                m_playerVelocityY = 0f;
+                m_verticalVelocity = 0f;
                 m_wallRunTimer = 0f;
             }
 
@@ -162,15 +174,15 @@ public class FirstPersonController : MonoBehaviour
         m_wasWallRunning = isWallRunning;
 
         IsGrounded = m_characterController.isGrounded;
-        if (IsGrounded && m_playerVelocityY < 0)
+        if (IsGrounded && m_verticalVelocity < 0)
         {
             // Player needs to be pressed into the ground for isGrounded to work correctly.
-            m_playerVelocityY = m_gravity * Time.deltaTime;
+            m_verticalVelocity = m_gravity * Time.deltaTime;
         }
         else
         {
             // Player is not on ground, accelerate downwards.
-            m_playerVelocityY += gravity * Time.deltaTime;
+            m_verticalVelocity += gravity * Time.deltaTime;
 
             // Player also isn't touching a platform
             m_currentPlatform = null;
@@ -178,44 +190,33 @@ public class FirstPersonController : MonoBehaviour
     }
 
     /// <summary>
-    /// Move player by whatever amount the platform they're standing on is moving.
+    /// Move player velocity towards the desired velocity. If there is no player input, move towards no velocity.
     /// </summary>
-    private void ApplyPlatformMovement()
+    /// <param name="target">Target direction and velocity to reach.</param>
+    private void UpdateHorizontalVelocity(Vector3 target)
     {
-        Vector3 delta = m_currentPlatform.GetTotalDelta();
-        m_characterController.Move(delta);
-    }
-
-    /// <summary>
-    /// Player's momentum is preserved after they stop moving. Friction interpolates this momentum down to zero.
-    /// </summary>
-    private void ApplyFriction()
-    {
+        bool hasInput = target.sqrMagnitude > 0.0001f;
+        float dt = Time.deltaTime;
+        
         if (IsGrounded)
         {
-            m_inertia = Vector3.MoveTowards(m_inertia, Vector3.zero, m_horizontalGroundFriction * Time.deltaTime);
+            float rate = hasInput ? m_groundAcceleration : m_groundFriction;
+            m_horizontalVelocity = Vector3.MoveTowards(m_horizontalVelocity, target, rate * dt);
+        }
+        else if (hasInput)
+        {
+            // Don't let player input get faster than the magnitude we defined in the input controller.
+            float speedCap = Mathf.Max(m_horizontalVelocity.magnitude, target.magnitude);
+
+            // Move towards direction we have input in, clamping if we go beyond the max.
+            m_horizontalVelocity += target.normalized * (m_airAcceleration * dt);
+            m_horizontalVelocity = Vector3.ClampMagnitude(m_horizontalVelocity, speedCap);
         }
         else
         {
-            m_inertia = Vector3.MoveTowards(m_inertia, Vector3.zero, m_horizontalAirFriction * Time.deltaTime);
+            // This is separate because we don't need to clamp our velocity as we move towards zero.
+            m_horizontalVelocity = Vector3.MoveTowards(m_horizontalVelocity, Vector3.zero, m_airFriction * dt);
         }
-        m_characterController.Move(new Vector3(m_inertia.x, m_playerVelocityY, m_inertia.z) * Time.deltaTime);
-    }
-
-    /// <summary>
-    /// Move player according to their requested input, to the best of our ability.
-    /// </summary>
-    /// <param name="moveInput">Vector3 representing requested movement.</param>
-    private void ApplyMove(Vector3 moveInput)
-    {
-        if (moveInput.y != 0)
-        {
-            // If player wants to jump, override vertical velocity.
-            m_playerVelocityY = moveInput.y * Mathf.Sqrt(-1*m_gravity);
-        }
-
-        m_characterController.Move(new Vector3(moveInput.x, m_playerVelocityY, moveInput.z) * Time.deltaTime);
-        m_inertia = new Vector3(moveInput.x, 0, moveInput.z);
     }
 
     /// <summary>
