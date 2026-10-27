@@ -145,24 +145,10 @@ public class FirstPersonController : MonoBehaviour
         bool wasGrounded = IsGrounded;
         m_characterController.Move(displacement);
 
-        bool snapped = false;
-
         if (wasGrounded && !m_characterController.isGrounded
             && desired.y == 0f && !request.IsWallRunning && m_verticalVelocity <= 0f)
         {
-            float half = m_characterController.height * 0.5f;
-            Vector3 origin = transform.position + m_characterController.center;
-            float snap = m_snapDistance + new Vector2(m_horizontalVelocity.x, m_horizontalVelocity.z).magnitude * Time.deltaTime;
-
-            if (Physics.Raycast(origin, Vector3.down, out RaycastHit hit, half + snap)
-                && Vector3.Angle(hit.normal, Vector3.up) <= m_characterController.slopeLimit)
-            {
-                m_characterController.Move(Vector3.down * (hit.distance - half));
-                m_verticalVelocity = -2f;
-                snapped = true;
-            }
-
-            m_snappedLastFrame = snapped;
+            m_snappedLastFrame = TrySnap();
         }
 
         HandleInteractions(request.IsInteracting);
@@ -295,6 +281,27 @@ public class FirstPersonController : MonoBehaviour
         Vector3 currentCameraPosition = m_cameraTransform.localPosition;
         currentCameraPosition.y = Mathf.Lerp(currentCameraPosition.y, intendedCameraHeight, m_slideCameraLerp * Time.deltaTime);
         m_cameraTransform.localPosition = currentCameraPosition;
+    }
+
+    /// <summary>
+    /// Tries to snap player to slope or step.
+    /// </summary>
+    private bool TrySnap()
+    {
+        float half = m_characterController.height * 0.5f;
+        Vector3 origin = transform.position + m_characterController.center;
+        float snap = m_snapDistance + new Vector2(m_horizontalVelocity.x, m_horizontalVelocity.z).magnitude * Time.deltaTime;
+
+        if (Physics.Raycast(origin, Vector3.down, out RaycastHit hit, half + snap)
+            && Vector3.Angle(hit.normal, Vector3.up) <= m_characterController.slopeLimit)
+        {
+            m_characterController.Move(Vector3.down * (hit.distance - half));
+            m_verticalVelocity = -2f;
+
+            return true;
+        }
+
+        return false;
     }
 
     /// <summary>
