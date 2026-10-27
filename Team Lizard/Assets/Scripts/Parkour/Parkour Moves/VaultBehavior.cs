@@ -1,5 +1,4 @@
 using Unity.VisualScripting;
-using UnityEditor.EditorTools;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "VaultBehavior", menuName = "Scriptable Objects/VaultBehavior")]

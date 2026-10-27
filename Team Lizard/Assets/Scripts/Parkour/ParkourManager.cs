@@ -59,4 +59,12 @@ public class ParkourManager : MonoBehaviour
 
         return parkourState;
     }
+
+    /// <summary>
+    /// Checks for a wall-runnable surface to either side of the player.
+    /// </summary>
+    public WallHitInfo CheckWall()
+    {
+        return m_obstacleSensor.DetectWall(transform.right);
+    }
 }

@@ -1,4 +1,5 @@
 using System;
+using Unity.Multiplayer.PlayMode;
 using Unity.VisualScripting;
 using UnityEditor.Build.Pipeline;
 using UnityEngine;
@@ -12,16 +13,24 @@ public class FirstPersonController : MonoBehaviour
         [Tooltip("Force of gravity applied to player.")]
         private float m_gravity = -9.81f;
 
+    [Header("Friction")]
         [SerializeField]
         [Tooltip("Force of ground friction horizontally on player.")]
-        private float m_horizontalGroundFriction = 17f;
+        private float m_groundFriction = 17f;
 
         [SerializeField]
         [Tooltip("Force of air friction horizontally on player.")]
-        private float m_horizontalAirFriction = 4f;
-    [Header("Wwise Object")]
-    public AK.Wwise.Event MyFootStep;
-    public AK.Wwise.Event MyLanding;
+        private float m_airFriction = 4f;
+
+    [Header("Acceleration")]
+        [SerializeField]
+        [Tooltip("Speed of acceleration when on ground.")]
+        private float m_groundAcceleration = 60f;
+
+        [SerializeField]
+        [Tooltip("Speed of acceleration when in air.")]
+        private float m_airAcceleration = 20f;
+
     [Header("Camera")]
         [SerializeField]
         [Tooltip("Transform of object parenting camera.")]
@@ -36,23 +45,45 @@ public class FirstPersonController : MonoBehaviour
         [Tooltip("How fast to transition to and from slide.")]
         private float m_slideCameraLerp = 12f;
 
+    [Header("Wall Running")]
+        [SerializeField]
+        [Tooltip("Multiplier applied to gravity while wall running (lower = floatier).")]
+        private float m_wallRunGravityMultiplier = 0.2f;
+
+        [SerializeField]
+        [Tooltip("Degrees to roll the camera while wall running.")]
+        private float m_wallRunCameraRoll = 15f;
+
+        [SerializeField]
+        [Tooltip("How fast the camera rolls into/out of a wall run.")]
+        private float m_wallRunRollLerp = 10f;
+
+        [SerializeField]
+        [Tooltip("Seconds the player holds their height after latching onto a wall.")]
+        private float m_wallRunHangTime = 0.7f;
+
+        [SerializeField]
+        [Tooltip("Seconds over which gravity ramps from zero to full wall-run gravity after the hang.")]
+        private float m_wallRunSlideRampTime = 0.5f;
+
+    private float m_wallRunTimer;
+    private bool m_wasWallRunning;
+    private float m_roll;
+
     private CharacterController m_characterController;
 
-    private float m_playerVelocityY;
+    private float m_verticalVelocity;
     private float m_pitch = 0f;
-    private Vector3 m_inertia;
+    private Vector3 m_horizontalVelocity;
     private float m_standHeight;
     private float m_standCameraY;
+    private float m_standRadius;
     private Vector3 m_standCenter;
     private bool m_isCrouched = false;
 
-    //Wwise variables
-    private bool m_footstepIsPlaying = false;
-    private float m_footstepTime = 0;
-    public float m_speed { get; private set; }
-    private Vector3 m_lastPosition;
-    private bool m_isgrounded = false;
-    private bool m_isjumping = false;
+    // item-specific data
+    private MovingPlatform m_currentPlatform;
+    private event Action m_interactableAction;
 
     /// <summary>
     /// Is the player currently touching the ground?
@@ -67,18 +98,12 @@ public class FirstPersonController : MonoBehaviour
     {
         m_characterController = gameObject.GetComponent<CharacterController>();
         m_standHeight = m_characterController.height;
+        m_standRadius = m_characterController.radius;
         m_standCameraY = m_cameraTransform.localPosition.y;
         m_standCenter = m_characterController.center;
-        m_footstepTime = Time.time;
-        m_lastPosition = transform.position;
-    }
 
-    private void Update()
-    {
-        Vector3 delta = transform.position - m_lastPosition;
-        delta.y = 0f;
-        m_speed = delta.magnitude / Time.deltaTime;
-        m_lastPosition = transform.position;
+        // empty action initialization
+        m_interactableAction = new Action(() => { });
     }
 
     /// <summary>
@@ -89,99 +114,110 @@ public class FirstPersonController : MonoBehaviour
     {
         UpdateSlidePose(request.IsSliding);
 
+        UpdateWallRunRoll(request.IsWallRunning, request.WallNormal);
+
         ApplyLook(request.LookDelta);
 
-        ApplyGravity();
+        ApplyGravity(request.IsWallRunning);
 
-        // Apply friction if the player doesn't want to move, apply their movement otherwise.
-        if (request.DesiredVelocity == Vector3.zero)
+        Vector3 desired = request.DesiredVelocity;
+        UpdateHorizontalVelocity(new Vector3(desired.x, 0f, desired.z));
+
+        // If player wants to jump, override vertical velocity.
+        if (desired.y != 0)
         {
-            ApplyFriction();
+            m_verticalVelocity = desired.y * Mathf.Sqrt(-1*m_gravity);
         }
-        else
+
+        // Inertia comes from player input and friction.
+        Vector3 displacement = new Vector3(m_horizontalVelocity.x, m_verticalVelocity, m_horizontalVelocity.z) * Time.deltaTime;
+        if (m_currentPlatform != null)
         {
-            ApplyMove(request.DesiredVelocity);
+            displacement += m_currentPlatform.GetTotalDelta();
         }
+
+        m_characterController.Move(displacement);
+
+        HandleInteractions(request.IsInteracting);
+    }
+
+    /// <summary>
+    /// Reset velocity of player for when they die.
+    /// </summary>
+    public void ResetVelocity()
+    {
+        m_horizontalVelocity = Vector3.zero;
+        m_verticalVelocity = 0f;
     }
 
     /// <summary>
     /// Checks if player is touching ground and applies gravity otherwise.
     /// </summary>
-    private void ApplyGravity()
+    private void ApplyGravity(bool isWallRunning)
     {
+        float gravity = m_gravity;
+
+        if (isWallRunning)
+        {
+            if (!m_wasWallRunning)
+            {
+                // Just latched: stop all vertical motion and restart the timer.
+                m_verticalVelocity = 0f;
+                m_wallRunTimer = 0f;
+            }
+
+            m_wallRunTimer += Time.deltaTime;
+
+            // 0 during the hang, then ramps up to the wall-run multiplier.
+            float wallRunProgress = Mathf.InverseLerp(m_wallRunHangTime, m_wallRunHangTime + m_wallRunSlideRampTime, m_wallRunTimer);
+            gravity = m_gravity * Mathf.Lerp(0f, m_wallRunGravityMultiplier, wallRunProgress);
+        }
+        m_wasWallRunning = isWallRunning;
+
         IsGrounded = m_characterController.isGrounded;
-        if (IsGrounded && m_playerVelocityY < 0)
+        if (IsGrounded && m_verticalVelocity < 0)
         {
             // Player needs to be pressed into the ground for isGrounded to work correctly.
-            m_playerVelocityY = m_gravity * Time.deltaTime;
-            if (m_isjumping)
-            {
-                m_isgrounded = true;
-                m_isjumping = false;
-                MyLanding.Post(gameObject);
-            }
-            ;
+            m_verticalVelocity = m_gravity * Time.deltaTime;
         }
         else
         {
             // Player is not on ground, accelerate downwards.
-            m_playerVelocityY += m_gravity * Time.deltaTime;
+            m_verticalVelocity += gravity * Time.deltaTime;
+
+            // Player also isn't touching a platform
+            m_currentPlatform = null;
         }
     }
 
     /// <summary>
-    /// Player's momentum is preserved after they stop moving. Friction interpolates this momentum down to zero.
+    /// Move player velocity towards the desired velocity. If there is no player input, move towards no velocity.
     /// </summary>
-    private void ApplyFriction()
+    /// <param name="target">Target direction and velocity to reach.</param>
+    private void UpdateHorizontalVelocity(Vector3 target)
     {
+        bool hasInput = target.sqrMagnitude > 0.0001f;
+        float dt = Time.deltaTime;
+        
         if (IsGrounded)
         {
-            m_inertia = Vector3.MoveTowards(m_inertia, Vector3.zero, m_horizontalGroundFriction * Time.deltaTime);
+            float rate = hasInput ? m_groundAcceleration : m_groundFriction;
+            m_horizontalVelocity = Vector3.MoveTowards(m_horizontalVelocity, target, rate * dt);
+        }
+        else if (hasInput)
+        {
+            // Don't let player input get faster than the magnitude we defined in the input controller.
+            float speedCap = Mathf.Max(m_horizontalVelocity.magnitude, target.magnitude);
+
+            // Move towards direction we have input in, clamping if we go beyond the max.
+            m_horizontalVelocity += target.normalized * (m_airAcceleration * dt);
+            m_horizontalVelocity = Vector3.ClampMagnitude(m_horizontalVelocity, speedCap);
         }
         else
         {
-            m_inertia = Vector3.MoveTowards(m_inertia, Vector3.zero, m_horizontalAirFriction * Time.deltaTime);
+            // This is separate because we don't need to clamp our velocity as we move towards zero.
+            m_horizontalVelocity = Vector3.MoveTowards(m_horizontalVelocity, Vector3.zero, m_airFriction * dt);
         }
-        m_characterController.Move(new Vector3(m_inertia.x, m_playerVelocityY, m_inertia.z) * Time.deltaTime);
-    }
-
-    /// <summary>
-    /// Move player according to their requested input, to the best of our ability.
-    /// </summary>
-    /// <param name="moveInput">Vector3 representing requested movement.</param>
-    private void ApplyMove(Vector3 moveInput)
-    {
-        if (moveInput.y != 0)
-        {
-            // If player wants to jump, override vertical velocity.
-            m_playerVelocityY = moveInput.y * Mathf.Sqrt(-1*m_gravity);
-
-            MyFootStep.Post(gameObject);
-            m_isgrounded = false;
-            m_isjumping = true;
-
-        }
-
-        m_characterController.Move(new Vector3(moveInput.x, m_playerVelocityY, moveInput.z) * Time.deltaTime);
-        m_inertia = new Vector3(moveInput.x, 0, moveInput.z);
-        if(!m_footstepIsPlaying && m_isgrounded)
-        {
-            MyFootStep.Post(gameObject);
-            m_footstepTime = Time.time;
-            m_footstepIsPlaying = true;
-        }
-        else
-        {
-            if (m_speed > 1)
-            {
-                if (Time.time - m_footstepTime > 500 / m_speed * Time.deltaTime)
-                {
-                    m_footstepIsPlaying = false;
-                }
-            }
-        }
-
-            
     }
 
     /// <summary>
@@ -196,7 +232,22 @@ public class FirstPersonController : MonoBehaviour
         // Camera shouldn't be able to rotate further than straight up or straight down.
         m_pitch = Mathf.Clamp(m_pitch, -85f, 85f);
 
-        m_cameraTransform.localRotation = Quaternion.Euler(m_pitch, 0, 0);
+        m_cameraTransform.localRotation = Quaternion.Euler(m_pitch, 0, m_roll);
+    }
+
+    /// <summary>
+    /// Rolls the camera toward or away from the wall while wall running.
+    /// </summary>
+    private void UpdateWallRunRoll(bool isWallRunning, Vector3 wallNormal)
+    {
+        float targetRoll = 0f;
+        if (isWallRunning)
+        {
+            float side = Vector3.Dot(wallNormal, transform.right);
+            targetRoll = -side * m_wallRunCameraRoll;
+        }
+
+        m_roll = Mathf.Lerp(m_roll, targetRoll, m_wallRunRollLerp * Time.deltaTime);
     }
 
     /// <summary>
@@ -210,6 +261,7 @@ public class FirstPersonController : MonoBehaviour
         m_isCrouched = shouldCrouch;
 
         m_characterController.height = m_isCrouched ? m_slideHeight : m_standHeight;
+        m_characterController.radius = Math.Min(m_characterController.height, m_standRadius);
         m_characterController.center = m_standCenter + Vector3.down * ((m_standHeight - m_characterController.height) * 0.5f);
 
         float intendedCameraHeight = CalculateIntendedCameraHeight();
@@ -239,5 +291,51 @@ public class FirstPersonController : MonoBehaviour
         Vector3 origin = transform.position + m_characterController.center;
         float distance = m_standHeight - m_characterController.height * 0.5f + 0.05f;
         return !Physics.Raycast(origin, Vector3.up, distance);
+    }
+
+    /// <summary>
+    /// When the player touches a platform, check if that platform is moving and assign it to the player if so.
+    /// </summary>
+    /// <param name="hit">Collider that was just touched.</param>
+    private void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        MovingPlatform platform = hit.collider.GetComponent<MovingPlatform>();
+        if (platform != null)
+        {
+            m_currentPlatform = platform;
+            m_currentPlatform.GetTotalDelta();
+        }
+    }
+
+    /// <summary>
+    /// If the player is currently pressing the interact key, we try to interact with our environment
+    /// </summary>
+    /// <param name="isInteracting"> whether or not the player is trying to interact </param>
+    private void HandleInteractions(bool isInteracting)
+    {
+        if (isInteracting)
+        {
+            m_interactableAction?.Invoke();
+        }
+    }
+
+    /// <summary>
+    /// CALLED FROM ANOTHER OBJECT!!!!!!!!!!
+    /// passes in a new behavior that should be run when the interact input is pressed.
+    /// </summary>
+    /// <param name="action"> the new behavior to be executed if the interact input is pressed. </param>
+    public void SubscribeToOnInteract(Action action)
+    {
+        m_interactableAction += action;
+    }
+
+    /// <summary>
+    /// CALLED FROM ANOTHER OBJECT!!!!!!!!!!
+    /// passes in a behavior that should be no longer run when the interact input is pressed.
+    /// </summary>
+    /// <param name="action"> the new behavior to be no longer executed if the interact input is pressed. </param>
+    public void UnsubscribeToOnInteract(Action action)
+    {
+        m_interactableAction -= action;
     }
 }
