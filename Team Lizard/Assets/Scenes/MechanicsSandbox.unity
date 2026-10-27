@@ -1290,7 +1290,7 @@ PrefabInstance:
       objectReference: {fileID: 11400000, guid: 35a69e3a6fc49db43a01a9a49716bc7c, type: 2}
     - target: {fileID: 4864713323900413798, guid: 55d28c6e4ca51ab49aa8d59553278bef, type: 3}
       propertyPath: m_StepOffset
-      value: 0.1
+      value: 0.15
       objectReference: {fileID: 0}
     - target: {fileID: 7380285322809941162, guid: 55d28c6e4ca51ab49aa8d59553278bef, type: 3}
       propertyPath: m_ActionEvents.Array.data[4].m_ActionId
