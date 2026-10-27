@@ -65,6 +65,11 @@ public class FirstPersonController : MonoBehaviour
         [Tooltip("Seconds over which gravity ramps from zero to full wall-run gravity after the hang.")]
         private float m_wallRunSlideRampTime = 0.5f;
 
+    [Header("Snap Distance")]
+        [SerializeField]
+        [Tooltip("Distance to snap to ground")]
+        private float m_snapDistance = 0.3f;
+
     private float m_wallRunTimer;
     private bool m_wasWallRunning;
     private float m_roll;
@@ -79,6 +84,7 @@ public class FirstPersonController : MonoBehaviour
     private float m_standRadius;
     private Vector3 m_standCenter;
     private bool m_isCrouched = false;
+    private bool m_snappedLastFrame;
 
     // item-specific data
     private MovingPlatform m_currentPlatform;
@@ -120,7 +126,8 @@ public class FirstPersonController : MonoBehaviour
         ApplyGravity(request.IsWallRunning);
 
         Vector3 desired = request.DesiredVelocity;
-        UpdateHorizontalVelocity(new Vector3(desired.x, 0f, desired.z));
+        Vector3 target = new Vector3(desired.x, 0f, desired.z);
+        UpdateHorizontalVelocity(target);
 
         // If player wants to jump, override vertical velocity.
         if (desired.y != 0)
@@ -135,7 +142,28 @@ public class FirstPersonController : MonoBehaviour
             displacement += m_currentPlatform.GetTotalDelta();
         }
 
+        bool wasGrounded = IsGrounded;
         m_characterController.Move(displacement);
+
+        bool snapped = false;
+
+        if (wasGrounded && !m_characterController.isGrounded
+            && desired.y == 0f && !request.IsWallRunning && m_verticalVelocity <= 0f)
+        {
+            float half = m_characterController.height * 0.5f;
+            Vector3 origin = transform.position + m_characterController.center;
+            float snap = m_snapDistance + new Vector2(m_horizontalVelocity.x, m_horizontalVelocity.z).magnitude * Time.deltaTime;
+
+            if (Physics.Raycast(origin, Vector3.down, out RaycastHit hit, half + snap)
+                && Vector3.Angle(hit.normal, Vector3.up) <= m_characterController.slopeLimit)
+            {
+                m_characterController.Move(Vector3.down * (hit.distance - half));
+                m_verticalVelocity = -2f;
+                snapped = true;
+            }
+
+            m_snappedLastFrame = snapped;
+        }
 
         HandleInteractions(request.IsInteracting);
     }
@@ -173,7 +201,7 @@ public class FirstPersonController : MonoBehaviour
         }
         m_wasWallRunning = isWallRunning;
 
-        IsGrounded = m_characterController.isGrounded;
+        IsGrounded = m_characterController.isGrounded || m_snappedLastFrame;
         if (IsGrounded && m_verticalVelocity < 0)
         {
             // Player needs to be pressed into the ground for isGrounded to work correctly.
