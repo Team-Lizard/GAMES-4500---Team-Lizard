@@ -143,6 +143,7 @@ public class FirstPersonController : MonoBehaviour
         }
 
         bool wasGrounded = IsGrounded;
+        m_snappedLastFrame = false;
         m_characterController.Move(displacement);
 
         if (wasGrounded && !m_characterController.isGrounded
