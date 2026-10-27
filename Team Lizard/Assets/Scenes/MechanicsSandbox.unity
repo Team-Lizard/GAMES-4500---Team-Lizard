@@ -1477,107 +1477,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1633818120
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1633818113}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 29aff1bb34a81cc4b8df0c9a20f7b1f8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::InputController
-  m_moveSpeed: 5
-  m_sprintMultiplier: 1.8
-  m_slideMultiplier: 1.8
-  m_minimumSlideMultiplier: 0.5
-  m_slideDecay: 1.8
-  m_jumpHeight: 1.5
-  m_lookSensitivity: 0.5
-  m_maxExtraJumps: 1
-  m_coyoteTime: 0.15
---- !u!114 &1633818121
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1633818113}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 067b705f339e6ea4fbccc4eb75011a76, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::FirstPersonController
-  m_gravity: -9.81
-  m_horizontalGroundFriction: 17
-  m_horizontalAirFriction: 4
-  MyFootStep:
-    idInternal: 0
-    valueGuidInternal: 
-    WwiseObjectReference: {fileID: 0}
-  MyLanding:
-    idInternal: 0
-    valueGuidInternal: 
-    WwiseObjectReference: {fileID: 0}
-  m_cameraTransform: {fileID: 0}
-  m_slideHeight: 0.5
-  m_slideCameraLerp: 12
---- !u!143 &1633818122
-CharacterController:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1633818113}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Height: 2
-  m_Radius: 0.5
-  m_SlopeLimit: 45
-  m_StepOffset: 0.15
-  m_SkinWidth: 0.08
-  m_MinMoveDistance: 0
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &1633818123
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1633818113}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 24514e37652a6d743ab7aa666ddde9da, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ObjectSensor
-  m_rayHeight: -0.5
-  m_rayLength: 1
---- !u!114 &1633818124
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1633818113}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: addb9f58488390e4192888360a850a83, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ParkourManager
-  m_parkourBehaviors:
-  - {fileID: 11400000, guid: 5d5a9a5d4e124894aabc8dc2e03212f5, type: 2}
-  - {fileID: 11400000, guid: 35a69e3a6fc49db43a01a9a49716bc7c, type: 2}
 --- !u!1 &1727344794
 GameObject:
   m_ObjectHideFlags: 0
@@ -2032,6 +1931,18 @@ PrefabInstance:
       propertyPath: MyFootStep.WwiseObjectReference
       value: 
       objectReference: {fileID: 11400000, guid: ef8158c8804f0f84bbacd7a9809142b9, type: 2}
+    - target: {fileID: 6610288824303935535, guid: 55d28c6e4ca51ab49aa8d59553278bef, type: 3}
+      propertyPath: m_jumpEvent.WwiseObjectReference
+      value: 
+      objectReference: {fileID: 11400000, guid: ef8158c8804f0f84bbacd7a9809142b9, type: 2}
+    - target: {fileID: 6610288824303935535, guid: 55d28c6e4ca51ab49aa8d59553278bef, type: 3}
+      propertyPath: m_landingEvent.WwiseObjectReference
+      value: 
+      objectReference: {fileID: 11400000, guid: 5009855e4c31bad43b4f0cde1a47863d, type: 2}
+    - target: {fileID: 6610288824303935535, guid: 55d28c6e4ca51ab49aa8d59553278bef, type: 3}
+      propertyPath: m_footStepEvent.WwiseObjectReference
+      value: 
+      objectReference: {fileID: 11400000, guid: ef8158c8804f0f84bbacd7a9809142b9, type: 2}
     - target: {fileID: 8985268930540334528, guid: 55d28c6e4ca51ab49aa8d59553278bef, type: 3}
       propertyPath: m_Name
       value: Character
@@ -2063,8 +1974,10 @@ SceneRoots:
   - {fileID: 992715060}
   - {fileID: 1256711660}
   - {fileID: 1727344798}
-  - {fileID: 1633818119}
   - {fileID: 281999469}
   - {fileID: 367677838}
   - {fileID: 180636781}
   - {fileID: 2087813807}
+  - {fileID: 559898245}
+  - {fileID: 911709661}
+  - {fileID: 1274805228}
