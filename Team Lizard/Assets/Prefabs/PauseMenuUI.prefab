@@ -10,8 +10,10 @@ GameObject:
   m_Component:
   - component: {fileID: 4614795970324628052}
   - component: {fileID: 5492744906460156084}
-  - component: {fileID: 7463673807666048332}
   - component: {fileID: 3802814054175529063}
+  - component: {fileID: 2703727010440317695}
+  - component: {fileID: 6000000000000000001}
+  - component: {fileID: 6000000000000000002}
   m_Layer: 5
   m_Name: PauseMenuUI
   m_TagString: Untagged
@@ -84,7 +86,7 @@ PanelRenderer:
   m_MaskInteraction: 0
   serializedVersion: 1
   m_PanelSettings: {fileID: 11400000, guid: 53c02929ebd16794d839d95a95d4248f, type: 2}
-  sourceAsset: {fileID: 9197481963319205126, guid: a18ba1c5ff344634e9d4bdcffacfa8e5, type: 3}
+  sourceAsset: {fileID: 9197481963319205126, guid: 2a4ee679afdf7ac46aafadce9c7b37b4, type: 3}
   m_ParentUI: {fileID: 0}
   m_WorldSpaceSizeMode: 1
   m_WorldSpaceWidth: 1920
@@ -92,20 +94,6 @@ PanelRenderer:
   m_PivotReferenceSize: 0
   m_Pivot: 0
   m_Position: 0
---- !u!114 &7463673807666048332
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 701428655326167618}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f908b3c107267f944b4a26607e9932b1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::InputBindingsMenu
-  m_inputActionAsset: {fileID: -944628639613478452, guid: b9877ba5dedd6f94591166917da37e37, type: 3}
-  m_bindingUI: {fileID: 9197481963319205126, guid: 477445ef0c8e3ce43819b594595777e5, type: 3}
 --- !u!114 &3802814054175529063
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -153,8 +141,8 @@ MonoBehaviour:
     m_ActionName: 'Player/Slide[/Keyboard/ctrl]'
   - m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 7463673807666048332}
-        m_TargetAssemblyTypeName: InputBindingsMenu, Assembly-CSharp
+      - m_Target: {fileID: 2703727010440317695}
+        m_TargetAssemblyTypeName: Menus.PauseMenu, Assembly-CSharp
         m_MethodName: OnPause
         m_Mode: 0
         m_Arguments:
@@ -176,3 +164,45 @@ MonoBehaviour:
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
+--- !u!114 &2703727010440317695
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 701428655326167618}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f6689fc03aab4ed0b91d9b22c948072f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Menus.PauseMenu
+  m_inputBindingsMenu: {fileID: 6000000000000000001}
+  m_debugMenu: {fileID: 6000000000000000002}
+--- !u!114 &6000000000000000001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 701428655326167618}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f908b3c107267f944b4a26607e9932b1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InputBindingsMenu
+  m_menuUI: {fileID: 9197481963319205126, guid: a18ba1c5ff344634e9d4bdcffacfa8e5, type: 3}
+  m_inputActionAsset: {fileID: -944628639613478452, guid: b9877ba5dedd6f94591166917da37e37, type: 3}
+  m_bindingUI: {fileID: 9197481963319205126, guid: 477445ef0c8e3ce43819b594595777e5, type: 3}
+--- !u!114 &6000000000000000002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 701428655326167618}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67f2bf40fc87e6a4b984f9ef19d6365c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DebugMenu
+  m_menuUI: {fileID: 9197481963319205126, guid: e5fa6c2342505be408902363e40acc97, type: 3}

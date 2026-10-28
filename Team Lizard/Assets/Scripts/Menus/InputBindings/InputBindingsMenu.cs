@@ -1,11 +1,15 @@
+using Menus;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.UI;
 using UnityEngine.UIElements;
 using Button = UnityEngine.UIElements.Button;
 
-public class InputBindingsMenu : MonoBehaviour
+public class InputBindingsMenu : MonoBehaviour, ISubMenu
 {
+    [SerializeField]
+    [Tooltip("The UXML file containing the input bindings submenu")]
+    private VisualTreeAsset m_menuUI;
+
     [SerializeField]
     [Tooltip("Asset containing all InputActions (player run, player jump, pause, etc)")]
     private InputActionAsset m_inputActionAsset;
@@ -15,16 +19,10 @@ public class InputBindingsMenu : MonoBehaviour
     private VisualTreeAsset m_bindingUI;
 
     /// <summary>
-    /// the PanelRenderer object the script is attached to
+    /// ran when this submenu is first loaded
     /// </summary>
-    private PanelRenderer m_panelRenderer;
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    private void Start()
+    private void Awake()
     {
-        m_panelRenderer = GetComponent<PanelRenderer>();
-        m_panelRenderer.RegisterUIReloadCallback(OnUIReload);
-
         if (PlayerPrefs.HasKey("rebinds"))
         {
             m_inputActionAsset.LoadBindingOverridesFromJson(
@@ -33,12 +31,8 @@ public class InputBindingsMenu : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Called whenever the UI is reloaded to prevent any sort of desync
-    /// </summary>
-    /// <param name="panelRenderer"> The panelRenderer object representing this UI </param>
-    /// <param name="root"> the root element of the panelRenderer's UI tree </param>
-    private void OnUIReload(PanelRenderer panelRenderer, VisualElement root)
+
+    public void Build(VisualElement root)
     {
         SyncBindings();
 
@@ -55,6 +49,7 @@ public class InputBindingsMenu : MonoBehaviour
 
                 // making a new BindingUI, updating the information it shows, and displays it
                 TemplateContainer bindingElement = m_bindingUI.Instantiate();
+                bindingElement.AddToClassList("input-binding");
 
                 bindingElement.name = action.name;
                 bindingElement.Q<Label>().text = action.name;
@@ -83,12 +78,6 @@ public class InputBindingsMenu : MonoBehaviour
                 list.Add(bindingElement);
             }
         }
-
-        // making sure that the menu is disabled whenever it's first loaded
-        if (panelRenderer.enabled)
-        {
-            ToggleVisibility();
-        }
     }
 
     /// <summary>
@@ -114,16 +103,11 @@ public class InputBindingsMenu : MonoBehaviour
         // saving the bindings to PlayerPrefs
         PlayerPrefs.SetString("rebinds", bindingOverrides);
         PlayerPrefs.Save();
-
     }
 
-    public void OnPause(InputAction.CallbackContext value)
-    {
-        ToggleVisibility();
-    }
 
-    private void ToggleVisibility()
+    public VisualTreeAsset GetVisualTreeAsset()
     {
-        m_panelRenderer.enabled = !m_panelRenderer.enabled;
+        return m_menuUI;
     }
 }

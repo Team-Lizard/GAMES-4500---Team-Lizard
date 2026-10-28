@@ -1,0 +1,21 @@
+.input-binding {
+    display: flex;
+    flex-direction: row;
+    height: auto;
+    min-height: 20px;
+    margin-left: 5px;
+    margin-right: 5px;
+    flex-grow: 1;
+}
+
+.rebind-button {
+    -unity-text-align: middle-center;
+    flex-grow: 1;
+    min-width: 200px;
+}
+
+.binding-label {
+    flex-grow: 1;
+    min-width: 200px;
+    -unity-text-align: upper-center;
+}
