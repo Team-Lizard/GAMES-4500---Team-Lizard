@@ -28,6 +28,37 @@ public class InputController : MonoBehaviour
         [Tooltip("Amount that speed is multiplied by when player is sprinting.")]
         private float m_sprintMultiplier = 1.8f;
 
+        [Space]
+
+        [SerializeField]
+        [Tooltip("Height that player can jump.")]
+        private float m_jumpHeight = 1.5f;
+
+        [SerializeField]
+        [Tooltip("Height that player can jump for their dadditional jumps.")]
+        private float m_extraJumpHeight = 1.5f;
+
+        [SerializeField]
+        [Tooltip("Height that player can jump off of a wall.")]
+        private float m_wallJumpHeight = 1.5f;
+
+        [SerializeField]
+        [Tooltip("Number of jumps the player can perform while not touching the ground.")]
+        private int m_maxExtraJumps = 1;
+
+        [Space]
+
+        [SerializeField]
+        [Tooltip("Mouse sensitivity when controlling the camera.")]
+        private float m_lookSensitivity = 1.5f;
+
+        [SerializeField]
+        [Tooltip("Time in seconds after leaving the ground where the player can still jump.")]
+        private float m_coyoteTime = 0.15f;
+
+
+    [Header("Sliding")]
+
         [SerializeField]
         [Tooltip("Amount that speed is multiplied by when player is sliding.")]
         private float m_slideMultiplier = 1.8f;
@@ -39,30 +70,6 @@ public class InputController : MonoBehaviour
         [SerializeField]
         [Tooltip("How fast slide decays.")]
         private float m_slideDecay = 1.8f;
-
-        [SerializeField]
-        [Tooltip("Height that player can jump.")]
-        private float m_jumpHeight = 1.5f;
-
-        [SerializeField]
-        [Tooltip("Height that player can jump for their double jump.")]
-        private float m_secondJumpHeight = 1.5f;
-
-        [SerializeField]
-        [Tooltip("Height that player can jump off of a wall.")]
-        private float m_wallJumpHeight = 1.5f;
-
-        [SerializeField]
-        [Tooltip("Mouse sensitivity when controlling the camera.")]
-        private float m_lookSensitivity = 1.5f;
-
-        [SerializeField]
-        [Tooltip("Number of jumps the player can perform while not touching the ground.")]
-        private int m_maxExtraJumps = 1;
-
-        [SerializeField]
-        [Tooltip("Time in seconds after leaving the ground where the player can still jump.")]
-        private float m_coyoteTime = 0.15f;
 
     [Header("Wall Running")]
         [SerializeField]
@@ -288,7 +295,7 @@ public class InputController : MonoBehaviour
             }
             else if (m_extraJumps > 0)
             {
-                verticalVelocity = HandleJump(m_secondJumpHeight);
+                verticalVelocity = HandleJump(m_extraJumpHeight);
                 m_extraJumps--;
             }
         }
