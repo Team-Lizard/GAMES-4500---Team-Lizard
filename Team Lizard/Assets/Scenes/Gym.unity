@@ -3323,6 +3323,14 @@ PrefabInstance:
       propertyPath: 'm_parkourBehaviors.Array.data[1]'
       value: 
       objectReference: {fileID: 11400000, guid: 35a69e3a6fc49db43a01a9a49716bc7c, type: 2}
+    - target: {fileID: 3848311692467163602, guid: 55d28c6e4ca51ab49aa8d59553278bef, type: 3}
+      propertyPath: m_wallJumpHeight
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3848311692467163602, guid: 55d28c6e4ca51ab49aa8d59553278bef, type: 3}
+      propertyPath: m_secondJumpHeight
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6610288824303935535, guid: 55d28c6e4ca51ab49aa8d59553278bef, type: 3}
       propertyPath: m_airAcceleration
       value: 20

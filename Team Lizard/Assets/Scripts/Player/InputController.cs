@@ -45,6 +45,14 @@ public class InputController : MonoBehaviour
         private float m_jumpHeight = 1.5f;
 
         [SerializeField]
+        [Tooltip("Height that player can jump for their double jump.")]
+        private float m_secondJumpHeight = 1.5f;
+
+        [SerializeField]
+        [Tooltip("Height that player can jump off of a wall.")]
+        private float m_wallJumpHeight = 1.5f;
+
+        [SerializeField]
         [Tooltip("Mouse sensitivity when controlling the camera.")]
         private float m_lookSensitivity = 1.5f;
 
@@ -243,10 +251,10 @@ public class InputController : MonoBehaviour
     /// Handles calculating jump velocity and cancels player input.
     /// </summary>
     /// <returns>Float velocity of jump.</returns>
-    private float HandleJump()
+    private float HandleJump(float height)
     {
         // Jump calculation from Unity Documentation for Character Controller
-        float verticalVelocity = Mathf.Sqrt(m_jumpHeight * 2.0f);
+        float verticalVelocity = Mathf.Sqrt(height * 2.0f);
         m_isJumping = false;
         return verticalVelocity;
     }
@@ -272,15 +280,15 @@ public class InputController : MonoBehaviour
                 m_wallGraceTimer = 0f;
                 m_wallLockoutTimer = m_wallJumpLockoutTime;
 
-                return HandleJump();
+                return HandleJump(m_wallJumpHeight);
             }
             else if (m_firstPersonController.IsGrounded || m_coyoteTimer > 0f)
             {
-                verticalVelocity = HandleJump();
+                verticalVelocity = HandleJump(m_jumpHeight);
             }
             else if (m_extraJumps > 0)
             {
-                verticalVelocity = HandleJump();
+                verticalVelocity = HandleJump(m_secondJumpHeight);
                 m_extraJumps--;
             }
         }
