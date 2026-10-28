@@ -133,6 +133,7 @@ public class FirstPersonController : MonoBehaviour
         if (m_currentPlatform != null)
         {
             displacement += m_currentPlatform.GetTotalDelta();
+            m_currentPlatform.ActivatePlatform();
         }
 
         m_characterController.Move(displacement);
