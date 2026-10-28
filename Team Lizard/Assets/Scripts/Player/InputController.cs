@@ -329,19 +329,35 @@ public class InputController : MonoBehaviour
         // Make sure diagonal movement isn't faster than unidirectional movement.
         move = Vector3.ClampMagnitude(move, 1f);
 
-        float finalSpeed;
         if (m_isSlideToggled && m_firstPersonController.IsGrounded)
         {
             m_movementRequest.IsSliding = true;
-            finalSpeed = HandleSlide(m_moveSpeed);
+
+            return move * HandleSlide(m_moveSpeed);
         }
         else
         {
             m_movementRequest.IsSliding = false;
-            finalSpeed = m_isSprintToggled ? m_moveSpeed * m_sprintMultiplier : m_moveSpeed;
+            float forwardAmount = Vector3.Dot(move, transform.forward);
+
+            // We should only apply a sprint boost to forward momentum.
+            if (forwardAmount > 0)
+            {
+                float adjustedSpeed = m_isSprintToggled ? m_moveSpeed * m_sprintMultiplier : m_moveSpeed;
+
+                Vector3 forwardMove = (forwardAmount * transform.forward) * adjustedSpeed;
+                Vector3 sidewaysMove = (move - forwardAmount * transform.forward) * m_moveSpeed;
+
+                return forwardMove + sidewaysMove;
+            }
+            // If there's no forward momentum, move at a normal speed.
+            else
+            {
+                return move * m_moveSpeed;
+            }
+        
         }
 
-        return move * finalSpeed;
     }
 
     /// ---------------
