@@ -31,7 +31,6 @@ public class InputBindingsMenu : MonoBehaviour, ISubMenu
         }
     }
 
-
     public void Build(VisualElement root)
     {
         SyncBindings();
@@ -104,7 +103,6 @@ public class InputBindingsMenu : MonoBehaviour, ISubMenu
         PlayerPrefs.SetString("rebinds", bindingOverrides);
         PlayerPrefs.Save();
     }
-
 
     public VisualTreeAsset GetVisualTreeAsset()
     {

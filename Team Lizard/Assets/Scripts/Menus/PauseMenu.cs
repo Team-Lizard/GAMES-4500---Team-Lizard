@@ -52,7 +52,6 @@ namespace Menus
             SetVisibility(false);
         }
 
-
         /// <summary>
         /// Sets up the submenu UI
         /// </summary>
@@ -99,7 +98,6 @@ namespace Menus
             m_visible = !m_visible;
             SetVisibility(m_visible);
         }
-
 
         /// <summary>
         /// turns on/off the menu
