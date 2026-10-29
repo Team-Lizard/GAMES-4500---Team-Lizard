@@ -234,13 +234,32 @@ public class InputController : MonoBehaviour
     /// </summary>
     /// <param name="moveSpeed">How fast the player is moving originally.</param>
     /// <returns>Float representing slide speed.</returns>
-    private float HandleSlide(float moveSpeed)
+    private float HandleSlide(float moveSpeed, Vector3 moveDirection)
     {
-        if (m_currentSlideMultiplier > m_minimumSlideMultiplier)
+        float slopeAcceleration = 0f;
+        Vector3 ground = m_firstPersonController.GroundNormal;
+
+        if (ground.y < 0.999f && moveDirection.sqrMagnitude > 0.0001f)
         {
-            m_currentSlideMultiplier -= m_slideDecay * Time.deltaTime;
+            Vector3 downhill = Vector3.ProjectOnPlane(Vector3.down, ground);
+            Vector3 downhillFlat = new Vector3(downhill.x, 0f, downhill.z).normalized;
+
+            float alignment = Vector3.Dot(moveDirection.normalized, downhillFlat);
+
+            slopeAcceleration = m_firstPersonController.GravityMagnitude * downhill.magnitude * alignment;
         }
 
+        float multiplierChange = slopeAcceleration / moveSpeed;
+        if (multiplierChange > 0f)
+    {
+            m_currentSlideMultiplier += multiplierChange * Time.deltaTime;
+        }
+        else
+        {
+            m_currentSlideMultiplier += (-m_slideDecay + multiplierChange) * Time.deltaTime;
+        }
+
+        m_currentSlideMultiplier = Mathf.Clamp(m_currentSlideMultiplier, m_minimumSlideMultiplier, m_maximumSlideMultiplier);
         return moveSpeed * m_currentSlideMultiplier;
     }
 
@@ -323,7 +342,7 @@ public class InputController : MonoBehaviour
         if (m_isSlideToggled && m_firstPersonController.IsGrounded)
         {
             m_movementRequest.IsSliding = true;
-            finalSpeed = HandleSlide(m_moveSpeed);
+            finalSpeed = HandleSlide(m_moveSpeed, move);
         }
         else
         {
