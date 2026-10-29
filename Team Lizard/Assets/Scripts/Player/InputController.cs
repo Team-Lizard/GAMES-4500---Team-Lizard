@@ -5,6 +5,7 @@ using Unity.VisualScripting;
 using UnityEditor.Build.Pipeline;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.ProBuilder;
 
 [Serializable]
 public struct MovementRequest
@@ -35,6 +36,10 @@ public class InputController : MonoBehaviour
         [SerializeField]
         [Tooltip("Minimium speed while crouched as a multiplier.")]
         private float m_minimumSlideMultiplier = 0.5f;
+
+        [SerializeField]
+        [Tooltip("Minimium speed while crouched as a multiplier.")]
+        private float m_maximumSlideMultiplier = 4f;
 
         [SerializeField]
         [Tooltip("How fast slide decays.")]
