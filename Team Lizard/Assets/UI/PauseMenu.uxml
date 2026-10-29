@@ -1,0 +1,11 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI/StyleSheets/PauseMenu.uss?fileID=7433441132597879392&amp;guid=9f1f6d4e8b3a4c7aa2e1d6f0b5c9e817&amp;type=3#PauseMenu"/>
+    <Style src="project://database/Assets/UI/StyleSheets/Button.uss?fileID=7433441132597879392&amp;guid=10fe887b92eb14e47814988872b198bc&amp;type=3#Button"/>
+    <ui:VisualElement name="MenuContainer">
+        <ui:VisualElement name="MenuSelector">
+            <ui:Button name="BindingMenuButton" text="Inputs" class="MenuSelectorButton"/>
+            <ui:Button name="DebugMenuButton" text="Debug" class="MenuSelectorButton"/>
+        </ui:VisualElement>
+        <ui:VisualElement name="SubmenuContainer"/>
+    </ui:VisualElement>
+</ui:UXML>

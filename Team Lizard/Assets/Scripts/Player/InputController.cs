@@ -29,6 +29,36 @@ public class InputController : MonoBehaviour
         [Tooltip("Amount that speed is multiplied by when player is sprinting.")]
         private float m_sprintMultiplier = 1.8f;
 
+        [Space]
+
+        [SerializeField]
+        [Tooltip("Height that player can jump.")]
+        private float m_jumpHeight = 1.5f;
+
+        [SerializeField]
+        [Tooltip("Height that player can jump for their dadditional jumps.")]
+        private float m_extraJumpHeight = 1.5f;
+
+        [SerializeField]
+        [Tooltip("Height that player can jump off of a wall.")]
+        private float m_wallJumpHeight = 1.5f;
+
+        [SerializeField]
+        [Tooltip("Number of jumps the player can perform while not touching the ground.")]
+        private int m_maxExtraJumps = 1;
+
+        [Space]
+
+        [SerializeField]
+        [Tooltip("Mouse sensitivity when controlling the camera.")]
+        private float m_lookSensitivity = 1.5f;
+
+        [SerializeField]
+        [Tooltip("Time in seconds after leaving the ground where the player can still jump.")]
+        private float m_coyoteTime = 0.15f;
+
+    [Header("Sliding")]
+
         [SerializeField]
         [Tooltip("Amount that speed is multiplied by when player is sliding.")]
         private float m_slideMultiplier = 1.8f;
@@ -44,22 +74,6 @@ public class InputController : MonoBehaviour
         [SerializeField]
         [Tooltip("How fast slide decays.")]
         private float m_slideDecay = 1.8f;
-
-        [SerializeField]
-        [Tooltip("Height that player can jump.")]
-        private float m_jumpHeight = 1.5f;
-
-        [SerializeField]
-        [Tooltip("Mouse sensitivity when controlling the camera.")]
-        private float m_lookSensitivity = 1.5f;
-
-        [SerializeField]
-        [Tooltip("Number of jumps the player can perform while not touching the ground.")]
-        private int m_maxExtraJumps = 1;
-
-        [SerializeField]
-        [Tooltip("Time in seconds after leaving the ground where the player can still jump.")]
-        private float m_coyoteTime = 0.15f;
 
     [Header("Wall Running")]
         [SerializeField]
@@ -267,10 +281,10 @@ public class InputController : MonoBehaviour
     /// Handles calculating jump velocity and cancels player input.
     /// </summary>
     /// <returns>Float velocity of jump.</returns>
-    private float HandleJump()
+    private float HandleJump(float height)
     {
         // Jump calculation from Unity Documentation for Character Controller
-        float verticalVelocity = Mathf.Sqrt(m_jumpHeight * 2.0f);
+        float verticalVelocity = Mathf.Sqrt(height * 2.0f);
         m_isJumping = false;
         return verticalVelocity;
     }
@@ -296,15 +310,15 @@ public class InputController : MonoBehaviour
                 m_wallGraceTimer = 0f;
                 m_wallLockoutTimer = m_wallJumpLockoutTime;
 
-                return HandleJump();
+                return HandleJump(m_wallJumpHeight);
             }
             else if (m_firstPersonController.IsGrounded || m_coyoteTimer > 0f)
             {
-                verticalVelocity = HandleJump();
+                verticalVelocity = HandleJump(m_jumpHeight);
             }
             else if (m_extraJumps > 0)
             {
-                verticalVelocity = HandleJump();
+                verticalVelocity = HandleJump(m_extraJumpHeight);
                 m_extraJumps--;
             }
         }
@@ -337,20 +351,32 @@ public class InputController : MonoBehaviour
 
         // Make sure diagonal movement isn't faster than unidirectional movement.
         move = Vector3.ClampMagnitude(move, 1f);
-
-        float finalSpeed;
         if (m_isSlideToggled && m_firstPersonController.IsGrounded)
         {
             m_movementRequest.IsSliding = true;
-            finalSpeed = HandleSlide(m_moveSpeed, move);
+            return move * HandleSlide(m_moveSpeed, move);
         }
         else
         {
             m_movementRequest.IsSliding = false;
-            finalSpeed = m_isSprintToggled ? m_moveSpeed * m_sprintMultiplier : m_moveSpeed;
-        }
+            float forwardAmount = Vector3.Dot(move, transform.forward);
 
-        return move * finalSpeed;
+            // We should only apply a sprint boost to forward momentum.
+            if (forwardAmount > 0)
+            {
+                float adjustedSpeed = m_isSprintToggled ? m_moveSpeed * m_sprintMultiplier : m_moveSpeed;
+
+                Vector3 forwardMove = (forwardAmount * transform.forward) * adjustedSpeed;
+                Vector3 sidewaysMove = (move - forwardAmount * transform.forward) * m_moveSpeed;
+
+                return forwardMove + sidewaysMove;
+            }
+            // If there's no forward momentum, move at a normal speed.
+            else
+            {
+                return move * m_moveSpeed;
+            }
+        }
     }
 
     /// ---------------

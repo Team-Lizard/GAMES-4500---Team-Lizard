@@ -1,0 +1,22 @@
+#MenuContainer {
+    flex-grow: 1;
+    background-color: rgba(0, 0, 32, 0.8);
+}
+
+#MenuSelector {
+    display: flex;
+    flex-direction: row;
+    height: 10%;
+    flex-wrap: nowrap;
+    margin: 10px;
+}
+
+.MenuSelectorButton {
+    flex-grow: 1;
+    height: auto;
+    min-height: 20px;
+}
+
+#BindingScrollView {
+    height: 90%;
+}

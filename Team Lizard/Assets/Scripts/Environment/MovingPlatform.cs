@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem.Controls;
 
@@ -27,6 +28,14 @@ public class MovingPlatform : MonoBehaviour
     [SerializeField]
     private float m_waitTime;
 
+    [Tooltip("Whether the platform should wait for the player to move from one phase to another.")]
+    [SerializeField]
+    private bool m_waitForPlayer;
+
+    [Tooltip("Whether the platform should return to its initial position.")]
+    [SerializeField]
+    private bool m_returnToStart;
+
     private Vector3 m_initialPosition;
     private Vector3 m_finalPosition;
     private Vector3 m_controlPosition;
@@ -37,6 +46,7 @@ public class MovingPlatform : MonoBehaviour
     private Vector3 m_lastPosition;
     private Vector3 m_delta;
     private Vector3 m_totalDelta;
+    private bool m_reachedEnd;
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void Start()
@@ -48,6 +58,7 @@ public class MovingPlatform : MonoBehaviour
         m_currentTime = 0;
         m_moveDirection = -1;
         m_moveState = ObjectMoveState.Waiting;
+        m_reachedEnd = false;
     }
 
     // FixedUpdate is called once per physics frame
@@ -65,13 +76,9 @@ public class MovingPlatform : MonoBehaviour
         {
             // Wait at endpoints
             case ObjectMoveState.Waiting:
-                if (m_currentTime > m_waitTime)
+                if (!m_waitForPlayer && m_currentTime > m_waitTime)
                 {
-                    m_currentTime = 0;
-
-                    // Switch direction we should be moving in.
-                    m_moveDirection *= -1;
-                    m_moveState = ObjectMoveState.Moving;
+                    StartMoving();
                 }
                 break;
             
@@ -87,10 +94,25 @@ public class MovingPlatform : MonoBehaviour
                 if (m_currentTime > m_transitTime)
                 {
                     m_currentTime = 0;
+                    m_reachedEnd = true;
                     m_moveState = ObjectMoveState.Waiting;
                 }
                 break;
         }
+    }
+
+    private void StartMoving()
+    {
+        if (m_reachedEnd && !m_returnToStart)
+        {
+            return;
+        }
+        
+        m_currentTime = 0;
+
+        // Switch direction we should be moving in.
+        m_moveDirection *= -1;
+        m_moveState = ObjectMoveState.Moving;
     }
 
     /// <summary>
@@ -102,5 +124,13 @@ public class MovingPlatform : MonoBehaviour
         Vector3 totalDelta = m_totalDelta;
         m_totalDelta = Vector3.zero;
         return totalDelta;
+    }
+
+    public void ActivatePlatform()
+    {
+        if (m_waitForPlayer && m_moveState == ObjectMoveState.Waiting && m_currentTime > m_waitTime)
+        {
+            StartMoving();
+        }
     }
 }

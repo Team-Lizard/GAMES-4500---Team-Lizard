@@ -3,6 +3,7 @@ using Unity.Multiplayer.PlayMode;
 using Unity.VisualScripting;
 using UnityEditor.Build.Pipeline;
 using UnityEngine;
+using UnityEngine.Assemblies;
 using UnityEngine.InputSystem;
 
 public class FirstPersonController : MonoBehaviour
@@ -64,6 +65,12 @@ public class FirstPersonController : MonoBehaviour
         [SerializeField]
         [Tooltip("Seconds over which gravity ramps from zero to full wall-run gravity after the hang.")]
         private float m_wallRunSlideRampTime = 0.5f;
+
+    [Header("Wwise Object")]
+        [SerializeField]
+        private AK.Wwise.Event m_jumpEvent;
+
+    private float m_movementThreshold = 0.0001f;
 
     [Header("Snap Distance")]
         [SerializeField]
@@ -131,7 +138,7 @@ public class FirstPersonController : MonoBehaviour
     /// <param name="request">MovementRequest struct holding a movement vector and a look vector.</param>
     public void ApplyMovement(MovementRequest request)
     {
-        UpdateSlidePose(request.IsSliding);
+       UpdateSlidePose(request.IsSliding);
 
         UpdateWallRunRoll(request.IsWallRunning, request.WallNormal);
 
@@ -147,6 +154,7 @@ public class FirstPersonController : MonoBehaviour
         if (desired.y != 0)
         {
             m_verticalVelocity = desired.y * Mathf.Sqrt(-1*m_gravity);
+            m_jumpEvent.Post(gameObject);
         }
 
         // Inertia comes from player input and friction.
@@ -154,6 +162,7 @@ public class FirstPersonController : MonoBehaviour
         if (m_currentPlatform != null)
         {
             displacement += m_currentPlatform.GetTotalDelta();
+            m_currentPlatform.ActivatePlatform();
         }
 
         bool wasGrounded = IsGrounded;
@@ -226,7 +235,7 @@ public class FirstPersonController : MonoBehaviour
     /// <param name="target">Target direction and velocity to reach.</param>
     private void UpdateHorizontalVelocity(Vector3 target)
     {
-        bool hasInput = target.sqrMagnitude > 0.0001f;
+        bool hasInput = target.sqrMagnitude > m_movementThreshold;
         float dt = Time.deltaTime;
         
         if (IsGrounded)
@@ -289,7 +298,6 @@ public class FirstPersonController : MonoBehaviour
 
         // If sliding or under a short roof, do not get up.
         m_isCrouched = shouldCrouch;
-
 
         float targetHeight = m_isCrouched ? m_standHeight * m_slideHeight : m_standHeight;
         m_characterController.height = targetHeight;

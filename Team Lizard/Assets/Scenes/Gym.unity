@@ -1784,6 +1784,63 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &765831544
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 765831546}
+  - component: {fileID: 765831545}
+  m_Layer: 0
+  m_Name: WwiseGlobal
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &765831545
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 765831544}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8f88dd5821638d45ac55b74160aff9a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: AK.Wwise.Unity.MonoBehaviour::AkInitializer
+  InitializationSettings: {fileID: 11400000, guid: edc48a7a89c51ed48804750c8bd4429c, type: 2}
+  basePath: 
+  language: 
+  defaultPoolSize: 0
+  lowerPoolSize: 0
+  streamingPoolSize: 0
+  memoryCutoffThreshold: 0
+  monitorPoolSize: 0
+  monitorQueuePoolSize: 0
+  callbackManagerBufferSize: 0
+  spatialAudioPoolSize: 0
+  maxSoundPropagationDepth: 0
+  engineLogging: 0
+--- !u!4 &765831546
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 765831544}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &770445561
 GameObject:
   m_ObjectHideFlags: 0
@@ -3266,21 +3323,44 @@ PrefabInstance:
       propertyPath: 'm_parkourBehaviors.Array.data[1]'
       value: 
       objectReference: {fileID: 11400000, guid: 35a69e3a6fc49db43a01a9a49716bc7c, type: 2}
+    - target: {fileID: 3848311692467163602, guid: 55d28c6e4ca51ab49aa8d59553278bef, type: 3}
+      propertyPath: m_wallJumpHeight
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3848311692467163602, guid: 55d28c6e4ca51ab49aa8d59553278bef, type: 3}
+      propertyPath: m_secondJumpHeight
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6610288824303935535, guid: 55d28c6e4ca51ab49aa8d59553278bef, type: 3}
       propertyPath: m_airAcceleration
       value: 20
       objectReference: {fileID: 0}
+    - target: {fileID: 6610288824303935535, guid: 55d28c6e4ca51ab49aa8d59553278bef, type: 3}
+      propertyPath: m_landingEvent.WwiseObjectReference
+      value: 
+      objectReference: {fileID: 11400000, guid: 5009855e4c31bad43b4f0cde1a47863d, type: 2}
+    - target: {fileID: 6610288824303935535, guid: 55d28c6e4ca51ab49aa8d59553278bef, type: 3}
+      propertyPath: m_footStepEvent.WwiseObjectReference
+      value: 
+      objectReference: {fileID: 11400000, guid: ef8158c8804f0f84bbacd7a9809142b9, type: 2}
     - target: {fileID: 8985268930540334528, guid: 55d28c6e4ca51ab49aa8d59553278bef, type: 3}
       propertyPath: m_Name
       value: Character
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 7465126052686610711, guid: 55d28c6e4ca51ab49aa8d59553278bef, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 8985268930540334528, guid: 55d28c6e4ca51ab49aa8d59553278bef, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2097107896}
+    - targetCorrespondingSourceObject: {fileID: 8395807419199172236, guid: 55d28c6e4ca51ab49aa8d59553278bef, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1633171428}
+    - targetCorrespondingSourceObject: {fileID: 8395807419199172236, guid: 55d28c6e4ca51ab49aa8d59553278bef, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1633171427}
   m_SourcePrefab: {fileID: 100100000, guid: 55d28c6e4ca51ab49aa8d59553278bef, type: 3}
 --- !u!1 &1326695268
 GameObject:
@@ -3990,6 +4070,8 @@ MonoBehaviour:
   m_curveAmount: {x: 0, y: 5, z: 0}
   m_transitTime: 5
   m_waitTime: 3
+  m_waitForPlayer: 1
+  m_returnToStart: 1
 --- !u!65 &1631041176
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4083,6 +4165,51 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1633171425 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8395807419199172236, guid: 55d28c6e4ca51ab49aa8d59553278bef, type: 3}
+  m_PrefabInstance: {fileID: 1321044448}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1633171427
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1633171425}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 337c170b7c09a0645b44ce16e6c733b6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: AK.Wwise.Unity.MonoBehaviour::AkAudioListener
+  isDefaultListener: 1
+  bOverrideScalingFactor: 0
+  scalingFactor: -1
+  listenerId: 0
+--- !u!114 &1633171428
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1633171425}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 389342bb2ebad1f4589221480b0b53db, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: AK.Wwise.Unity.MonoBehaviour::AkGameObj
+  m_listeners:
+    initialListenerList: []
+    useDefaultListeners: 1
+  isEnvironmentAware: 0
+  isStaticObject: 0
+  usePositionOffsetData: 0
+  m_positionOffsetData:
+    KeepMe: 0
+    positionOffset: {x: 0, y: 0, z: 0}
+  scalingFactor: 1
+  m_posOffsetData: {fileID: 0}
+  listenerMask: 1
 --- !u!1001 &1657186344
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5456,3 +5583,4 @@ SceneRoots:
   - {fileID: 1855192095}
   - {fileID: 548978475}
   - {fileID: 2135300571}
+  - {fileID: 765831546}
