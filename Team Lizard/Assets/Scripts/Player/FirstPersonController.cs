@@ -166,6 +166,8 @@ public class FirstPersonController : MonoBehaviour
             m_snappedLastFrame = TrySnap();
         }
 
+        UpdateGroundNormal();
+
         HandleInteractions(request.IsInteracting);
     }
 
@@ -340,6 +342,26 @@ public class FirstPersonController : MonoBehaviour
         Vector3 origin = transform.position + m_characterController.center;
         float distance = m_standHeight - m_characterController.height * 0.5f + 0.05f;
         return !Physics.Raycast(origin, Vector3.up, distance);
+    }
+
+    /// <summary>
+    /// Gets the slope of the ground beneath the player.
+    /// </summary>
+    private void UpdateGroundNormal()
+    {
+        GroundNormal = Vector3.up;
+
+        if (!(m_characterController.isGrounded || m_snappedLastFrame))
+        {
+            return;
+        }
+
+        float half = m_characterController.height * 0.5f;
+        Vector3 origin = transform.position + m_characterController.center;
+        if (Physics.Raycast(origin, Vector3.down, out RaycastHit hit, half + m_snapDistance))
+        {
+            GroundNormal = hit.normal;
+        }
     }
 
     /// <summary>
