@@ -99,6 +99,20 @@ public class FirstPersonController : MonoBehaviour
         private set;
     }
 
+    /// <summary>
+    /// A 3d vector representing the angle of the ground beneath the player.
+    /// </summary>
+    public Vector3 GroundNormal
+    {
+        get;
+        private set;
+    } = Vector3.up;
+
+    /// <summary>
+    /// Magnitude of gravity.
+    /// </summary>
+    public float GravityMagnitude => Mathf.Abs(m_gravity);
+
     private void Awake()
     {
         m_characterController = gameObject.GetComponent<CharacterController>();
