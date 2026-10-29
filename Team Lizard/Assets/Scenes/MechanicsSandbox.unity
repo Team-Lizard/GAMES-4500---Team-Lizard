@@ -1942,7 +1942,35 @@ PrefabInstance:
     - target: {fileID: 6610288824303935535, guid: 55d28c6e4ca51ab49aa8d59553278bef, type: 3}
       propertyPath: m_footStepEvent.WwiseObjectReference
       value: 
-      objectReference: {fileID: 11400000, guid: ef8158c8804f0f84bbacd7a9809142b9, type: 2}
+      objectReference: {fileID: 11400000, guid: 35a69e3a6fc49db43a01a9a49716bc7c, type: 2}
+    - target: {fileID: 4864713323900413798, guid: 55d28c6e4ca51ab49aa8d59553278bef, type: 3}
+      propertyPath: m_StepOffset
+      value: 0.15
+      objectReference: {fileID: 0}
+    - target: {fileID: 7380285322809941162, guid: 55d28c6e4ca51ab49aa8d59553278bef, type: 3}
+      propertyPath: m_ActionEvents.Array.data[4].m_ActionId
+      value: 1ad57a8c-5ebc-4d5c-ba25-0f353b86d0ef
+      objectReference: {fileID: 0}
+    - target: {fileID: 7380285322809941162, guid: 55d28c6e4ca51ab49aa8d59553278bef, type: 3}
+      propertyPath: m_ActionEvents.Array.data[5].m_ActionId
+      value: f09c2d4f-6e82-4d51-a432-5179ed6a26d1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7380285322809941162, guid: 55d28c6e4ca51ab49aa8d59553278bef, type: 3}
+      propertyPath: m_ActionEvents.Array.data[4].m_ActionName
+      value: 'Player/Slide[/Keyboard/ctrl]'
+      objectReference: {fileID: 0}
+    - target: {fileID: 7380285322809941162, guid: 55d28c6e4ca51ab49aa8d59553278bef, type: 3}
+      propertyPath: m_ActionEvents.Array.data[5].m_ActionName
+      value: 'Player/Pause[/Keyboard/escape]'
+      objectReference: {fileID: 0}
+    - target: {fileID: 7380285322809941162, guid: 55d28c6e4ca51ab49aa8d59553278bef, type: 3}
+      propertyPath: m_ActionEvents.Array.data[5].m_PersistentCalls.m_Calls.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7380285322809941162, guid: 55d28c6e4ca51ab49aa8d59553278bef, type: 3}
+      propertyPath: m_ActionEvents.Array.data[4].m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnSlide
+      objectReference: {fileID: 0}
     - target: {fileID: 8985268930540334528, guid: 55d28c6e4ca51ab49aa8d59553278bef, type: 3}
       propertyPath: m_Name
       value: Character
