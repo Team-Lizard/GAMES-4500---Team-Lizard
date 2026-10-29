@@ -290,9 +290,11 @@ public class FirstPersonController : MonoBehaviour
         // If sliding or under a short roof, do not get up.
         m_isCrouched = shouldCrouch;
 
-        m_characterController.height = m_isCrouched ? m_slideHeight : m_standHeight;
-        m_characterController.radius = Math.Min(m_characterController.height, m_standRadius);
-        m_characterController.center = m_standCenter + Vector3.down * ((m_standHeight - m_characterController.height) * 0.5f);
+
+        float targetHeight = m_isCrouched ? m_standHeight * m_slideHeight : m_standHeight;
+        m_characterController.height = targetHeight;
+        m_characterController.radius = Mathf.Min(m_standRadius, targetHeight * 0.5f);
+        m_characterController.center = m_standCenter + Vector3.down * ((m_standHeight - targetHeight) * 0.5f);
 
         float intendedCameraHeight = CalculateIntendedCameraHeight();
         Vector3 currentCameraPosition = m_cameraTransform.localPosition;
@@ -329,7 +331,7 @@ public class FirstPersonController : MonoBehaviour
     {
         float bottomY = m_standCenter.y - m_standHeight * 0.5f;
         float cameraRelativeToBottom = m_standCameraY - bottomY;
-        float crouchedCameraY = bottomY + cameraRelativeToBottom * (m_slideHeight / m_standHeight);
+        float crouchedCameraY = bottomY + cameraRelativeToBottom * m_slideHeight;
         return m_isCrouched ? crouchedCameraY : m_standCameraY;
     }
 
