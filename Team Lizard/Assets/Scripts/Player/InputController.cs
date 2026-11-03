@@ -5,6 +5,7 @@ using Unity.VisualScripting;
 using UnityEditor.Build.Pipeline;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.ProBuilder;
 
 [Serializable]
 public struct MovementRequest
@@ -56,7 +57,6 @@ public class InputController : MonoBehaviour
         [Tooltip("Time in seconds after leaving the ground where the player can still jump.")]
         private float m_coyoteTime = 0.15f;
 
-
     [Header("Sliding")]
 
         [SerializeField]
@@ -66,6 +66,10 @@ public class InputController : MonoBehaviour
         [SerializeField]
         [Tooltip("Minimium speed while crouched as a multiplier.")]
         private float m_minimumSlideMultiplier = 0.5f;
+
+        [SerializeField]
+        [Tooltip("Minimium speed while crouched as a multiplier.")]
+        private float m_maximumSlideMultiplier = 4f;
 
         [SerializeField]
         [Tooltip("How fast slide decays.")]
@@ -244,13 +248,32 @@ public class InputController : MonoBehaviour
     /// </summary>
     /// <param name="moveSpeed">How fast the player is moving originally.</param>
     /// <returns>Float representing slide speed.</returns>
-    private float HandleSlide(float moveSpeed)
+    private float HandleSlide(float moveSpeed, Vector3 moveDirection)
     {
-        if (m_currentSlideMultiplier > m_minimumSlideMultiplier)
+        float slopeAcceleration = 0f;
+        Vector3 ground = m_firstPersonController.GroundNormal;
+
+        if (ground.y < 0.999f && moveDirection.sqrMagnitude > 0.0001f)
         {
-            m_currentSlideMultiplier -= m_slideDecay * Time.deltaTime;
+            Vector3 downhill = Vector3.ProjectOnPlane(Vector3.down, ground);
+            Vector3 downhillFlat = new Vector3(downhill.x, 0f, downhill.z).normalized;
+
+            float alignment = Vector3.Dot(moveDirection.normalized, downhillFlat);
+
+            slopeAcceleration = m_firstPersonController.GravityMagnitude * downhill.magnitude * alignment;
         }
 
+        float multiplierChange = slopeAcceleration / moveSpeed;
+        if (multiplierChange > 0f)
+    {
+            m_currentSlideMultiplier += multiplierChange * Time.deltaTime;
+        }
+        else
+        {
+            m_currentSlideMultiplier += (-m_slideDecay + multiplierChange) * Time.deltaTime;
+        }
+
+        m_currentSlideMultiplier = Mathf.Clamp(m_currentSlideMultiplier, m_minimumSlideMultiplier, m_maximumSlideMultiplier);
         return moveSpeed * m_currentSlideMultiplier;
     }
 
@@ -328,12 +351,10 @@ public class InputController : MonoBehaviour
 
         // Make sure diagonal movement isn't faster than unidirectional movement.
         move = Vector3.ClampMagnitude(move, 1f);
-
         if (m_isSlideToggled && m_firstPersonController.IsGrounded)
         {
             m_movementRequest.IsSliding = true;
-
-            return move * HandleSlide(m_moveSpeed);
+            return move * HandleSlide(m_moveSpeed, move);
         }
         else
         {
@@ -355,9 +376,7 @@ public class InputController : MonoBehaviour
             {
                 return move * m_moveSpeed;
             }
-        
         }
-
     }
 
     /// ---------------

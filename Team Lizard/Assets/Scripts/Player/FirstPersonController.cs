@@ -72,6 +72,11 @@ public class FirstPersonController : MonoBehaviour
 
     private float m_movementThreshold = 0.0001f;
 
+    [Header("Snap Distance")]
+        [SerializeField]
+        [Tooltip("Distance to snap to ground")]
+        private float m_snapDistance = 0.3f;
+
     private float m_wallRunTimer;
     private bool m_wasWallRunning;
     private float m_roll;
@@ -86,6 +91,7 @@ public class FirstPersonController : MonoBehaviour
     private float m_standRadius;
     private Vector3 m_standCenter;
     private bool m_isCrouched = false;
+    private bool m_snappedLastFrame;
 
     // item-specific data
     private MovingPlatform m_currentPlatform;
@@ -99,6 +105,20 @@ public class FirstPersonController : MonoBehaviour
         get;
         private set;
     }
+
+    /// <summary>
+    /// A 3d vector representing the angle of the ground beneath the player.
+    /// </summary>
+    public Vector3 GroundNormal
+    {
+        get;
+        private set;
+    } = Vector3.up;
+
+    /// <summary>
+    /// Magnitude of gravity.
+    /// </summary>
+    public float GravityMagnitude => Mathf.Abs(m_gravity);
 
     private void Awake()
     {
@@ -127,7 +147,8 @@ public class FirstPersonController : MonoBehaviour
         ApplyGravity(request.IsWallRunning);
 
         Vector3 desired = request.DesiredVelocity;
-        UpdateHorizontalVelocity(new Vector3(desired.x, 0f, desired.z));
+        Vector3 target = new Vector3(desired.x, 0f, desired.z);
+        UpdateHorizontalVelocity(target);
 
         // If player wants to jump, override vertical velocity.
         if (desired.y != 0)
@@ -144,7 +165,17 @@ public class FirstPersonController : MonoBehaviour
             m_currentPlatform.ActivatePlatform();
         }
 
+        bool wasGrounded = IsGrounded;
+        m_snappedLastFrame = false;
         m_characterController.Move(displacement);
+
+        if (wasGrounded && !m_characterController.isGrounded
+            && desired.y == 0f && !request.IsWallRunning && m_verticalVelocity <= 0f)
+        {
+            m_snappedLastFrame = TrySnap();
+        }
+
+        UpdateGroundNormal();
 
         HandleInteractions(request.IsInteracting);
     }
@@ -182,7 +213,7 @@ public class FirstPersonController : MonoBehaviour
         }
         m_wasWallRunning = isWallRunning;
 
-        IsGrounded = m_characterController.isGrounded;
+        IsGrounded = m_characterController.isGrounded || m_snappedLastFrame;
         if (IsGrounded && m_verticalVelocity < 0)
         {
             // Player needs to be pressed into the ground for isGrounded to work correctly.
@@ -268,14 +299,36 @@ public class FirstPersonController : MonoBehaviour
         // If sliding or under a short roof, do not get up.
         m_isCrouched = shouldCrouch;
 
-        m_characterController.height = m_isCrouched ? m_slideHeight : m_standHeight;
-        m_characterController.radius = Math.Min(m_characterController.height, m_standRadius);
-        m_characterController.center = m_standCenter + Vector3.down * ((m_standHeight - m_characterController.height) * 0.5f);
+        float targetHeight = m_isCrouched ? m_standHeight * m_slideHeight : m_standHeight;
+        m_characterController.height = targetHeight;
+        m_characterController.radius = Mathf.Min(m_standRadius, targetHeight * 0.5f);
+        m_characterController.center = m_standCenter + Vector3.down * ((m_standHeight - targetHeight) * 0.5f);
 
         float intendedCameraHeight = CalculateIntendedCameraHeight();
         Vector3 currentCameraPosition = m_cameraTransform.localPosition;
         currentCameraPosition.y = Mathf.Lerp(currentCameraPosition.y, intendedCameraHeight, m_slideCameraLerp * Time.deltaTime);
         m_cameraTransform.localPosition = currentCameraPosition;
+    }
+
+    /// <summary>
+    /// Tries to snap player to slope or step.
+    /// </summary>
+    private bool TrySnap()
+    {
+        float half = m_characterController.height * 0.5f;
+        Vector3 origin = transform.position + m_characterController.center;
+        float snap = m_snapDistance + new Vector2(m_horizontalVelocity.x, m_horizontalVelocity.z).magnitude * Time.deltaTime;
+
+        if (Physics.Raycast(origin, Vector3.down, out RaycastHit hit, half + snap)
+            && Vector3.Angle(hit.normal, Vector3.up) <= m_characterController.slopeLimit)
+        {
+            m_characterController.Move(Vector3.down * (hit.distance - half));
+            m_verticalVelocity = -2f;
+
+            return true;
+        }
+
+        return false;
     }
 
     /// <summary>
@@ -286,7 +339,7 @@ public class FirstPersonController : MonoBehaviour
     {
         float bottomY = m_standCenter.y - m_standHeight * 0.5f;
         float cameraRelativeToBottom = m_standCameraY - bottomY;
-        float crouchedCameraY = bottomY + cameraRelativeToBottom * (m_slideHeight / m_standHeight);
+        float crouchedCameraY = bottomY + cameraRelativeToBottom * m_slideHeight;
         return m_isCrouched ? crouchedCameraY : m_standCameraY;
     }
 
@@ -299,6 +352,26 @@ public class FirstPersonController : MonoBehaviour
         Vector3 origin = transform.position + m_characterController.center;
         float distance = m_standHeight - m_characterController.height * 0.5f + 0.05f;
         return !Physics.Raycast(origin, Vector3.up, distance);
+    }
+
+    /// <summary>
+    /// Gets the slope of the ground beneath the player.
+    /// </summary>
+    private void UpdateGroundNormal()
+    {
+        GroundNormal = Vector3.up;
+
+        if (!(m_characterController.isGrounded || m_snappedLastFrame))
+        {
+            return;
+        }
+
+        float half = m_characterController.height * 0.5f;
+        Vector3 origin = transform.position + m_characterController.center;
+        if (Physics.Raycast(origin, Vector3.down, out RaycastHit hit, half + m_snapDistance))
+        {
+            GroundNormal = hit.normal;
+        }
     }
 
     /// <summary>

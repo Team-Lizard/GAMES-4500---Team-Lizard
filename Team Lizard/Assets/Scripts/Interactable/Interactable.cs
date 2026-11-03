@@ -13,7 +13,7 @@ namespace Interactable
         /// interaction distance of this item)
         /// </summary>
         /// <param name="other"> the other object (potentially a player) </param>
-        private void OnTriggerEnter(Collider other)
+        protected virtual void OnTriggerEnter(Collider other)
         {
             if (!other.CompareTag("Player"))
             {
@@ -31,7 +31,7 @@ namespace Interactable
             controller.SubscribeToOnInteract(OnInteract);
         }
 
-        private void OnTriggerExit(Collider other)
+        protected virtual void OnTriggerExit(Collider other)
         {
             if (!other.CompareTag("Player"))
             {
