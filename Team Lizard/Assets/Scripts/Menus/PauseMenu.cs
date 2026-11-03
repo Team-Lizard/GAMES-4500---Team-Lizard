@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using UnityEditor.PackageManager;
+using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
 
@@ -17,6 +18,12 @@ namespace Menus
         private VisualElement m_submenuContainer;
         private bool m_visible;
 
+        // pausing should deactivate the player's input so we will need a reference to it
+        private PlayerInput m_playerInput;
+
+        // if we ever want a slo-mo effect, it may be wise to hold the previous gamespeed
+        private float m_prevTimeScale;
+
         /// <summary>
         /// Called when the object is first loaded
         /// </summary>
@@ -28,6 +35,16 @@ namespace Menus
 
             m_panelRenderer.RegisterUIReloadCallback(OnUIReload);
             m_visible = false;
+
+            FirstPersonController[] players = FindObjectsByType<FirstPersonController>();
+            if (players.Length != 1)
+            {
+                Debug.LogError("More than 1 player controller found. if this is intended, " +
+                               "remove the error message in PauseMenu.cs");
+            }
+            m_playerInput = players[0].GetComponent<PlayerInput>();
+
+            m_prevTimeScale = Time.timeScale;
         }
 
         /// <summary>
@@ -87,16 +104,17 @@ namespace Menus
         /// <param name="value"> stores the pause key press </param>
         public void OnPause(InputAction.CallbackContext value)
         {
-            ToggleVisibility();
+            TogglePauseMenu();
         }
 
         /// <summary>
         /// toggles the visibility var and sets the visibility respectively
         /// </summary>
-        private void ToggleVisibility()
+        private void TogglePauseMenu()
         {
             m_visible = !m_visible;
             SetVisibility(m_visible);
+            PauseUnpause(m_visible);
         }
 
         /// <summary>
@@ -108,6 +126,28 @@ namespace Menus
             if (m_menuContainer != null)
             {
                 m_menuContainer.style.display = visible ? DisplayStyle.Flex : DisplayStyle.None;
+            }
+        }
+
+        /// <summary>
+        /// Pauses or unpauses the gameplay
+        /// </summary>
+        /// <param name="visible"> determines whether the game should be paused:
+        /// true -> pause menu is shown -> pause game
+        /// false -> pause menu is not shown -> resume game
+        /// </param>
+        private void PauseUnpause(bool visible)
+        {
+            if (!visible)
+            {
+                Time.timeScale = m_prevTimeScale;
+                m_playerInput.ActivateInput();
+            }
+            else
+            {
+                m_prevTimeScale = Time.timeScale;
+                Time.timeScale = 0;
+                m_playerInput.DeactivateInput();
             }
         }
     }
