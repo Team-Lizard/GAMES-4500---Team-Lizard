@@ -96,6 +96,31 @@ public class InputController : MonoBehaviour
         [Tooltip("Time after a wall jump before the player can latch onto a wall again.")]
         private float m_wallJumpLockoutTime = 0.25f;
 
+    [Header("Stamina")]
+        [SerializeField]
+        [Tooltip("How much stamina should be spent to run.")]
+        private float m_staminaRun;
+
+        [SerializeField]
+        [Tooltip("How much stamina should be spent to jump regularly.")]
+        private float m_staminaJump;
+
+        [SerializeField]
+        [Tooltip("How much stamina should be spent to double jump.")]
+        private float m_staminaDoubleJump;
+
+        [SerializeField]
+        [Tooltip("How much stamina should be spent to jump off of a wall.")]
+        private float m_staminaWallJump;
+
+        [SerializeField]
+        [Tooltip("How much stamina should be spent to wall run.")]
+        private float m_staminaWallRun;
+
+        [SerializeField]
+        [Tooltip("How much stamina should be spent to slide.")]
+        private float m_staminaSlide;
+
     private float m_wallGraceTimer;
     private float m_wallLockoutTimer;
     private bool m_isWallRunning;
@@ -172,7 +197,7 @@ public class InputController : MonoBehaviour
                 m_coyoteTimer = m_coyoteTime;
             }
             else
-            {
+            {   
                 m_coyoteTimer -= Time.deltaTime;
             }
 
@@ -181,8 +206,19 @@ public class InputController : MonoBehaviour
                 m_parkourState = m_parkourManager.CheckParkourAction();
                 if (m_parkourState.CurrentAction != null)
                 {
-                    m_isJumping = false;
-                    return;
+                    // Remove current parkour action if we don't have the stamina.
+                    // Player will default to jumping if we don't have the stamina for an action.
+                    if (!Stamina.Instance().TrySpendStamina(m_parkourState.StaminaCost))
+                    {
+                        m_parkourState.CurrentAction = null;
+                    }
+                    // Don't let player jump if we're going to do a parkour action.
+                    else
+                    {
+                        m_isJumping = false;
+                        return;
+                    }
+                    
                 }
             }
 
@@ -215,13 +251,16 @@ public class InputController : MonoBehaviour
                           && m_moveInput.y >= m_wallRunMinForwardInput
                           && m_wallLockoutTimer <= 0f;
 
+                          
+
         if (canWallRun)
         {
             WallHitInfo wall = m_parkourManager.CheckWall();
-            if (wall.HitWall)
-            {
+            if (wall.HitWall && Stamina.Instance().TrySpendStamina(m_staminaWallRun))
+            {   
                 m_wallGraceTimer = m_wallRunGraceTime;
                 m_wallNormal = wall.Normal;
+                
             }
             else
             {
@@ -265,7 +304,7 @@ public class InputController : MonoBehaviour
 
         float multiplierChange = slopeAcceleration / moveSpeed;
         if (multiplierChange > 0f)
-    {
+        {
             m_currentSlideMultiplier += multiplierChange * Time.deltaTime;
         }
         else
@@ -274,7 +313,9 @@ public class InputController : MonoBehaviour
         }
 
         m_currentSlideMultiplier = Mathf.Clamp(m_currentSlideMultiplier, m_minimumSlideMultiplier, m_maximumSlideMultiplier);
-        return moveSpeed * m_currentSlideMultiplier;
+
+        // Slide if we have the stamina, otherwise move at crawling speed.
+        return Stamina.Instance().TrySpendStamina(m_staminaSlide) ? moveSpeed * m_currentSlideMultiplier : moveSpeed * m_minimumSlideMultiplier;
     }
 
     /// <summary>
@@ -310,13 +351,18 @@ public class InputController : MonoBehaviour
                 m_wallGraceTimer = 0f;
                 m_wallLockoutTimer = m_wallJumpLockoutTime;
 
-                return HandleJump(m_wallJumpHeight);
+                if (Stamina.Instance().TrySpendStamina(m_staminaWallJump))
+                {
+                    return HandleJump(m_wallJumpHeight);
+                }
+                
             }
-            else if (m_firstPersonController.IsGrounded || m_coyoteTimer > 0f)
+            else if ((m_firstPersonController.IsGrounded || m_coyoteTimer > 0f) && Stamina.Instance().TrySpendStamina(m_staminaJump))
             {
                 verticalVelocity = HandleJump(m_jumpHeight);
             }
-            else if (m_extraJumps > 0)
+            // Don't allow double jump unless we have the stamina.
+            else if (m_extraJumps > 0 && Stamina.Instance().TrySpendStamina(m_staminaDoubleJump))
             {
                 verticalVelocity = HandleJump(m_extraJumpHeight);
                 m_extraJumps--;
@@ -364,6 +410,11 @@ public class InputController : MonoBehaviour
             // We should only apply a sprint boost to forward momentum.
             if (forwardAmount > 0)
             {
+                // Turn off sprinting if we don't have the stamina to sprint.
+                if (m_isSprintToggled && !Stamina.Instance().TrySpendStamina(m_staminaRun)) {
+                    m_isSprintToggled = false;
+                }
+
                 float adjustedSpeed = m_isSprintToggled ? m_moveSpeed * m_sprintMultiplier : m_moveSpeed;
 
                 Vector3 forwardMove = (forwardAmount * transform.forward) * adjustedSpeed;
