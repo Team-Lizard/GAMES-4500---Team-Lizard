@@ -146,7 +146,7 @@ public class FirstPersonController : MonoBehaviour
         }
         else
         {
-            UpdateRoll(request.ParkourRoll != 0, transform.right, request.ParkourRoll, m_wallRunRollLerp);
+            UpdateRoll(request.ParkourRoll != 0, transform.right, request.ParkourRoll, request.ParkourRollLerp);
         }
         
 

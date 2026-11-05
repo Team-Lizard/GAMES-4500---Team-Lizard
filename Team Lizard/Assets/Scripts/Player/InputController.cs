@@ -15,6 +15,7 @@ public struct MovementRequest
     public bool IsSliding;
     public bool IsWallRunning;
     public float ParkourRoll;
+    public float ParkourRollLerp;
     public Vector3 WallNormal;
     public bool IsInteracting;
 }
@@ -218,6 +219,7 @@ public class InputController : MonoBehaviour
                     else
                     {
                         m_movementRequest.ParkourRoll = m_parkourState.RollAmount;
+                        m_movementRequest.ParkourRollLerp = m_parkourState.RollLerp;
                         m_isJumping = false;
                         return;
                     }

@@ -13,6 +13,7 @@ public struct ParkourState
     public float ObstacleHeight;
     public float StaminaCost;
     public float RollAmount;
+    public float RollLerp;
 }
 
 public class ParkourManager : MonoBehaviour
@@ -58,6 +59,7 @@ public class ParkourManager : MonoBehaviour
 
                     parkourState.StaminaCost = action.StaminaCost;
                     parkourState.RollAmount = action.RollAmount;
+                    parkourState.RollLerp = action.RollLerp;
                 }
             }
         }

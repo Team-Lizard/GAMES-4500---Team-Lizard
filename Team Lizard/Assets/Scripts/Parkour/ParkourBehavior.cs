@@ -27,6 +27,10 @@ public abstract class ParkourBehavior : ScriptableObject
     [Tooltip("How much the camera should roll by when performing this parkour behavior.")]
     public float RollAmount;
 
+    [SerializeField]
+    [Tooltip("How fast the camera should roll when performing this parkour behavior.")]
+    public float RollLerp;
+
     /// <summary>
     /// Checks whether this parkour action can be performed.
     /// </summary>
