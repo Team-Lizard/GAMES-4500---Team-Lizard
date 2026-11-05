@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 namespace Interactable
 {
@@ -13,22 +13,14 @@ namespace Interactable
         [Tooltip("The GameObject that will be affected by the button.")]
         private MonoBehaviour m_resultObject;
 
-        private bool m_hasActivated;
-
-        private void Awake()
-        {
-            m_hasActivated = false;
-        }
-
-
         protected override void OnInteract()
         {
-            if (m_hasActivated)
+            if (!CanBeActivated())
             {
                 return;
             }
-
-            m_hasActivated = true;
+            SetActivatedState();
+            
             if (m_resultObject == null)
             {
                 Debug.Log(" m_resultObject is not yet assigned. Look at InteractableButton.cs");
