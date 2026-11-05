@@ -3992,6 +3992,7 @@ GameObject:
   - component: {fileID: 1414074995}
   - component: {fileID: 1414074994}
   - component: {fileID: 1414074993}
+  - component: {fileID: 1414074998}
   m_Layer: 0
   m_Name: Door (1)
   m_TagString: Untagged
@@ -4107,6 +4108,22 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
+--- !u!114 &1414074998
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1414074992}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db80d13a30694cc44b0c235b9ee43037, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Interactable.InteractableVariableCondition
+  m_canReactivate: 0
+  m_cooldown: 0
+  m_resultObject: {fileID: 0}
+  m_condition: {fileID: 0}
 --- !u!1 &1556404693
 GameObject:
   m_ObjectHideFlags: 0
