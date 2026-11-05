@@ -12,6 +12,7 @@ public struct ParkourState
     public Vector3 EndingPosition;
     public float ObstacleHeight;
     public float StaminaCost;
+    public float RollAmount;
 }
 
 public class ParkourManager : MonoBehaviour
@@ -56,6 +57,7 @@ public class ParkourManager : MonoBehaviour
                     parkourState.EndingPosition = parkourState.StartingPosition + action.HorizontalDistance * hitInfo.ForwardDirection;
 
                     parkourState.StaminaCost = action.StaminaCost;
+                    parkourState.RollAmount = action.RollAmount;
                 }
             }
         }
