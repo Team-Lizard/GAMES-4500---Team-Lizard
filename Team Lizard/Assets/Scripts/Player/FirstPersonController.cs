@@ -55,7 +55,7 @@ public class FirstPersonController : MonoBehaviour
         private float m_wallRunCameraRoll = 15f;
 
         [SerializeField]
-        [Tooltip("How fast the camera rolls into/out of a wall run.")]
+        [Tooltip("How fast the camera rolls into/out of a roll.")]
         private float m_wallRunRollLerp = 10f;
 
         [SerializeField]
@@ -140,7 +140,15 @@ public class FirstPersonController : MonoBehaviour
     {
        UpdateSlidePose(request.IsSliding);
 
-        UpdateWallRunRoll(request.IsWallRunning, request.WallNormal);
+        if (request.IsWallRunning)
+        {
+            UpdateRoll(request.IsWallRunning, request.WallNormal, m_wallRunCameraRoll, m_wallRunRollLerp);
+        }
+        else
+        {
+            UpdateRoll(request.ParkourRoll != 0, transform.right, request.ParkourRoll, request.ParkourRollLerp);
+        }
+        
 
         ApplyLook(request.LookDelta);
 
@@ -277,16 +285,16 @@ public class FirstPersonController : MonoBehaviour
     /// <summary>
     /// Rolls the camera toward or away from the wall while wall running.
     /// </summary>
-    private void UpdateWallRunRoll(bool isWallRunning, Vector3 wallNormal)
+    private void UpdateRoll(bool shouldRoll, Vector3 normalDirection, float rollAmount, float rollLerp)
     {
         float targetRoll = 0f;
-        if (isWallRunning)
+        if (shouldRoll)
         {
-            float side = Vector3.Dot(wallNormal, transform.right);
-            targetRoll = -side * m_wallRunCameraRoll;
+            float side = Vector3.Dot(normalDirection, transform.right);
+            targetRoll = -side * rollAmount;
         }
 
-        m_roll = Mathf.Lerp(m_roll, targetRoll, m_wallRunRollLerp * Time.deltaTime);
+        m_roll = Mathf.Lerp(m_roll, targetRoll, rollLerp * Time.deltaTime);
     }
 
     /// <summary>

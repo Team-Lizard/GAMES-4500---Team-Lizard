@@ -14,6 +14,8 @@ public struct MovementRequest
     public Vector2 LookDelta;
     public bool IsSliding;
     public bool IsWallRunning;
+    public float ParkourRoll;
+    public float ParkourRollLerp;
     public Vector3 WallNormal;
     public bool IsInteracting;
 }
@@ -181,6 +183,7 @@ public class InputController : MonoBehaviour
             if (m_parkourState.AnimationTime > m_parkourState.AnimationLength)
             {
                 m_parkourState.CurrentAction = null;
+                m_movementRequest.ParkourRoll = 0.0f;
             }
 
             // Clear wall running and sliding variables if a parkour action is taken.
@@ -215,6 +218,8 @@ public class InputController : MonoBehaviour
                     // Don't let player jump if we're going to do a parkour action.
                     else
                     {
+                        m_movementRequest.ParkourRoll = m_parkourState.RollAmount;
+                        m_movementRequest.ParkourRollLerp = m_parkourState.RollLerp;
                         m_isJumping = false;
                         return;
                     }
