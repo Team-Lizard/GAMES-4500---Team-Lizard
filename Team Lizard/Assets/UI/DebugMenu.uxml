@@ -5,5 +5,5 @@
     xmlns:uie="UnityEditor.UIElements"
     xsi:noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd"
 >
-    
+    <ui:ScrollView name="DebugScrollView"/>
 </ui:UXML>
