@@ -875,7 +875,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Interactable.InteractableButton
   m_canReactivate: 0
   m_cooldown: 0
-  m_resultObject: {fileID: 1149365831}
+  m_condition:
+    VariableName: 
+    condition: 0
+    Value: 0
+  m_buttonActivatedObjects:
+  - {fileID: 1149365831}
 --- !u!1 &317631839
 GameObject:
   m_ObjectHideFlags: 0
@@ -2889,7 +2894,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Interactable.InteractableButton
   m_canReactivate: 0
   m_cooldown: 0
-  m_resultObject: {fileID: 1157396032}
+  m_condition:
+    VariableName: 
+    condition: 0
+    Value: 0
+  m_buttonActivatedObjects:
+  - {fileID: 1157396032}
 --- !u!135 &1157396034
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -4122,8 +4132,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Interactable.InteractableVariableCondition
   m_canReactivate: 0
   m_cooldown: 0
+  m_hasActivated: 0
+  m_lastPressedTime: 0
   m_resultObject: {fileID: 0}
-  m_condition: {fileID: 0}
+  m_condition:
+    VariableName: 
+    condition: 0
+    Value: 0
 --- !u!1 &1556404693
 GameObject:
   m_ObjectHideFlags: 0
@@ -4704,8 +4719,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Interactable.InteractableTriggerArea
   m_canReactivate: 0
   m_cooldown: 0
-  m_resultObjectEnter: {fileID: 1414074993}
-  m_resultObjectExit: {fileID: 0}
+  m_condition:
+    VariableName: times clicked
+    condition: 0
+    Value: 2
+  m_resultObjectsEnter:
+  - {fileID: 1414074993}
+  m_resultObjectsExit: []
 --- !u!1001 &1657186344
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4839,7 +4859,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Interactable.InteractableButton
   m_canReactivate: 0
   m_cooldown: 0
-  m_resultObject: {fileID: 1664392909}
+  m_condition:
+    VariableName: 
+    condition: 0
+    Value: 0
+  m_buttonActivatedObjects:
+  - {fileID: 1664392909}
 --- !u!135 &1664392911
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -6329,8 +6354,8 @@ SceneRoots:
   - {fileID: 2043991270}
   - {fileID: 677037261}
   - {fileID: 1149365830}
-  - {fileID: 1647436106}
   - {fileID: 1414074997}
+  - {fileID: 1647436106}
   - {fileID: 1987329384}
   - {fileID: 1657186344}
   - {fileID: 3762474579960343809}

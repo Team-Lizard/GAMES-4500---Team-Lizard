@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using System.Collections.Generic;
 
 namespace Interactable
 {   /// <summary>
@@ -15,6 +16,12 @@ namespace Interactable
         [SerializeField]
         [Tooltip("How long before the trigger area can be reactivated (only works if canReactivate is true).")]
         protected float m_cooldown;
+
+        [SerializeField]
+        [Tooltip("Condition that's required for this trigger to work. Setting no condition makes the trigger always work.")]
+        protected VariableCondition m_condition;
+
+        protected List<MonoBehaviour> m_resultObjects;
 
         private bool m_hasActivated;
         private float m_lastPressedTime;
@@ -67,7 +74,9 @@ namespace Interactable
 
         protected virtual bool CanBeActivated()
         {
-            return !(m_hasActivated && (!m_canReactivate || (m_canReactivate && (Time.time - m_lastPressedTime < m_cooldown))));
+            bool cooldownPassed = m_canReactivate && (Time.time - m_lastPressedTime < m_cooldown);
+            bool conditionMet = (m_condition == null) ? true : m_condition.IsConditionMet();
+            return !(m_hasActivated && (!m_canReactivate || cooldownPassed)) && conditionMet;
         }
 
         protected virtual void SetActivatedState()
@@ -80,7 +89,31 @@ namespace Interactable
         /// InteractionInput Action in the player controller.
         /// This defines the behavior for when this item is interacted with.
         /// </summary>
-        protected abstract void OnInteract();
+        protected virtual void OnInteract()
+        {
+            if (!CanBeActivated())
+            {
+                return;
+            }
+            SetActivatedState();
+
+            foreach (MonoBehaviour resultObject in m_resultObjects)
+            {
+                if (resultObject == null)
+                {
+                    Debug.Log(" resultObject is not yet assigned. Look at InteractableButton.cs");
+                    return;
+                }
+
+                if (resultObject is IInteractableTarget target)
+                {
+                    target.OnActivate();
+                    return;
+                }
+
+                Debug.Log(" resultObject is not implementing IInteractableTarget.cs");
+            }
+        }
     }
 
 }

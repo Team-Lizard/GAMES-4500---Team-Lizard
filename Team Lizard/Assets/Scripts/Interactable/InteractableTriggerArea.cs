@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -11,13 +12,11 @@ namespace Interactable
         /// </summary>
         [SerializeField]
         [Tooltip("The GameObject that will be affected by the trigger area when the player enters.")]
-        private MonoBehaviour m_resultObjectEnter;
+        private List<MonoBehaviour> m_resultObjectsEnter;
 
         [SerializeField]
         [Tooltip("The GameObject that will be affected by the trigger area when the player enters.")]
-        private MonoBehaviour m_resultObjectExit;
-
-        private MonoBehaviour m_resultObject;
+        private List<MonoBehaviour> m_resultObjectsExit;
 
 
 
@@ -36,9 +35,9 @@ namespace Interactable
                     return;
                 }
 
-                m_resultObject = m_resultObjectEnter;
+                m_resultObjects = m_resultObjectsEnter;
 
-                if (m_resultObjectEnter != null)
+                if (m_resultObjectsEnter != null)
                 {
                     OnInteract();
                 }
@@ -59,36 +58,13 @@ namespace Interactable
                 return;
             }
 
-            m_resultObject = m_resultObjectExit;
+            m_resultObjects = m_resultObjectsExit;
 
-            if (m_resultObjectExit != null)
+            if (m_resultObjectsExit != null)
             {
                 OnInteract();
             }
             
-        }
-
-        protected override void OnInteract()
-        {
-            if (!CanBeActivated())
-            {
-                return;
-            }
-            SetActivatedState();
-
-            if (m_resultObject == null)
-            {
-                Debug.Log(" m_resultObject is not yet assigned. Look at InteractableTriggerArea.cs");
-                return;
-            }
-
-            if (m_resultObject is IInteractableTarget target)
-            {
-                target.OnActivate();
-                return;
-            }
-
-            Debug.Log(" m_resultObject is not implementing IInteractableTarget.cs");
         }
     }
 }

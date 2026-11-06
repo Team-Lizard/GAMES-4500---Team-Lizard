@@ -23,8 +23,6 @@ public class VariableManager : ScriptableObject
         {
             m_variableStorage.Add(name, value);
         }
-        
-        Debug.Log(GetVariableValue(name));
     }
 
     public float GetVariableValue(string name)
