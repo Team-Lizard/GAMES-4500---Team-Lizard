@@ -245,7 +245,7 @@ public class FirstPersonController : MonoBehaviour
     {
         bool hasInput = target.sqrMagnitude > m_movementThreshold;
         float dt = Time.deltaTime;
-        
+
         if (IsGrounded)
         {
             float rate = hasInput ? m_groundAcceleration : m_groundFriction;
@@ -427,4 +427,18 @@ public class FirstPersonController : MonoBehaviour
     {
         m_interactableAction -= action;
     }
+
+    public void UpdateDebugData(DebugMenu.DebugData data)
+    {
+        data.m_airFriction = m_airFriction;
+        data.m_groundFriction = m_groundFriction;
+    }
+
+    public void UpdateViaDebugData(DebugMenu.DebugData data)
+    {
+        m_airFriction = data.m_airFriction;
+        m_groundFriction = data.m_groundFriction;
+    }
+
+
 }

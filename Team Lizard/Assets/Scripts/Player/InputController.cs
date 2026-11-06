@@ -200,7 +200,7 @@ public class InputController : MonoBehaviour
                 m_coyoteTimer = m_coyoteTime;
             }
             else
-            {   
+            {
                 m_coyoteTimer -= Time.deltaTime;
             }
 
@@ -223,7 +223,7 @@ public class InputController : MonoBehaviour
                         m_isJumping = false;
                         return;
                     }
-                    
+
                 }
             }
 
@@ -256,16 +256,16 @@ public class InputController : MonoBehaviour
                           && m_moveInput.y >= m_wallRunMinForwardInput
                           && m_wallLockoutTimer <= 0f;
 
-                          
+
 
         if (canWallRun)
         {
             WallHitInfo wall = m_parkourManager.CheckWall();
             if (wall.HitWall && Stamina.Instance().TrySpendStamina(m_staminaWallRun))
-            {   
+            {
                 m_wallGraceTimer = m_wallRunGraceTime;
                 m_wallNormal = wall.Normal;
-                
+
             }
             else
             {
@@ -360,7 +360,7 @@ public class InputController : MonoBehaviour
                 {
                     return HandleJump(m_wallJumpHeight);
                 }
-                
+
             }
             else if ((m_firstPersonController.IsGrounded || m_coyoteTimer > 0f) && Stamina.Instance().TrySpendStamina(m_staminaJump))
             {
@@ -467,7 +467,7 @@ public class InputController : MonoBehaviour
         {
             m_isSprintToggled = !m_isSprintToggled;
         }
-      
+
     }
 
     /// <summary>
@@ -514,4 +514,24 @@ public class InputController : MonoBehaviour
             m_movementRequest.IsInteracting = false;
         }
     }
+
+    public void UpdateDebugData(DebugMenu.DebugData data)
+    {
+        data.m_moveSpeed = m_moveSpeed;
+        data.m_sprintMultiplier = m_sprintMultiplier;
+        data.m_jumpHeight = m_jumpHeight;
+        data.m_extraJumpHeight = m_extraJumpHeight;
+        data.m_lookSensitivity = m_lookSensitivity;
+    }
+
+    public void UpdateViaDebugData(DebugMenu.DebugData data)
+    {
+        m_moveSpeed = data.m_moveSpeed;
+        m_sprintMultiplier = data.m_sprintMultiplier;
+        m_jumpHeight = data.m_jumpHeight;
+        m_extraJumpHeight = data.m_extraJumpHeight;
+        m_lookSensitivity = data.m_lookSensitivity;
+    }
+
+
 }
