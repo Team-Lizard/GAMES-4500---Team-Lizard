@@ -51,7 +51,7 @@ PrefabInstance:
     - target: {fileID: -7511558181221131132, guid: 257a32178bb13814e8522ea282d626e6, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: d5a9bd6770a16ce4ca2f636c34eba43d, type: 2}
+      objectReference: {fileID: 2100000, guid: c77840bc0e1b73042b3dbbab3c75df4a, type: 2}
     - target: {fileID: 919132149155446097, guid: 257a32178bb13814e8522ea282d626e6, type: 3}
       propertyPath: m_Name
       value: CS_ATM
