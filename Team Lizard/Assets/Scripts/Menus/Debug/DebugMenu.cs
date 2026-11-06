@@ -78,11 +78,11 @@ public class DebugMenu : MonoBehaviour, ISubMenu
 
         public DebugBinding(VisualTreeAsset template, string name, float value, Action<DebugBinding> onValueChanged)
         {
-            Name = VarToNormal(name);
+            Name = name;
             Value = value;
             Element = template.Instantiate();
 
-            Element.Q<Label>(className: "binding-label").text = Name;
+            Element.Q<Label>(className: "binding-label").text = VarToNormal(name);
 
             TextField input = Element.Q<TextField>(className: "binding-input");
             input.SetValueWithoutNotify(value.ToString(CultureInfo.InvariantCulture));
