@@ -19,7 +19,7 @@ namespace Interactable
 
         [SerializeField]
         [Tooltip("Condition that's required for this trigger to work. Setting no condition makes the trigger always work.")]
-        protected VariableCondition m_condition;
+        protected List<VariableCondition> m_conditions;
 
         protected List<MonoBehaviour> m_resultObjects;
 
@@ -75,7 +75,18 @@ namespace Interactable
         protected virtual bool CanBeActivated()
         {
             bool cooldownPassed = m_canReactivate && (Time.time - m_lastPressedTime < m_cooldown);
-            bool conditionMet = (m_condition == null) ? true : m_condition.IsConditionMet();
+
+            bool conditionMet = true;
+            if (m_conditions.Count > 0)
+            {
+                foreach (VariableCondition condition in m_conditions)
+                {
+                    if (!condition.IsConditionMet())
+                    {
+                        conditionMet = false;
+                    }
+                }
+            }
             return !(m_hasActivated && (!m_canReactivate || cooldownPassed)) && conditionMet;
         }
 
@@ -84,6 +95,7 @@ namespace Interactable
             m_hasActivated = true;
             m_lastPressedTime = Time.time;
         }
+        
         /// <summary>
         /// This function shouldn't be directly called, but is rather the behavior that is passed into the
         /// InteractionInput Action in the player controller.

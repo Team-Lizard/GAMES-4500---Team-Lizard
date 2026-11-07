@@ -875,10 +875,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Interactable.InteractableButton
   m_canReactivate: 0
   m_cooldown: 0
-  m_condition:
-    VariableName: 
-    condition: 0
-    Value: 0
+  m_conditions: []
   m_buttonActivatedObjects:
   - {fileID: 1149365831}
 --- !u!1 &317631839
@@ -2894,10 +2891,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Interactable.InteractableButton
   m_canReactivate: 0
   m_cooldown: 0
-  m_condition:
-    VariableName: 
-    condition: 0
-    Value: 0
+  m_conditions: []
   m_buttonActivatedObjects:
   - {fileID: 1157396032}
 --- !u!135 &1157396034
@@ -4130,15 +4124,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db80d13a30694cc44b0c235b9ee43037, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Interactable.InteractableVariableCondition
-  m_canReactivate: 0
-  m_cooldown: 0
-  m_hasActivated: 0
-  m_lastPressedTime: 0
-  m_resultObject: {fileID: 0}
-  m_condition:
-    VariableName: 
-    condition: 0
-    Value: 0
 --- !u!1 &1556404693
 GameObject:
   m_ObjectHideFlags: 0
@@ -4719,8 +4704,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Interactable.InteractableTriggerArea
   m_canReactivate: 0
   m_cooldown: 0
-  m_condition:
-    VariableName: times clicked
+  m_conditions:
+  - VariableName: times clicked
     condition: 0
     Value: 2
   m_resultObjectsEnter:
@@ -4859,10 +4844,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Interactable.InteractableButton
   m_canReactivate: 0
   m_cooldown: 0
-  m_condition:
-    VariableName: 
-    condition: 0
-    Value: 0
+  m_conditions: []
   m_buttonActivatedObjects:
   - {fileID: 1664392909}
 --- !u!135 &1664392911
