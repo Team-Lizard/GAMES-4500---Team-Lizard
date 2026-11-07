@@ -6,7 +6,7 @@ namespace Interactable
 {
     public class InteractableTargetMovingPlatform : MovingPlatform, IInteractableTarget
     {
-        public void Start()
+        new public void Start()
         {
             base.Start();
 
