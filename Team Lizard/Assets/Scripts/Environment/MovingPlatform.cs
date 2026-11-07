@@ -47,9 +47,10 @@ public class MovingPlatform : MonoBehaviour
     private Vector3 m_delta;
     private Vector3 m_totalDelta;
     private bool m_reachedEnd;
+    protected bool m_canStartOnOwn = true;
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    private void Start()
+    protected void Start()
     {
         m_initialPosition = transform.position;
         m_finalPosition = m_initialPosition + m_movementAmount;
@@ -101,9 +102,14 @@ public class MovingPlatform : MonoBehaviour
         }
     }
 
-    private void StartMoving()
+    protected void StartMoving()
     {
         if (m_reachedEnd && !m_returnToStart)
+        {
+            return;
+        }
+
+        if (!m_canStartOnOwn)
         {
             return;
         }
