@@ -1,0 +1,22 @@
+﻿.debug-binding {
+    display: flex;
+    flex-direction: row;
+    height: auto;
+    min-height: 20px;
+    margin-left: 5px;
+    margin-right: 5px;
+    flex-grow: 1;
+}
+
+.binding-input {
+    -unity-text-align: middle-center;
+    flex-grow: 1;
+    min-width: 200px;
+}
+
+.binding-label {
+    -unity-text-align: upper-center;
+    color: white;
+    flex-grow: 1;
+    min-width: 200px;
+}
