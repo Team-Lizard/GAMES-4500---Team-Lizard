@@ -3347,12 +3347,20 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3848311692467163602, guid: 55d28c6e4ca51ab49aa8d59553278bef, type: 3}
+      propertyPath: m_extraJumpHeight
+      value: 0.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 3848311692467163602, guid: 55d28c6e4ca51ab49aa8d59553278bef, type: 3}
       propertyPath: m_secondJumpHeight
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3848311692467163602, guid: 55d28c6e4ca51ab49aa8d59553278bef, type: 3}
       propertyPath: m_staminaDoubleJump
       value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 6610288824303935535, guid: 55d28c6e4ca51ab49aa8d59553278bef, type: 3}
+      propertyPath: m_gravity
+      value: -11
       objectReference: {fileID: 0}
     - target: {fileID: 6610288824303935535, guid: 55d28c6e4ca51ab49aa8d59553278bef, type: 3}
       propertyPath: m_airAcceleration
