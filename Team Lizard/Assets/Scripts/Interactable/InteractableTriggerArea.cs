@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -10,10 +11,14 @@ namespace Interactable
         /// The use of InteractableTarget allows this class to call its interface method
         /// </summary>
         [SerializeField]
-        [Tooltip("The GameObject that will be affected by the button.")]
-        private MonoBehaviour m_resultObject;
+        [Tooltip("The GameObject that will be affected by the trigger area when the player enters.")]
+        private List<MonoBehaviour> m_resultObjectsEnter;
 
-        private bool m_hasActivated;
+        [SerializeField]
+        [Tooltip("The GameObject that will be affected by the trigger area when the player enters.")]
+        private List<MonoBehaviour> m_resultObjectsExit;
+
+
 
         protected override void OnTriggerEnter(Collider other)
         {
@@ -30,30 +35,36 @@ namespace Interactable
                     return;
                 }
 
-                OnInteract();
+                m_resultObjects = m_resultObjectsEnter;
+
+                if (m_resultObjectsEnter != null)
+                {
+                    OnInteract();
+                }
         }
 
-        protected override void OnInteract()
+        protected override void OnTriggerExit(Collider other)
         {
-            if (m_hasActivated)
+            if (!other.CompareTag("Player"))
             {
                 return;
             }
 
-            m_hasActivated = true;
-            if (m_resultObject == null)
+            FirstPersonController controller = other.GetComponent<FirstPersonController>();
+
+            if (!controller)
             {
-                Debug.Log(" m_resultObject is not yet assigned. Look at InteractableButton.cs");
+                Debug.Log("FirstPersonController not found, Interactable.cs");
                 return;
             }
 
-            if (m_resultObject is IInteractableTarget target)
-            {
-                target.OnActivate();
-                return;
-            }
+            m_resultObjects = m_resultObjectsExit;
 
-            Debug.Log(" m_resultObject is not implementing IInteractableTarget.cs");
+            if (m_resultObjectsExit != null)
+            {
+                OnInteract();
+            }
+            
         }
     }
 }

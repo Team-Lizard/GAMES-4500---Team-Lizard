@@ -1,4 +1,5 @@
 using System;
+using Interactable;
 using Unity.Multiplayer.PlayMode;
 using Unity.VisualScripting;
 using UnityEditor.Build.Pipeline;
@@ -392,6 +393,14 @@ public class FirstPersonController : MonoBehaviour
         if (platform != null)
         {
             m_currentPlatform = platform;
+
+            InteractablePlatformAcquired inter = platform.GetComponent<InteractablePlatformAcquired>();
+
+            if (inter)
+            {
+                inter.OnPlatformAcquired();
+            }
+
             m_currentPlatform.GetTotalDelta();
         }
     }
