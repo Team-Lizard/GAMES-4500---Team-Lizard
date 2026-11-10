@@ -3335,6 +3335,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6610288824303935535, guid: 55d28c6e4ca51ab49aa8d59553278bef, type: 3}
+      propertyPath: m_groundFriction
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 6610288824303935535, guid: 55d28c6e4ca51ab49aa8d59553278bef, type: 3}
       propertyPath: m_airAcceleration
       value: 20
       objectReference: {fileID: 0}
