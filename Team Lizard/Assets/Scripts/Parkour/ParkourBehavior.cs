@@ -19,10 +19,6 @@ public abstract class ParkourBehavior : ScriptableObject
     [Tooltip("Distance player should move in the forward direction.")]
     public float HorizontalDistance;
 
-    [SerializeField]
-    [Tooltip("How much stamina is required for this parkour behavior to be possible.")]
-    public float StaminaCost;
-
     /// <summary>
     /// Checks whether this parkour action can be performed.
     /// </summary>
