@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ui:UXML
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ui="UnityEngine.UIElements"
+    xmlns:uie="UnityEditor.UIElements"
+    xsi:noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd">
+    <Style src="project://database/Assets/UI/StyleSheets/DebugBinding.uss?fileID=7433441132597879392&amp;guid=c6acf92444ec4b44939d487cfed45d48&amp;type=3#DebugBinding"/>
+    <ui:VisualElement class="debug-binding">
+        <ui:Label text="Label" class="binding-label"/>
+        <ui:TextField text="Input" class="binding-input"/>
+    </ui:VisualElement>
+</ui:UXML>
