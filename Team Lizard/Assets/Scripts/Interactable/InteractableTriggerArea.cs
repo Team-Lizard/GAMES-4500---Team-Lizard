@@ -17,9 +17,7 @@ namespace Interactable
         [SerializeField]
         [Tooltip("The GameObject that will be affected by the trigger area when the player enters.")]
         private List<MonoBehaviour> m_resultObjectsExit;
-
-
-
+        
         protected override void OnTriggerEnter(Collider other)
         {
             if (!other.CompareTag("Player"))

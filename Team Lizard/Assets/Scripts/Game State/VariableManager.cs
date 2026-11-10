@@ -27,15 +27,7 @@ public class VariableManager : ScriptableObject
 
     public float GetVariableValue(string name)
     {
-        if (m_variableStorage.ContainsKey(name))
-        {
-            return m_variableStorage[name];
-        }
-        else
-        {
-            return 0;
-        }
-        
+        return m_variableStorage.ContainsKey(name) ? m_variableStorage[name] : 0;
     }
 
     public void IncrementVariable(string name, float amount = 1)

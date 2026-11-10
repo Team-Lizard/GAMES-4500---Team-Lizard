@@ -14,7 +14,6 @@ namespace Interactable
         [Tooltip("The GameObject that will be affected by the trigger area when the player enters.")]
         private List<MonoBehaviour> m_platformActivatedObjects;
 
-
         public void OnPlatformAcquired()
         {
             m_resultObjects = m_platformActivatedObjects;

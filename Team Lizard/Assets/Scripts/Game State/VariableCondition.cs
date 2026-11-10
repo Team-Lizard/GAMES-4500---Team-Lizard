@@ -22,7 +22,6 @@ public class VariableCondition
 
     public bool IsConditionMet()
     {
-        
         switch (condition)
         {
             case ConditionType.LT:
@@ -39,7 +38,5 @@ public class VariableCondition
             default:
                 return VariableManager.Instance().GetVariableValue(VariableName) == Value;
         }
-
-        
     }
 }
