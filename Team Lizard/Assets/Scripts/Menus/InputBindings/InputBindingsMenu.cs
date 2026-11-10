@@ -55,7 +55,6 @@ public class InputBindingsMenu : MonoBehaviour, ISubMenu
 
                 Button button = bindingElement.Q<Button>();
                 button.clicked += Onclicked;
-                button.RegisterCallback<FocusInEvent>(_ => list.ScrollTo(bindingElement));
 
                 // when clicking a binding button, we'll show the screen to rebind the input; the screen
                 // will be responsible for overriding the current binding and destroying itself
