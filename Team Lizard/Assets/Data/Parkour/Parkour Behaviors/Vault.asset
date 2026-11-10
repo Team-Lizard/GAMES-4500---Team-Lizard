@@ -16,7 +16,4 @@ MonoBehaviour:
   m_maxHeight: 0.5
   AnimationLength: 0.25
   HorizontalDistance: 5
-  StaminaCost: 10
-  RollAmount: 20
-  RollLerp: 20
   m_obstacleClearance: 0.5

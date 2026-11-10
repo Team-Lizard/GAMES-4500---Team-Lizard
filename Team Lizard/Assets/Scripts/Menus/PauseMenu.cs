@@ -24,10 +24,6 @@ namespace Menus
         // if we ever want a slo-mo effect, it may be wise to hold the previous gamespeed
         private float m_prevTimeScale;
 
-        [SerializeField]
-        [Tooltip("The player object associated with this scene")]
-        private MonoBehaviour m_playerObject;
-
         /// <summary>
         /// Called when the object is first loaded
         /// </summary>
@@ -40,7 +36,13 @@ namespace Menus
             m_panelRenderer.RegisterUIReloadCallback(OnUIReload);
             m_visible = false;
 
-            m_playerInput = m_playerObject.GetComponent<PlayerInput>();
+            FirstPersonController[] players = FindObjectsByType<FirstPersonController>();
+            if (players.Length != 1)
+            {
+                Debug.LogError("More than 1 player controller found. if this is intended, " +
+                               "remove the error message in PauseMenu.cs");
+            }
+            m_playerInput = players[0].GetComponent<PlayerInput>();
 
             m_prevTimeScale = Time.timeScale;
         }
