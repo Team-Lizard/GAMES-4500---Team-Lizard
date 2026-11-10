@@ -4,7 +4,7 @@
             {
                 "type": "UnityEngine.ProBuilder.SelectMode, Unity.ProBuilder, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
                 "key": "s_SelectMode",
-                "value": "{\"m_Value\":1}"
+                "value": "{\"m_Value\":4}"
             },
             {
                 "type": "UnityEngine.ProBuilder.LogLevel, Unity.ProBuilder, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
@@ -174,7 +174,7 @@
             {
                 "type": "UnityEngine.Vector3, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
                 "key": "ShapeBuilder.LastSize.Cube",
-                "value": "{\"m_Value\":{\"x\":3.3099184036254885,\"y\":0.2777976989746094,\"z\":0.6861299872398377}}"
+                "value": "{\"m_Value\":{\"x\":-6.590370178222656,\"y\":-0.2118358612060547,\"z\":4.772071838378906}}"
             },
             {
                 "type": "UnityEngine.Vector3, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null",
