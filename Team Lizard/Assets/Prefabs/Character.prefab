@@ -25,7 +25,7 @@ Transform:
   m_GameObject: {fileID: 1281660263265938163}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -458,8 +458,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FirstPersonController
   m_gravity: -9.81
-  m_horizontalGroundFriction: 17
-  m_horizontalAirFriction: 4
+  m_groundFriction: 17
+  m_airFriction: 4
+  m_groundAcceleration: 60
+  m_airAcceleration: 20
   m_cameraTransform: {fileID: 3842612233710885895}
   m_slideHeight: 0.5
   m_slideCameraLerp: 12
@@ -468,6 +470,11 @@ MonoBehaviour:
   m_wallRunRollLerp: 10
   m_wallRunHangTime: 0.7
   m_wallRunSlideRampTime: 0.5
+  m_jumpEvent:
+    idInternal: 0
+    valueGuidInternal: 
+    WwiseObjectReference: {fileID: 0}
+  m_snapDistance: 0.3
 --- !u!114 &3848311692467163602
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -482,18 +489,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::InputController
   m_moveSpeed: 5
   m_sprintMultiplier: 1.8
+  m_jumpHeight: 1.5
+  m_extraJumpHeight: 1.5
+  m_wallJumpHeight: 1.5
+  m_maxExtraJumps: 1
+  m_lookSensitivity: 0.5
+  m_coyoteTime: 0.15
   m_slideMultiplier: 1.8
   m_minimumSlideMultiplier: 0.5
+  m_maximumSlideMultiplier: 4
   m_slideDecay: 1.8
-  m_jumpHeight: 1.5
-  m_lookSensitivity: 0.5
-  m_maxExtraJumps: 1
-  m_coyoteTime: 0.15
   m_wallRunSpeedMultiplier: 1.2
   m_wallJumpSideForce: 6
   m_wallRunMinForwardInput: 0.3
   m_wallRunGraceTime: 0.2
   m_wallJumpLockoutTime: 0.25
+  m_staminaRun: 0
+  m_staminaJump: 0
+  m_staminaDoubleJump: 0
+  m_staminaWallJump: 0
+  m_staminaWallRun: 0
+  m_staminaSlide: 0
 --- !u!114 &7984297794713564900
 MonoBehaviour:
   m_ObjectHideFlags: 0
