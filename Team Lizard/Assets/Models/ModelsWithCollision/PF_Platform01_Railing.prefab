@@ -48,9 +48,13 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 52d216eaff5e3f6458fbb796ad54e751, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 406419b5a2030fc4bb342fa510aadc58, type: 2}
     - target: {fileID: 919132149155446097, guid: 52d216eaff5e3f6458fbb796ad54e751, type: 3}
       propertyPath: m_Name
-      value: CS_Platform01_Railing
+      value: PF_Platform01_Railing
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
