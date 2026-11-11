@@ -35,7 +35,7 @@ public class InputBindingsMenu : MonoBehaviour, ISubMenu
     {
         SyncBindings();
 
-        ScrollView list = root.Q<ScrollView>("BindingScrollView");
+        ScrollView list = root.Q<ScrollView>("SubmenuScrollView");
         list.Clear();
 
         // adding every single input across all InputActionMaps to a single menu.

@@ -190,7 +190,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f908b3c107267f944b4a26607e9932b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InputBindingsMenu
-  m_menuUI: {fileID: 9197481963319205126, guid: a18ba1c5ff344634e9d4bdcffacfa8e5, type: 3}
+  m_menuUI: {fileID: 9197481963319205126, guid: 8c3f2a1d7e6b4c59a0f8d2e4b6c1a9f3, type: 3}
   m_inputActionAsset: {fileID: -944628639613478452, guid: b9877ba5dedd6f94591166917da37e37, type: 3}
   m_bindingUI: {fileID: 9197481963319205126, guid: 477445ef0c8e3ce43819b594595777e5, type: 3}
 --- !u!114 &6000000000000000002
@@ -205,4 +205,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67f2bf40fc87e6a4b984f9ef19d6365c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DebugMenu
-  m_menuUI: {fileID: 9197481963319205126, guid: e5fa6c2342505be408902363e40acc97, type: 3}
+  m_menuUI: {fileID: 9197481963319205126, guid: 8c3f2a1d7e6b4c59a0f8d2e4b6c1a9f3, type: 3}

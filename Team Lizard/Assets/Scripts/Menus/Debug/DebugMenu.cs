@@ -37,7 +37,7 @@ public class DebugMenu : MonoBehaviour, ISubMenu
         m_inputController = m_playerObject.GetComponent<InputController>();
 
         DebugData data = DebugData.GetDebugData(m_firstPersonController,  m_inputController);
-        ScrollView list = root.Q<ScrollView>("DebugScrollView");
+        ScrollView list = root.Q<ScrollView>("SubmenuScrollView");
 
         list.Clear();
         m_debugBindings = new List<DebugBinding>();

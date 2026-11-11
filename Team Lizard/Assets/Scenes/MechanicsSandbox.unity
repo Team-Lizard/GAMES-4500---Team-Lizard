@@ -929,7 +929,7 @@ PanelRenderer:
   m_MaskInteraction: 0
   serializedVersion: 1
   m_PanelSettings: {fileID: 11400000, guid: 53c02929ebd16794d839d95a95d4248f, type: 2}
-  sourceAsset: {fileID: 9197481963319205126, guid: a18ba1c5ff344634e9d4bdcffacfa8e5, type: 3}
+  sourceAsset: {fileID: 9197481963319205126, guid: 8c3f2a1d7e6b4c59a0f8d2e4b6c1a9f3, type: 3}
   m_ParentUI: {fileID: 0}
   m_WorldSpaceSizeMode: 1
   m_WorldSpaceWidth: 1920
