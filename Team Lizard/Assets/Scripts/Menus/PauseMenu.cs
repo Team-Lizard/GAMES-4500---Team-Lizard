@@ -12,6 +12,7 @@ namespace Menus
         /// </summary>
         private MonoBehaviour m_inputBindingsMenu;
         private MonoBehaviour m_debugMenu;
+        private MonoBehaviour m_optionsMenu;
 
         private PanelRenderer m_panelRenderer;
         private VisualElement m_menuContainer;
@@ -57,6 +58,10 @@ namespace Menus
 
             root.Q<Button>("BindingMenuButton").clicked +=
                 () => ShowSubmenu(m_inputBindingsMenu as ISubMenu);
+
+            root.Q<Button>("OptionsMenuButton").clicked +=
+                () => ShowSubmenu(m_optionsMenu as ISubMenu);
+
 
             root.Q<Button>("DebugMenuButton").clicked +=
                 () => ShowSubmenu(m_debugMenu as ISubMenu);
