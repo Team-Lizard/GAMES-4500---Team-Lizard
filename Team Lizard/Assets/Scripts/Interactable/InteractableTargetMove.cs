@@ -38,20 +38,21 @@ namespace Interactable
         // FixedUpdate is called once per physics frame
         private void FixedUpdate()
         {            
-            if (m_isMoving)
+            if (!m_isMoving)
             {
-                m_currentTime += Time.deltaTime;
-                
-                // Move between endpoints
-                float scaledT = m_currentTime / m_transitTime;
+                return;
+            }
+            m_currentTime += Time.deltaTime;
+            
+            // Move between endpoints
+            float scaledT = m_currentTime / m_transitTime;
 
-                transform.position = BezierCurve.EvaluatePoint(m_initialPosition, m_finalPosition, m_controlPosition, scaledT);
-                
-                if (m_currentTime > m_transitTime)
-                {
-                    m_currentTime = 0;
-                    m_isMoving = false;
-                }
+            transform.position = BezierCurve.EvaluatePoint(m_initialPosition, m_finalPosition, m_controlPosition, scaledT);
+            
+            if (m_currentTime > m_transitTime)
+            {
+                m_currentTime = 0;
+                m_isMoving = false;
             }
         }
     }
