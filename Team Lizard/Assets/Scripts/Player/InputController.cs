@@ -76,6 +76,9 @@ public class InputController : MonoBehaviour
         [SerializeField]
         [Tooltip("How fast slide decays.")]
         private float m_slideDecay = 1.8f;
+        [SerializeField]
+        [Tooltip("How much player input can steer an auto slide, as a percentage. If 1, player can do what they want on auto slide surface. If 0, they are forced in that direction.")]
+        private float m_autoSlideSteering = 0.3f;
 
     [Header("Wall Running")]
         [SerializeField]
@@ -131,6 +134,7 @@ public class InputController : MonoBehaviour
     private bool m_isSprintToggled;
     private bool m_isSlideToggled;
     private bool m_isJumping;
+    private bool m_wasAutoSliding;
     private int m_extraJumps;
     private Vector2 m_moveInput;
     private Vector2 m_lookInput;
@@ -292,7 +296,7 @@ public class InputController : MonoBehaviour
     /// </summary>
     /// <param name="moveSpeed">How fast the player is moving originally.</param>
     /// <returns>Float representing slide speed.</returns>
-    private float HandleSlide(float moveSpeed, Vector3 moveDirection)
+    private float HandleSlide(float moveSpeed, Vector3 moveDirection, bool skipStaminaCost = false)
     {
         float slopeAcceleration = 0f;
         Vector3 ground = m_firstPersonController.GroundNormal;
@@ -320,7 +324,9 @@ public class InputController : MonoBehaviour
         m_currentSlideMultiplier = Mathf.Clamp(m_currentSlideMultiplier, m_minimumSlideMultiplier, m_maximumSlideMultiplier);
 
         // Slide if we have the stamina, otherwise move at crawling speed.
-        return Stamina.Instance().TrySpendStamina(m_staminaSlide) ? moveSpeed * m_currentSlideMultiplier : moveSpeed * m_minimumSlideMultiplier;
+        return (skipStaminaCost || Stamina.Instance().TrySpendStamina(m_staminaSlide))
+                ? moveSpeed * m_currentSlideMultiplier
+                : moveSpeed * m_minimumSlideMultiplier;
     }
 
     /// <summary>
@@ -383,6 +389,14 @@ public class InputController : MonoBehaviour
     /// <returns>Vector3 representing movement velocity.</returns>
     private Vector3 HandleHorizontalMovement()
     {
+        bool autoSlide = m_firstPersonController.IsGrounded && m_parkourManager.CheckAutoSlideSurface();
+
+        if (m_wasAutoSliding && !autoSlide && !m_isSlideToggled)
+        {
+            m_currentSlideMultiplier = m_slideMultiplier;
+        }
+        m_wasAutoSliding = autoSlide;
+
         // Calculate wall running horizontal speed.
         if (m_isWallRunning)
         {
@@ -399,13 +413,31 @@ public class InputController : MonoBehaviour
 
         // Create movement vector based on stored player input.
         Vector3 move = transform.forward * m_moveInput.y + transform.right * m_moveInput.x;
+        move = Vector3.ClampMagnitude(move, 1f);
 
         // Make sure diagonal movement isn't faster than unidirectional movement.
         move = Vector3.ClampMagnitude(move, 1f);
-        if (m_isSlideToggled && m_firstPersonController.IsGrounded)
+        if ((m_isSlideToggled || autoSlide) && m_firstPersonController.IsGrounded)
         {
             m_movementRequest.IsSliding = true;
-            return move * HandleSlide(m_moveSpeed, move);
+
+            Vector3 slideDirection = move;
+
+            if (autoSlide)
+            {
+                Vector3 ground = m_firstPersonController.GroundNormal;
+                Vector3 downhill = Vector3.ProjectOnPlane(Vector3.down, ground);
+                Vector3 downhillFlat = new Vector3(downhill.x, 0f, downhill.z);
+
+                // Only override the direction if there's an actual slope.
+                if (downhillFlat.sqrMagnitude > 0.0001f)
+                {
+                    slideDirection = downhillFlat.normalized + move * m_autoSlideSteering;
+                    slideDirection = Vector3.ClampMagnitude(slideDirection, 1f);
+                }
+            }
+
+            return slideDirection * HandleSlide(m_moveSpeed, slideDirection, autoSlide);
         }
         else
         {
