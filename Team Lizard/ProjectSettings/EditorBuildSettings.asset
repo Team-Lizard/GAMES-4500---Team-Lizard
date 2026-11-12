@@ -12,4 +12,4 @@ EditorBuildSettings:
     path: Assets/Scenes/Level_Design.unity
     guid: e4cbb7d66a925ff43b3215737b1aa321
   m_configObjects:
-    com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+    com.unity.input.settings.actions: {fileID: -944628639613478452, guid: b9877ba5dedd6f94591166917da37e37, type: 3}
