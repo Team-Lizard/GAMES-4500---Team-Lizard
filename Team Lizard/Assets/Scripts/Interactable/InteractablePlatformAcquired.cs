@@ -20,6 +20,7 @@ namespace Interactable
 
             if (m_resultObjects != null)
             {
+                Debug.Log("Standing on");
                 OnInteract();
             }
         }
