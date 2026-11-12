@@ -10,7 +10,7 @@ namespace Interactable
         [SerializeField]
         private Ability m_ability;
 
-        [Tooltip("Ability to activate.")]
+        [Tooltip("Player input controller to activate ability on.")]
         [SerializeField]
         private InputController m_inputController;
 
