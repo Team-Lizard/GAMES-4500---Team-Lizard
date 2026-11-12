@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Specialized;
 using System.Net.Http.Headers;
+using Interactable;
 using Unity.VisualScripting;
 using UnityEditor.Build.Pipeline;
 using UnityEngine;
@@ -18,6 +19,16 @@ public struct MovementRequest
     public float ParkourRollLerp;
     public Vector3 WallNormal;
     public bool IsInteracting;
+}
+
+public enum Ability
+{
+    RUN,
+    JUMP,
+    DOUBLE_JUMP,
+    WALL_JUMP,
+    WALL_RUN,
+    SLIDE
 }
 
 public class InputController : MonoBehaviour
@@ -433,6 +444,31 @@ public class InputController : MonoBehaviour
             {
                 return move * m_moveSpeed;
             }
+        }
+    }
+
+    public void ActivateAbility(Ability ability)
+    {
+        switch (ability)
+        {
+            case Ability.RUN:
+                m_staminaRun.Enable();
+                break;
+            case Ability.JUMP:
+                m_staminaJump.Enable();
+                break;
+            case Ability.DOUBLE_JUMP:
+                m_staminaDoubleJump.Enable();
+                break;
+            case Ability.WALL_JUMP:
+                m_staminaWallJump.Enable();
+                break;
+            case Ability.WALL_RUN:
+                m_staminaWallRun.Enable();
+                break;
+            case Ability.SLIDE:
+                m_staminaSlide.Enable();
+                break;
         }
     }
 
