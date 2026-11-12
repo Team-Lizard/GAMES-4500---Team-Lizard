@@ -11,7 +11,7 @@ public struct ParkourState
     public Vector3 StartingPosition;
     public Vector3 EndingPosition;
     public float ObstacleHeight;
-    public float StaminaCost;
+    public StaminaSetting Stamina;
     public float RollAmount;
     public float RollLerp;
 }
@@ -57,7 +57,7 @@ public class ParkourManager : MonoBehaviour
                     // We want to end up on other side of the object. This code could be adjusted if we want different behavior.
                     parkourState.EndingPosition = parkourState.StartingPosition + action.HorizontalDistance * hitInfo.ForwardDirection;
 
-                    parkourState.StaminaCost = action.StaminaCost;
+                    parkourState.Stamina = action.Stamina;
                     parkourState.RollAmount = action.RollAmount;
                     parkourState.RollLerp = action.RollLerp;
                 }
