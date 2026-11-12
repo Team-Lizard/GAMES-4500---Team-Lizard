@@ -14,6 +14,8 @@ public struct MovementRequest
     public Vector2 LookDelta;
     public bool IsSliding;
     public bool IsWallRunning;
+    public float ParkourRoll;
+    public float ParkourRollLerp;
     public Vector3 WallNormal;
     public bool IsInteracting;
 }
@@ -74,6 +76,9 @@ public class InputController : MonoBehaviour
         [SerializeField]
         [Tooltip("How fast slide decays.")]
         private float m_slideDecay = 1.8f;
+        [SerializeField]
+        [Tooltip("How much player input can steer an auto slide, as a percentage. If 1, player can do what they want on auto slide surface. If 0, they are forced in that direction.")]
+        private float m_autoSlideSteering = 0.3f;
 
     [Header("Wall Running")]
         [SerializeField]
@@ -96,6 +101,31 @@ public class InputController : MonoBehaviour
         [Tooltip("Time after a wall jump before the player can latch onto a wall again.")]
         private float m_wallJumpLockoutTime = 0.25f;
 
+    [Header("Stamina")]
+        [SerializeField]
+        [Tooltip("How much stamina should be spent to run.")]
+        private float m_staminaRun;
+
+        [SerializeField]
+        [Tooltip("How much stamina should be spent to jump regularly.")]
+        private float m_staminaJump;
+
+        [SerializeField]
+        [Tooltip("How much stamina should be spent to double jump.")]
+        private float m_staminaDoubleJump;
+
+        [SerializeField]
+        [Tooltip("How much stamina should be spent to jump off of a wall.")]
+        private float m_staminaWallJump;
+
+        [SerializeField]
+        [Tooltip("How much stamina should be spent to wall run.")]
+        private float m_staminaWallRun;
+
+        [SerializeField]
+        [Tooltip("How much stamina should be spent to slide.")]
+        private float m_staminaSlide;
+
     private float m_wallGraceTimer;
     private float m_wallLockoutTimer;
     private bool m_isWallRunning;
@@ -104,6 +134,7 @@ public class InputController : MonoBehaviour
     private bool m_isSprintToggled;
     private bool m_isSlideToggled;
     private bool m_isJumping;
+    private bool m_wasAutoSliding;
     private int m_extraJumps;
     private Vector2 m_moveInput;
     private Vector2 m_lookInput;
@@ -156,6 +187,7 @@ public class InputController : MonoBehaviour
             if (m_parkourState.AnimationTime > m_parkourState.AnimationLength)
             {
                 m_parkourState.CurrentAction = null;
+                m_movementRequest.ParkourRoll = 0.0f;
             }
 
             // Clear wall running and sliding variables if a parkour action is taken.
@@ -181,8 +213,21 @@ public class InputController : MonoBehaviour
                 m_parkourState = m_parkourManager.CheckParkourAction();
                 if (m_parkourState.CurrentAction != null)
                 {
-                    m_isJumping = false;
-                    return;
+                    // Remove current parkour action if we don't have the stamina.
+                    // Player will default to jumping if we don't have the stamina for an action.
+                    if (!Stamina.Instance().TrySpendStamina(m_parkourState.StaminaCost))
+                    {
+                        m_parkourState.CurrentAction = null;
+                    }
+                    // Don't let player jump if we're going to do a parkour action.
+                    else
+                    {
+                        m_movementRequest.ParkourRoll = m_parkourState.RollAmount;
+                        m_movementRequest.ParkourRollLerp = m_parkourState.RollLerp;
+                        m_isJumping = false;
+                        return;
+                    }
+
                 }
             }
 
@@ -215,13 +260,16 @@ public class InputController : MonoBehaviour
                           && m_moveInput.y >= m_wallRunMinForwardInput
                           && m_wallLockoutTimer <= 0f;
 
+
+
         if (canWallRun)
         {
             WallHitInfo wall = m_parkourManager.CheckWall();
-            if (wall.HitWall)
+            if (wall.HitWall && Stamina.Instance().TrySpendStamina(m_staminaWallRun))
             {
                 m_wallGraceTimer = m_wallRunGraceTime;
                 m_wallNormal = wall.Normal;
+
             }
             else
             {
@@ -248,7 +296,7 @@ public class InputController : MonoBehaviour
     /// </summary>
     /// <param name="moveSpeed">How fast the player is moving originally.</param>
     /// <returns>Float representing slide speed.</returns>
-    private float HandleSlide(float moveSpeed, Vector3 moveDirection)
+    private float HandleSlide(float moveSpeed, Vector3 moveDirection, bool skipStaminaCost = false)
     {
         float slopeAcceleration = 0f;
         Vector3 ground = m_firstPersonController.GroundNormal;
@@ -265,7 +313,7 @@ public class InputController : MonoBehaviour
 
         float multiplierChange = slopeAcceleration / moveSpeed;
         if (multiplierChange > 0f)
-    {
+        {
             m_currentSlideMultiplier += multiplierChange * Time.deltaTime;
         }
         else
@@ -274,7 +322,11 @@ public class InputController : MonoBehaviour
         }
 
         m_currentSlideMultiplier = Mathf.Clamp(m_currentSlideMultiplier, m_minimumSlideMultiplier, m_maximumSlideMultiplier);
-        return moveSpeed * m_currentSlideMultiplier;
+
+        // Slide if we have the stamina, otherwise move at crawling speed.
+        return (skipStaminaCost || Stamina.Instance().TrySpendStamina(m_staminaSlide))
+                ? moveSpeed * m_currentSlideMultiplier
+                : moveSpeed * m_minimumSlideMultiplier;
     }
 
     /// <summary>
@@ -310,13 +362,18 @@ public class InputController : MonoBehaviour
                 m_wallGraceTimer = 0f;
                 m_wallLockoutTimer = m_wallJumpLockoutTime;
 
-                return HandleJump(m_wallJumpHeight);
+                if (Stamina.Instance().TrySpendStamina(m_staminaWallJump))
+                {
+                    return HandleJump(m_wallJumpHeight);
+                }
+
             }
-            else if (m_firstPersonController.IsGrounded || m_coyoteTimer > 0f)
+            else if ((m_firstPersonController.IsGrounded || m_coyoteTimer > 0f) && Stamina.Instance().TrySpendStamina(m_staminaJump))
             {
                 verticalVelocity = HandleJump(m_jumpHeight);
             }
-            else if (m_extraJumps > 0)
+            // Don't allow double jump unless we have the stamina.
+            else if (m_extraJumps > 0 && Stamina.Instance().TrySpendStamina(m_staminaDoubleJump))
             {
                 verticalVelocity = HandleJump(m_extraJumpHeight);
                 m_extraJumps--;
@@ -332,6 +389,14 @@ public class InputController : MonoBehaviour
     /// <returns>Vector3 representing movement velocity.</returns>
     private Vector3 HandleHorizontalMovement()
     {
+        bool autoSlide = m_firstPersonController.IsGrounded && m_parkourManager.CheckAutoSlideSurface();
+
+        if (m_wasAutoSliding && !autoSlide && !m_isSlideToggled)
+        {
+            m_currentSlideMultiplier = m_slideMultiplier;
+        }
+        m_wasAutoSliding = autoSlide;
+
         // Calculate wall running horizontal speed.
         if (m_isWallRunning)
         {
@@ -348,13 +413,31 @@ public class InputController : MonoBehaviour
 
         // Create movement vector based on stored player input.
         Vector3 move = transform.forward * m_moveInput.y + transform.right * m_moveInput.x;
+        move = Vector3.ClampMagnitude(move, 1f);
 
         // Make sure diagonal movement isn't faster than unidirectional movement.
         move = Vector3.ClampMagnitude(move, 1f);
-        if (m_isSlideToggled && m_firstPersonController.IsGrounded)
+        if ((m_isSlideToggled || autoSlide) && m_firstPersonController.IsGrounded)
         {
             m_movementRequest.IsSliding = true;
-            return move * HandleSlide(m_moveSpeed, move);
+
+            Vector3 slideDirection = move;
+
+            if (autoSlide)
+            {
+                Vector3 ground = m_firstPersonController.GroundNormal;
+                Vector3 downhill = Vector3.ProjectOnPlane(Vector3.down, ground);
+                Vector3 downhillFlat = new Vector3(downhill.x, 0f, downhill.z);
+
+                // Only override the direction if there's an actual slope.
+                if (downhillFlat.sqrMagnitude > 0.0001f)
+                {
+                    slideDirection = downhillFlat.normalized + move * m_autoSlideSteering;
+                    slideDirection = Vector3.ClampMagnitude(slideDirection, 1f);
+                }
+            }
+
+            return slideDirection * HandleSlide(m_moveSpeed, slideDirection, autoSlide);
         }
         else
         {
@@ -364,6 +447,11 @@ public class InputController : MonoBehaviour
             // We should only apply a sprint boost to forward momentum.
             if (forwardAmount > 0)
             {
+                // Turn off sprinting if we don't have the stamina to sprint.
+                if (m_isSprintToggled && !Stamina.Instance().TrySpendStamina(m_staminaRun)) {
+                    m_isSprintToggled = false;
+                }
+
                 float adjustedSpeed = m_isSprintToggled ? m_moveSpeed * m_sprintMultiplier : m_moveSpeed;
 
                 Vector3 forwardMove = (forwardAmount * transform.forward) * adjustedSpeed;
@@ -411,7 +499,7 @@ public class InputController : MonoBehaviour
         {
             m_isSprintToggled = !m_isSprintToggled;
         }
-      
+
     }
 
     /// <summary>
@@ -458,4 +546,24 @@ public class InputController : MonoBehaviour
             m_movementRequest.IsInteracting = false;
         }
     }
+
+    public void UpdateDebugData(DebugMenu.DebugData data)
+    {
+        data.m_moveSpeed = m_moveSpeed;
+        data.m_sprintMultiplier = m_sprintMultiplier;
+        data.m_jumpHeight = m_jumpHeight;
+        data.m_extraJumpHeight = m_extraJumpHeight;
+        data.m_lookSensitivity = m_lookSensitivity;
+    }
+
+    public void UpdateViaDebugData(DebugMenu.DebugData data)
+    {
+        m_moveSpeed = data.m_moveSpeed;
+        m_sprintMultiplier = data.m_sprintMultiplier;
+        m_jumpHeight = data.m_jumpHeight;
+        m_extraJumpHeight = data.m_extraJumpHeight;
+        m_lookSensitivity = data.m_lookSensitivity;
+    }
+
+
 }
