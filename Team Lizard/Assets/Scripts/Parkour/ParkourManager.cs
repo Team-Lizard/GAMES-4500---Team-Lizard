@@ -74,4 +74,12 @@ public class ParkourManager : MonoBehaviour
     {
         return m_obstacleSensor.DetectWall(transform.right);
     }
+
+    /// <summary>
+    /// Checks for an auto-slide surface underneath the player.
+    /// </summary>
+    public bool CheckAutoSlideSurface()
+    {
+        return m_obstacleSensor.DetectAutoSlideSurface();
+    }
 }
