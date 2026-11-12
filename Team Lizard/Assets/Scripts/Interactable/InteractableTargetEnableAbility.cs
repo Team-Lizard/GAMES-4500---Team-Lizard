@@ -14,7 +14,6 @@ namespace Interactable
         [SerializeField]
         private InputController m_inputController;
 
-
         public void OnActivate()
         {
             m_inputController.ActivateAbility(m_ability);
