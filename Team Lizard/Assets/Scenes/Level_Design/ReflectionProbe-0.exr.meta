@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Team Lizard/Assets/Scenes/Level_Design/ReflectionProbe-0.exr.meta
 guid: 2c4dcf58ad11ffb4a8149442309faef7
+========
+guid: cc5d0fbd9c0f4be4bb5e8f90e61c724f
+>>>>>>>> main:Team Lizard/Assets/Textures/T_Cards_Normal.png.meta
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
