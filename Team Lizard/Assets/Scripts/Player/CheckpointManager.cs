@@ -27,11 +27,6 @@ public class CheckpointManager : MonoBehaviour
     /// <param name="order">Checkpoint's number.</param>
     public void SetCheckpoint(Vector3 position, Quaternion rotation, int order)
     {
-        if (order <= m_checkpointOrder)
-        {
-            return;
-        }
-
         m_checkpointPosition = position;
         m_checkpointRotation = rotation;
         m_checkpointOrder = order;
