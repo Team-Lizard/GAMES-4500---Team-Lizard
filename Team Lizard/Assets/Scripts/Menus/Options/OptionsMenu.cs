@@ -1,5 +1,5 @@
+using System;
 using System.Collections.Generic;
-using System.Reflection;
 using Menus;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -22,6 +22,10 @@ public class OptionsMenu : MonoBehaviour, ISubMenu
     private FirstPersonController m_firstPersonController;
     private InputController m_inputController;
 
+    private const string SPRINT_TOGGLE_TEXT = "Hold to sprint";
+    private const string SLIDE_TOGGLE_TEXT = "Hold to slide";
+
+
     public VisualTreeAsset GetVisualTreeAsset()
     {
         return m_menuUI;
@@ -29,9 +33,35 @@ public class OptionsMenu : MonoBehaviour, ISubMenu
 
     public void Build(VisualElement root)
     {
+        Dictionary<string, Action<bool>> bindingLambdas = new Dictionary<string, Action<bool>>();
+        bindingLambdas[SPRINT_TOGGLE_TEXT] = ToggleSprint;
+        bindingLambdas[SLIDE_TOGGLE_TEXT] = ToggleSlide;
+
         m_firstPersonController = m_playerObject.GetComponent<FirstPersonController>();
         m_inputController = m_playerObject.GetComponent<InputController>();
 
+
+        foreach (KeyValuePair<string, Action<bool>> binding in bindingLambdas)
+        {
+            TemplateContainer bindingElement = m_bindingUI.Instantiate();
+            bindingElement.Q<Label>().text = binding.Key;
+
+            Toggle toggle = bindingElement.Q<Toggle>();
+            toggle.RegisterValueChangedCallback(change => binding.Value(change.newValue));
+            root.Add(bindingElement);
+        }
+
+
+    }
+
+    private void ToggleSprint(bool holdToSprint)
+    {
+        m_inputController.SetSprintToggleMode(!holdToSprint);
+    }
+
+    private void ToggleSlide(bool holdToSlide)
+    {
+        m_inputController.SetSlideToggleMode(!holdToSlide);
     }
 
 }

@@ -128,6 +128,11 @@ public class InputController : MonoBehaviour
     private bool m_isWallRunning;
     private Vector3 m_wallNormal;
     private Vector3 m_wallJumpVelocity;
+    // These select whether the corresponding action is toggled or held.
+    // They default to the current toggle behavior; disabling one restores the
+    // pre-toggle, hold-to-use behavior.
+    private bool m_sprintUsesToggle = true;
+    private bool m_slideUsesToggle = true;
     private bool m_isSprintToggled;
     private bool m_isSlideToggled;
     private bool m_isJumping;
@@ -463,11 +468,23 @@ public class InputController : MonoBehaviour
     /// <param name="value">Information about input being passed to controller.</param>
     public void OnSprint(InputAction.CallbackContext value)
     {
-        if (value.started)
+        if (m_sprintUsesToggle)
         {
-            m_isSprintToggled = !m_isSprintToggled;
+            if (value.started)
+            {
+                m_isSprintToggled = !m_isSprintToggled;
+            }
         }
+        else
+        {
+            m_isSprintToggled = value.ReadValueAsButton();
+        }
+    }
 
+    public void SetSprintToggleMode(bool useToggle)
+    {
+        m_sprintUsesToggle = useToggle;
+        m_isSprintToggled = false;
     }
 
     /// <summary>
@@ -492,15 +509,37 @@ public class InputController : MonoBehaviour
     /// <param name="value">Information about input being passed to controller.</param>
     public void OnSlide(InputAction.CallbackContext value)
     {
-        if (value.started)
+        if (m_slideUsesToggle)
         {
-            m_isSlideToggled = !m_isSlideToggled;
-
-            if (!m_isSlideToggled)
+            if (value.started)
             {
+                m_isSlideToggled = !m_isSlideToggled;
+
+                if (!m_isSlideToggled)
+                {
+                    m_currentSlideMultiplier = m_slideMultiplier;
+                }
+            }
+        }
+        else
+        {
+            if (value.started)
+            {
+                m_isSlideToggled = true;
+            }
+            else if (value.canceled)
+            {
+                m_isSlideToggled = false;
                 m_currentSlideMultiplier = m_slideMultiplier;
             }
         }
+    }
+
+    public void SetSlideToggleMode(bool useToggle)
+    {
+        m_slideUsesToggle = useToggle;
+        m_isSlideToggled = false;
+        m_currentSlideMultiplier = m_slideMultiplier;
     }
 
     public void OnInteract(InputAction.CallbackContext value)

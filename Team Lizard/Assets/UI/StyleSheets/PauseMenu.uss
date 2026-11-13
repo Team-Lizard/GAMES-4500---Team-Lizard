@@ -25,6 +25,10 @@
 .unity-button:focus {
     background-color: rgb(194, 255, 205);
 }
+.option-toggle > .unity-toggle__input:focus {
+    background-color: rgb(194, 255, 205);
+}
+
 
 /* Reusable submenu row styling */
 .debug-binding,

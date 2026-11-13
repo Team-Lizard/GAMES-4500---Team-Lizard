@@ -1,5 +1,4 @@
-﻿using UnityEditor.PackageManager;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
 
@@ -37,6 +36,7 @@ namespace Menus
             m_panelRenderer = GetComponent<PanelRenderer>();
             m_inputBindingsMenu = GetComponent<InputBindingsMenu>();
             m_debugMenu = GetComponent<DebugMenu>();
+            m_optionsMenu = GetComponent<OptionsMenu>();
 
             m_panelRenderer.RegisterUIReloadCallback(OnUIReload);
             m_visible = false;
