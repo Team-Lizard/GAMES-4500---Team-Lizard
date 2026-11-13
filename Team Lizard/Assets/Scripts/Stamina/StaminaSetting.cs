@@ -9,7 +9,7 @@ public class StaminaSetting
     private float m_cost;
     [SerializeField]
     [Tooltip("Is this ability accessible when the game starts?")]
-    private bool m_isEnabledOnStart;
+    private bool m_isEnabledOnStart = true;
 
     private bool m_isEnabled = false;
 
