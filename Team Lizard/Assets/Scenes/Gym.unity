@@ -1378,7 +1378,7 @@ GameObject:
   - component: {fileID: 518351135}
   - component: {fileID: 518351134}
   - component: {fileID: 518351133}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Cube (18)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3740,8 +3740,16 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 11400000, guid: 35a69e3a6fc49db43a01a9a49716bc7c, type: 2}
     - target: {fileID: 3848311692467163602, guid: 55d28c6e4ca51ab49aa8d59553278bef, type: 3}
+      propertyPath: m_jumpHeight
+      value: 1.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3848311692467163602, guid: 55d28c6e4ca51ab49aa8d59553278bef, type: 3}
+      propertyPath: m_slideDecay
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3848311692467163602, guid: 55d28c6e4ca51ab49aa8d59553278bef, type: 3}
       propertyPath: m_staminaRun
-      value: 0.1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3848311692467163602, guid: 55d28c6e4ca51ab49aa8d59553278bef, type: 3}
       propertyPath: m_staminaJump
@@ -3749,15 +3757,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3848311692467163602, guid: 55d28c6e4ca51ab49aa8d59553278bef, type: 3}
       propertyPath: m_staminaSlide
-      value: 0.2
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3848311692467163602, guid: 55d28c6e4ca51ab49aa8d59553278bef, type: 3}
       propertyPath: m_staminaWallRun
-      value: 0.2
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 3848311692467163602, guid: 55d28c6e4ca51ab49aa8d59553278bef, type: 3}
       propertyPath: m_wallJumpHeight
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3848311692467163602, guid: 55d28c6e4ca51ab49aa8d59553278bef, type: 3}
+      propertyPath: m_extraJumpHeight
+      value: 0.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 3848311692467163602, guid: 55d28c6e4ca51ab49aa8d59553278bef, type: 3}
+      propertyPath: m_slideMultiplier
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3848311692467163602, guid: 55d28c6e4ca51ab49aa8d59553278bef, type: 3}
       propertyPath: m_secondJumpHeight
