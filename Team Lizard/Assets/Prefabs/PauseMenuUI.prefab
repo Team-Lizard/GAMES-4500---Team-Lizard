@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 2703727010440317695}
   - component: {fileID: 6000000000000000001}
   - component: {fileID: 6000000000000000002}
+  - component: {fileID: 7749228471309054515}
   m_Layer: 5
   m_Name: PauseMenuUI
   m_TagString: Untagged
@@ -176,8 +177,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f6689fc03aab4ed0b91d9b22c948072f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Menus.PauseMenu
-  m_inputBindingsMenu: {fileID: 6000000000000000001}
-  m_debugMenu: {fileID: 6000000000000000002}
+  m_playerObject: {fileID: 0}
 --- !u!114 &6000000000000000001
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -206,3 +206,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DebugMenu
   m_menuUI: {fileID: 9197481963319205126, guid: 8c3f2a1d7e6b4c59a0f8d2e4b6c1a9f3, type: 3}
+  m_playerObject: {fileID: 0}
+  m_bindingUI: {fileID: 9197481963319205126, guid: 4bcf2cdfceeff024d990a5886bb671b7, type: 3}
+--- !u!114 &7749228471309054515
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 701428655326167618}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 42bbb65eef9331947b958b4a4bd2b0b8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::OptionsMenu
+  m_menuUI: {fileID: 9197481963319205126, guid: 8c3f2a1d7e6b4c59a0f8d2e4b6c1a9f3, type: 3}
+  m_bindingUI: {fileID: 9197481963319205126, guid: 2d6f0b4a6c9e4f1a8b7c3d5e9f0a1b2c, type: 3}
+  m_playerObject: {fileID: 0}

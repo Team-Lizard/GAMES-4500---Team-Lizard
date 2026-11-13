@@ -5,8 +5,8 @@
     xmlns:uie="UnityEditor.UIElements"
     xsi:noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd">
     <Style src="project://database/Assets/UI/StyleSheets/PauseMenu.uss?fileID=7433441132597879392&amp;guid=9f1f6d4e8b3a4c7aa2e1d6f0b5c9e817&amp;type=3#PauseMenu"/>
-    <ui:VisualElement class="debug-binding">
-        <ui:Label text="Label" class="binding-label"/>
-        <ui:TextField text="Input" class="binding-input"/>
+    <ui:VisualElement class="debug-binding binding">
+        <ui:Label text="Label" class="binding-label binding-key"/>
+        <ui:TextField text="Input" class="binding-input binding-value"/>
     </ui:VisualElement>
 </ui:UXML>
