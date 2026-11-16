@@ -33,21 +33,27 @@ public class OptionsMenu : MonoBehaviour, ISubMenu
 
     public void Build(VisualElement root)
     {
-        Dictionary<string, Action<bool>> bindingLambdas = new Dictionary<string, Action<bool>>();
-        bindingLambdas[SPRINT_TOGGLE_TEXT] = ToggleSprint;
-        bindingLambdas[SLIDE_TOGGLE_TEXT] = ToggleSlide;
+        List<OptionData> options = new List<OptionData>();
+        options.Add(new OptionData(SPRINT_TOGGLE_TEXT, ToggleSprint, "SprintToggle"));
+        options.Add(new OptionData(SLIDE_TOGGLE_TEXT, ToggleSlide, "SlideToggle"));
+
 
         m_firstPersonController = m_playerObject.GetComponent<FirstPersonController>();
         m_inputController = m_playerObject.GetComponent<InputController>();
 
 
-        foreach (KeyValuePair<string, Action<bool>> binding in bindingLambdas)
+        foreach (OptionData data in options)
         {
             TemplateContainer bindingElement = m_bindingUI.Instantiate();
-            bindingElement.Q<Label>().text = binding.Key;
+            bindingElement.Q<Label>().text = data.name;
 
             Toggle toggle = bindingElement.Q<Toggle>();
-            toggle.RegisterValueChangedCallback(change => binding.Value(change.newValue));
+            toggle.RegisterValueChangedCallback(change => data.onActivate(change.newValue));
+
+            // this deals with bools, idk if we want a different loop or even brute force to generate non-toggles
+            // notice the == 0; this is because we want the toggle to be true if we want to hold (if toggle is false)
+            bindingElement.Q<Toggle>().value = PlayerPrefs.GetInt(data.playerPrefName) == 0;
+
             root.Add(bindingElement);
         }
 
@@ -64,4 +70,18 @@ public class OptionsMenu : MonoBehaviour, ISubMenu
         m_inputController.SetSlideToggleMode(!holdToSlide);
     }
 
+}
+
+public class OptionData
+{
+
+    public string name;
+    public Action<bool> onActivate;
+    public string playerPrefName;
+    public OptionData(string name, Action<bool> onActivate, string playerPrefName)
+    {
+        this.name = name;
+        this.onActivate = onActivate;
+        this.playerPrefName = playerPrefName;
+    }
 }

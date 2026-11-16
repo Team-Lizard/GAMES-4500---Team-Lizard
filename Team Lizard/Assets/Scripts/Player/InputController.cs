@@ -128,11 +128,8 @@ public class InputController : MonoBehaviour
     private bool m_isWallRunning;
     private Vector3 m_wallNormal;
     private Vector3 m_wallJumpVelocity;
-    // These select whether the corresponding action is toggled or held.
-    // They default to the current toggle behavior; disabling one restores the
-    // pre-toggle, hold-to-use behavior.
-    private bool m_sprintUsesToggle = true;
-    private bool m_slideUsesToggle = true;
+    private bool m_sprintUsesToggle;
+    private bool m_slideUsesToggle;
     private bool m_isSprintToggled;
     private bool m_isSlideToggled;
     private bool m_isJumping;
@@ -160,6 +157,9 @@ public class InputController : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         m_extraJumps = m_maxExtraJumps;
         m_currentSlideMultiplier = m_slideMultiplier;
+
+        m_sprintUsesToggle = PlayerPrefs.GetInt("SprintToggle") != 0;
+        m_slideUsesToggle = PlayerPrefs.GetInt("SlideToggle") != 0;
     }
 
     // Update is called once per frame
@@ -485,6 +485,7 @@ public class InputController : MonoBehaviour
     {
         m_sprintUsesToggle = useToggle;
         m_isSprintToggled = false;
+        PlayerPrefs.SetInt("SprintToggle", useToggle ? 1 : 0);
     }
 
     /// <summary>
@@ -540,6 +541,8 @@ public class InputController : MonoBehaviour
         m_slideUsesToggle = useToggle;
         m_isSlideToggled = false;
         m_currentSlideMultiplier = m_slideMultiplier;
+        PlayerPrefs.SetInt("SlideToggle", useToggle ? 1 : 0);
+
     }
 
     public void OnInteract(InputAction.CallbackContext value)
