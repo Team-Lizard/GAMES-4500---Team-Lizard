@@ -145,11 +145,14 @@ public class FirstPersonController : MonoBehaviour
         {
             UpdateRoll(request.IsWallRunning, request.WallNormal, m_wallRunCameraRoll, m_wallRunRollLerp);
         }
+        else if (request.ParkourRoll != 0)
+        {
+            UpdateRoll(true, transform.right, request.ParkourRoll, request.ParkourRollLerp);
+        }
         else
         {
-            UpdateRoll(request.ParkourRoll != 0, transform.right, request.ParkourRoll, request.ParkourRollLerp);
+            UpdateRoll(false, Vector3.zero, 0f, m_wallRunRollLerp);
         }
-        
 
         ApplyLook(request.LookDelta);
 

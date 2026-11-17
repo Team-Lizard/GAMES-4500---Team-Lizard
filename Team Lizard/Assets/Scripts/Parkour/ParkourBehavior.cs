@@ -21,7 +21,7 @@ public abstract class ParkourBehavior : ScriptableObject
 
     [SerializeField]
     [Tooltip("How much stamina is required for this parkour behavior to be possible.")]
-    public float StaminaCost;
+    public StaminaSetting Stamina;
 
     [SerializeField]
     [Tooltip("How much the camera should roll by when performing this parkour behavior.")]
