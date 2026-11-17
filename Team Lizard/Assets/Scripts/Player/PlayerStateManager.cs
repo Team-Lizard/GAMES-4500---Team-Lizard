@@ -20,10 +20,10 @@ public class PlayerStateManager : MonoBehaviour
         m_currentHealth = m_startingHealth;
     }
 
-    public bool TryKillPlayer()
+    public bool TryKillPlayer(int damage)
     {
-        Debug.Log(m_currentHealth - 1);
-        return --m_currentHealth <= 0;
+        m_currentHealth -= damage;
+        return m_currentHealth <= 0;
     }
 
     public void Respawn()

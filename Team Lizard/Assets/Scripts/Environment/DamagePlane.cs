@@ -2,6 +2,10 @@ using UnityEngine;
 
 public class DamagePlane : MonoBehaviour
 {
+    [Tooltip("Damage applied by this object.")]
+    [SerializeField]
+    private int m_damage;
+
     [Tooltip("Cooldown until damage is tried again.")]
     [SerializeField]
     private float m_cooldown;
@@ -17,7 +21,7 @@ public class DamagePlane : MonoBehaviour
             m_lastDamage = Time.time;
             
             // Try to kill the player and respawn them.
-            if (playerStateManager.TryKillPlayer() && other.TryGetComponent(out CheckpointManager checkpointManager))
+            if (playerStateManager.TryKillPlayer(m_damage) && other.TryGetComponent(out CheckpointManager checkpointManager))
             {
                 checkpointManager.Respawn();
             }
