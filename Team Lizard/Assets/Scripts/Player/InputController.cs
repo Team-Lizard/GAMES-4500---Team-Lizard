@@ -142,6 +142,8 @@ public class InputController : MonoBehaviour
     private bool m_isWallRunning;
     private Vector3 m_wallNormal;
     private Vector3 m_wallJumpVelocity;
+    private bool m_sprintUsesToggle;
+    private bool m_slideUsesToggle;
     private bool m_isSprintToggled;
     private bool m_isSlideToggled;
     private bool m_isJumping;
@@ -170,6 +172,9 @@ public class InputController : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         m_extraJumps = m_maxExtraJumps;
         m_currentSlideMultiplier = m_slideMultiplier;
+
+        m_sprintUsesToggle = PlayerPrefs.GetInt("SprintToggle") != 0;
+        m_slideUsesToggle = PlayerPrefs.GetInt("SlideToggle") != 0;
     }
 
     // Update is called once per frame
@@ -532,11 +537,24 @@ public class InputController : MonoBehaviour
     /// <param name="value">Information about input being passed to controller.</param>
     public void OnSprint(InputAction.CallbackContext value)
     {
-        if (value.started)
+        if (m_sprintUsesToggle)
         {
-            m_isSprintToggled = !m_isSprintToggled;
+            if (value.started)
+            {
+                m_isSprintToggled = !m_isSprintToggled;
+            }
         }
+        else
+        {
+            m_isSprintToggled = value.ReadValueAsButton();
+        }
+    }
 
+    public void SetSprintToggleMode(bool useToggle)
+    {
+        m_sprintUsesToggle = useToggle;
+        m_isSprintToggled = false;
+        PlayerPrefs.SetInt("SprintToggle", useToggle ? 1 : 0);
     }
 
     /// <summary>
@@ -561,15 +579,39 @@ public class InputController : MonoBehaviour
     /// <param name="value">Information about input being passed to controller.</param>
     public void OnSlide(InputAction.CallbackContext value)
     {
-        if (value.started)
+        if (m_slideUsesToggle)
         {
-            m_isSlideToggled = !m_isSlideToggled;
-
-            if (!m_isSlideToggled)
+            if (value.started)
             {
+                m_isSlideToggled = !m_isSlideToggled;
+
+                if (!m_isSlideToggled)
+                {
+                    m_currentSlideMultiplier = m_slideMultiplier;
+                }
+            }
+        }
+        else
+        {
+            if (value.started)
+            {
+                m_isSlideToggled = true;
+            }
+            else if (value.canceled)
+            {
+                m_isSlideToggled = false;
                 m_currentSlideMultiplier = m_slideMultiplier;
             }
         }
+    }
+
+    public void SetSlideToggleMode(bool useToggle)
+    {
+        m_slideUsesToggle = useToggle;
+        m_isSlideToggled = false;
+        m_currentSlideMultiplier = m_slideMultiplier;
+        PlayerPrefs.SetInt("SlideToggle", useToggle ? 1 : 0);
+
     }
 
     public void OnInteract(InputAction.CallbackContext value)

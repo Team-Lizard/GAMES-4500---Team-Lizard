@@ -10,9 +10,9 @@ public class ClimbBehavior : ParkourBehavior
     // Documented in parent. Climbing is a curve ONTO the object.
     public override Vector3 Evaluate(Vector3 start, Vector3 end, float obstacleHeight, float t)
     {
-        end.y = obstacleHeight;
+        end.y += obstacleHeight;
         Vector3 control = Vector3.Lerp(start, end, 0.5f);
-        control.y = obstacleHeight + m_obstacleClearance;
+        control.y = end.y + m_obstacleClearance;
 
         return EvaluateBezierDerivative(start, end, control, t);
     }

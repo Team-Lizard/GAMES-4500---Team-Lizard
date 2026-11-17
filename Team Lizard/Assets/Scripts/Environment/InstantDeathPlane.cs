@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class DeathPlane : MonoBehaviour
+public class InstantDeathPlane : MonoBehaviour
 {
     private void OnTriggerEnter(Collider other)
     {
