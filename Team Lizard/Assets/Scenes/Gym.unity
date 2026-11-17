@@ -3855,7 +3855,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 393936006093447682, guid: 55d28c6e4ca51ab49aa8d59553278bef, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2.63
+      value: 1.57
       objectReference: {fileID: 0}
     - target: {fileID: 393936006093447682, guid: 55d28c6e4ca51ab49aa8d59553278bef, type: 3}
       propertyPath: m_LocalPosition.z
@@ -4049,6 +4049,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8985268930540334528, guid: 55d28c6e4ca51ab49aa8d59553278bef, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2097107896}
+    - targetCorrespondingSourceObject: {fileID: 8985268930540334528, guid: 55d28c6e4ca51ab49aa8d59553278bef, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2097107916}
     - targetCorrespondingSourceObject: {fileID: 8395807419199172236, guid: 55d28c6e4ca51ab49aa8d59553278bef, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1633171428}
@@ -6220,6 +6223,7 @@ MonoBehaviour:
   m_minimumSlideMultiplier: 0.5
   m_maximumSlideMultiplier: 4
   m_slideDecay: 1.8
+  m_autoSlideSteering: 0.3
   m_wallRunSpeedMultiplier: 1.2
   m_wallJumpSideForce: 6
   m_wallRunMinForwardInput: 0.3
@@ -6243,6 +6247,19 @@ MonoBehaviour:
   m_staminaSlide:
     m_cost: 0.15
     m_isEnabledOnStart: 1
+--- !u!114 &2097107916
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2097107885}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe5d63ad4e4e1004393c988cfe45d52e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerStateController
+  m_startingHealth: 3
 --- !u!1 &2121407280
 GameObject:
   m_ObjectHideFlags: 0
