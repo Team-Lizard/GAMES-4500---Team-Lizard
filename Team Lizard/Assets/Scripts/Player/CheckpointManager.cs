@@ -9,14 +9,12 @@ public class CheckpointManager : MonoBehaviour
     private CharacterController m_characterController;
     private Vector3 m_checkpointPosition;
     private Quaternion m_checkpointRotation;
-    private int m_checkpointOrder;
 
     private void Awake()
     {
         m_characterController = GetComponent<CharacterController>();
         m_checkpointPosition = m_spawnPoint.position;
         m_checkpointRotation = m_spawnPoint.rotation;
-        m_checkpointOrder = -1;
     }
 
     /// <summary>
@@ -25,16 +23,10 @@ public class CheckpointManager : MonoBehaviour
     /// <param name="position">Player's position on respawn.</param>
     /// <param name="rotation">Player's rotation on respawn.</param>
     /// <param name="order">Checkpoint's number.</param>
-    public void SetCheckpoint(Vector3 position, Quaternion rotation, int order)
+    public void SetCheckpoint(Vector3 position, Quaternion rotation)
     {
-        if (order <= m_checkpointOrder)
-        {
-            return;
-        }
-
         m_checkpointPosition = position;
         m_checkpointRotation = rotation;
-        m_checkpointOrder = order;
     }
 
     /// <summary>
