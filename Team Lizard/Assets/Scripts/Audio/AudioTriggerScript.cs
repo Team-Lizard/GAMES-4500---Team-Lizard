@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class SoundTriggerScript : MonoBehaviour
+public class AudioTriggerScript : MonoBehaviour
 {
     public AK.Wwise.Event soundEvent;
     private void OnTriggerEnter(Collider other)
