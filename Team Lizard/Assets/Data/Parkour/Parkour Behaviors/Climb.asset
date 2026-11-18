@@ -14,7 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ClimbBehavior
   m_minHeight: 0.5
   m_maxHeight: 3
-  AnimationLength: 0.5
-  HorizontalDistance: 2
-  StaminaCost: 20
-  m_obstacleClearance: 5
+  AnimationLength: 0.25
+  HorizontalDistance: 1
+  Stamina:
+    m_cost: 10
+    m_isEnabledOnStart: 1
+  RollAmount: 0
+  RollLerp: 0
+  m_obstacleClearance: 0.5

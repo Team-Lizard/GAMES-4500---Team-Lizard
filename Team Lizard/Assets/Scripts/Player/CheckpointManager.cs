@@ -7,6 +7,7 @@ public class CheckpointManager : MonoBehaviour
     private Transform m_spawnPoint;
 
     private CharacterController m_characterController;
+    private PlayerStateManager m_playerStateManager;
     private Vector3 m_checkpointPosition;
     private Quaternion m_checkpointRotation;
     private int m_checkpointOrder;
@@ -14,6 +15,7 @@ public class CheckpointManager : MonoBehaviour
     private void Awake()
     {
         m_characterController = GetComponent<CharacterController>();
+        m_playerStateManager = GetComponent<PlayerStateManager>();
         m_checkpointPosition = m_spawnPoint.position;
         m_checkpointRotation = m_spawnPoint.rotation;
         m_checkpointOrder = -1;
@@ -46,5 +48,7 @@ public class CheckpointManager : MonoBehaviour
         m_characterController.enabled = false;
         transform.SetPositionAndRotation(m_checkpointPosition, m_checkpointRotation);
         m_characterController.enabled = true;
+
+        m_playerStateManager.Respawn();
     }
 }

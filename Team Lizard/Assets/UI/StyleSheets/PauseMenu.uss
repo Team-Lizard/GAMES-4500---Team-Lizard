@@ -1,22 +1,86 @@
+/* constant color values */
+:root {
+    --background: rgba(8, 12, 28, 0.94);
+    --item-background: rgba(255, 255, 255, 0.08);
+    --selected: rgba(255, 255, 255, 0.12);
+
+}
+
+/* Pause menu */
 #MenuContainer {
     flex-grow: 1;
-    background-color: rgba(0, 0, 32, 0.8);
+    background-color: var(--background);
 }
 
 #MenuSelector {
     display: flex;
     flex-direction: row;
-    height: 10%;
     flex-wrap: nowrap;
-    margin: 10px;
+    height: 10%;
+    margin: 10px 12px 6px;
 }
 
 .MenuSelectorButton {
     flex-grow: 1;
     height: auto;
     min-height: 20px;
+    margin: 0 3px;
+    padding: 6px 10px;
+    background-color: var(--item-background);
+    border-width: 1px;
+    border-color: var(--item-background);
+    border-radius: 4px;
+    color: white;
 }
 
-#BindingScrollView {
-    height: 90%;
+#SubmenuScrollView {
+    padding: 4px 8px 8px;
+}
+
+/* Shared focus highlight */
+.unity-button:focus,
+.unity-toggle__input:focus > .unity-toggle__checkmark {
+    background-color: var(--selected);
+    border-color: var(--selected);
+}
+
+/* Submenu rows */
+.binding {
+    display: flex;
+    flex-direction: row;
+    flex-grow: 1;
+    height: auto;
+    min-height: 20px;
+    margin: 3px 0;
+    padding: 6px 8px;
+    background-color: var(--item-background);
+    border-bottom-width: 1px;
+    border-bottom-color: var(--item-background);
+}
+
+/* Submenu controls */
+.binding-key {
+    flex-grow: 1;
+    min-width: 200px;
+    color: white;
+    -unity-text-align: middle-Left;
+}
+
+/* aligning right side */
+.binding-value {
+    min-width: 200px;
+}
+.option-toggle {
+    /* by giving it half the width, the check boxes look 'centered' */
+    min-width: 100px;
+}
+
+.rebind-button {
+    margin-left: 8px;
+    padding: 4px 8px;
+    background-color: var(--item-background);
+    border-width: 1px;
+    border-color: var(--item-background);
+    border-radius: 4px;
+    color: white;
 }
