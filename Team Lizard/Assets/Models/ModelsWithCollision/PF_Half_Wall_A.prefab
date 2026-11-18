@@ -50,7 +50,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -927199367670048503, guid: e61a23f7210ea2a498344fb68dc0809c, type: 3}
       propertyPath: m_Name
-      value: CS_Half_Wall_A
+      value: PF_Half_Wall_A
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -84,5 +84,5 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 160.01733, y: 100, z: 100}
-  m_Center: {x: 0, y: 50, z: 50.000023}
+  m_Size: {x: 1.6001734, y: 1, z: 1}
+  m_Center: {x: 0, y: 0.5, z: 0.50000024}

@@ -50,7 +50,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -927199367670048503, guid: 78dab2ac075413d4ca90bb0f06f0a3da, type: 3}
       propertyPath: m_Name
-      value: CS_C_Wall_B
+      value: PF_C_Wall_B
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -84,5 +84,5 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 75.25647, y: 547.9, z: 350}
-  m_Center: {x: 0, y: 271.91565, z: 175}
+  m_Size: {x: 0.75256467, y: 5.479, z: 3.5}
+  m_Center: {x: 0, y: 2.7191563, z: 1.75}

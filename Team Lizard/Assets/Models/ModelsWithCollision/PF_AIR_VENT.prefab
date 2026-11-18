@@ -50,7 +50,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: e7c093a3c95e5c2449516b8602294da1, type: 3}
       propertyPath: m_Name
-      value: AIR VENT
+      value: PF_AIR_VENT
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -84,5 +84,5 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1289.1678, y: 140.69266, z: 775.8459}
+  m_Size: {x: 12.891678, y: 1.4069265, z: 7.7584586}
   m_Center: {x: 0, y: 0, z: 0}
