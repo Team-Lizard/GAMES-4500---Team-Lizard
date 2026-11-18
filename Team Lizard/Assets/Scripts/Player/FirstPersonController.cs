@@ -67,6 +67,10 @@ public class FirstPersonController : MonoBehaviour
         [Tooltip("Seconds over which gravity ramps from zero to full wall-run gravity after the hang.")]
         private float m_wallRunSlideRampTime = 0.5f;
 
+    [Header("Collisions")]
+        [SerializeField]
+        private float m_headCollisionDistance = 1.55f;
+
     [Header("Wwise Object")]
         [SerializeField]
         private AK.Wwise.Event m_jumpEvent;
@@ -83,6 +87,7 @@ public class FirstPersonController : MonoBehaviour
     private float m_roll;
 
     private CharacterController m_characterController;
+    private ObstacleSensor m_obstacleSensor;
 
     private float m_verticalVelocity;
     private float m_pitch = 0f;
@@ -124,6 +129,8 @@ public class FirstPersonController : MonoBehaviour
     private void Awake()
     {
         m_characterController = gameObject.GetComponent<CharacterController>();
+        m_obstacleSensor = gameObject.GetComponent<ObstacleSensor>();
+
         m_standHeight = m_characterController.height;
         m_standRadius = m_characterController.radius;
         m_standCameraY = m_cameraTransform.localPosition.y;
@@ -167,6 +174,10 @@ public class FirstPersonController : MonoBehaviour
         {
             m_verticalVelocity = desired.y * Mathf.Sqrt(-1*m_gravity);
             m_jumpEvent.Post(gameObject);
+        }
+        if (m_verticalVelocity > 0 && m_obstacleSensor.ObstacleInDir(transform.up, m_headCollisionDistance))
+        {
+            m_verticalVelocity = m_gravity * Time.deltaTime;
         }
 
         // Inertia comes from player input and friction.
@@ -226,6 +237,7 @@ public class FirstPersonController : MonoBehaviour
         m_wasWallRunning = isWallRunning;
 
         IsGrounded = m_characterController.isGrounded || m_snappedLastFrame;
+
         if (IsGrounded && m_verticalVelocity < 0)
         {
             // Player needs to be pressed into the ground for isGrounded to work correctly.
@@ -234,8 +246,8 @@ public class FirstPersonController : MonoBehaviour
         else
         {
             // Player is not on ground, accelerate downwards.
-            m_verticalVelocity += gravity * Time.deltaTime;
-
+             m_verticalVelocity += gravity * Time.deltaTime;
+        
             // Player also isn't touching a platform
             m_currentPlatform = null;
         }
