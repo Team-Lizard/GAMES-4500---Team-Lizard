@@ -50,7 +50,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 1b189874668ecdd46840f77a16018f7f, type: 3}
       propertyPath: m_Name
-      value: CS_Platform02_Wide
+      value: PF_Platform02_Wide
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -90,8 +90,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 518.1377, y: 112.13852, z: 143.4412}
-  m_Center: {x: -0.18267632, y: -52.405064, z: 71.7206}
+  m_Size: {x: 5.181377, y: 1.121385, z: 1.434412}
+  m_Center: {x: -0.001826763, y: -0.5240506, z: 0.717206}
 --- !u!65 &4050367082380611123
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -111,8 +111,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 17.3, y: 66.7, z: 143.44121}
-  m_Center: {x: -257.1, y: 37.6, z: 71.720604}
+  m_Size: {x: 0.173, y: 0.667, z: 1.434412}
+  m_Center: {x: -2.571, y: 0.376, z: 0.717206}
 --- !u!65 &4602355164933658163
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -132,5 +132,5 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 17.3, y: 66.7, z: 143.44121}
-  m_Center: {x: 256.3, y: 37.6, z: 71.720604}
+  m_Size: {x: 0.173, y: 0.667, z: 1.434412}
+  m_Center: {x: 2.563, y: 0.376, z: 0.717206}
