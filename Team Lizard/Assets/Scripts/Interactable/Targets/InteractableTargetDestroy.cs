@@ -2,7 +2,7 @@
 
 namespace Interactable
 {
-    public class InteractableTargetDoor : MonoBehaviour, IInteractableTarget
+    public class InteractableTargetDestroy : MonoBehaviour, IInteractableTarget
     {
         public void OnActivate()
         {
