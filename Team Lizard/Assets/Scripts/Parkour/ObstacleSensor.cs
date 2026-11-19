@@ -28,7 +28,7 @@ public class ObstacleSensor : MonoBehaviour
     [Header("Wall Running")]
         [SerializeField]
         [Tooltip("Distance to check for a wall to the player's side.")]
-        private float m_wallCheckDistance = 0.7f;
+        private float m_wallCheckDistance = 1f;
 
     [Header("Auto Slide")]
         [SerializeField]
