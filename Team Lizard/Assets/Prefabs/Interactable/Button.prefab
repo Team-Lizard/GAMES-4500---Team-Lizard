@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 8831902925211336338}
   - component: {fileID: 2343783812543038212}
   - component: {fileID: 6581281433509531022}
+  - component: {fileID: 5270607707816910421}
   m_Layer: 0
   m_Name: Button
   m_TagString: Untagged
@@ -134,3 +135,19 @@ MonoBehaviour:
   m_conditions: []
   m_buttonActivatedObjects:
   - {fileID: 0}
+--- !u!114 &5270607707816910421
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5506695508049458181}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1b06c9d9c541c64e8c4404b9157e60b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InspectorComment
+  note: "This prefab can be interacted with using the interaction key (default \"E\")
+    to activate an InteractableTarget object like a moving platform or an ability
+    unlock. \n\nThe mesh can be replaced with whatever you'd like.\n\nHover over
+    all variables for a description of what they do. "
