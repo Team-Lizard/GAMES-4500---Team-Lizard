@@ -21,16 +21,6 @@ public struct MovementRequest
     public bool IsInteracting;
 }
 
-public enum Ability
-{
-    RUN,
-    JUMP,
-    DOUBLE_JUMP,
-    WALL_JUMP,
-    WALL_RUN,
-    SLIDE
-}
-
 public class InputController : MonoBehaviour
 {
     [Header("Movement")]
@@ -263,7 +253,7 @@ public class InputController : MonoBehaviour
         if (canWallRun)
         {
             WallHitInfo wall = m_parkourManager.CheckWall(m_wallNormal);
-            if (wall.HitWall && Stamina.Instance().TrySpendStamina(m_staminaManager.StaminaWallRun.GetCost()))
+            if (wall.HitWall && m_staminaManager.CanUseAbility(Ability.WALL_RUN))
             {
                 m_wallGraceTimer = m_wallRunGraceTime;
                 m_wallNormal = wall.Normal;
@@ -323,7 +313,7 @@ public class InputController : MonoBehaviour
         m_currentSlideMultiplier = Mathf.Clamp(m_currentSlideMultiplier, m_minimumSlideMultiplier, m_maximumSlideMultiplier);
 
         // Slide if we have the stamina, otherwise move at crawling speed.
-        return (skipStaminaCost || Stamina.Instance().TrySpendStamina(m_staminaManager.StaminaSlide.GetCost()))
+        return (skipStaminaCost || m_staminaManager.CanUseAbility(Ability.SLIDE))
                 ? moveSpeed * m_currentSlideMultiplier
                 : moveSpeed * m_minimumSlideMultiplier;
     }
@@ -361,18 +351,18 @@ public class InputController : MonoBehaviour
                 m_wallGraceTimer = 0f;
                 m_wallLockoutTimer = m_wallJumpLockoutTime;
 
-                if (Stamina.Instance().TrySpendStamina(m_staminaManager.StaminaWallJump.GetCost()))
+                if (m_staminaManager.CanUseAbility(Ability.WALL_JUMP))
                 {
                     return HandleJump(m_wallJumpHeight);
                 }
 
             }
-            else if ((m_firstPersonController.IsGrounded || m_coyoteTimer > 0f) && Stamina.Instance().TrySpendStamina(m_staminaManager.StaminaJump.GetCost()))
+            else if ((m_firstPersonController.IsGrounded || m_coyoteTimer > 0f) && m_staminaManager.CanUseAbility(Ability.JUMP))
             {
                 verticalVelocity = HandleJump(m_jumpHeight);
             }
             // Don't allow double jump unless we have the stamina.
-            else if (m_extraJumps > 0 && Stamina.Instance().TrySpendStamina(m_staminaManager.StaminaDoubleJump.GetCost()))
+            else if (m_extraJumps > 0 && m_staminaManager.CanUseAbility(Ability.DOUBLE_JUMP))
             {
                 verticalVelocity = HandleJump(m_extraJumpHeight);
                 m_extraJumps--;
@@ -449,7 +439,7 @@ public class InputController : MonoBehaviour
             if (forwardAmount > 0)
             {
                 // Turn off sprinting if we don't have the stamina to sprint.
-                if (m_isSprintToggled && !Stamina.Instance().TrySpendStamina(m_staminaManager.StaminaRun.GetCost())) {
+                if (m_isSprintToggled && !m_staminaManager.CanUseAbility(Ability.RUN)) {
                     Debug.Log("Sprint turned off because stamina was too low.");
                     m_isSprintToggled = false;
                 }

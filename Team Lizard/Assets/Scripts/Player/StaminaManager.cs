@@ -1,7 +1,18 @@
 using UnityEngine;
 
+public enum Ability
+{
+    RUN,
+    JUMP,
+    DOUBLE_JUMP,
+    WALL_JUMP,
+    WALL_RUN,
+    SLIDE
+}
+
 public class StaminaManager : MonoBehaviour
 {
+    
     [Header("Stamina")]
         [SerializeField]
         [Tooltip("How much stamina should be spent to run.")]
@@ -48,6 +59,28 @@ public class StaminaManager : MonoBehaviour
             case Ability.SLIDE:
                 StaminaSlide.Enable();
                 break;
+        }
+    }
+
+    public bool CanUseAbility(Ability ability)
+    {
+        switch (ability)
+        {
+            case Ability.RUN:
+                return Stamina.Instance().TrySpendStamina(StaminaRun.GetCost());
+            case Ability.JUMP:
+                return Stamina.Instance().TrySpendStamina(StaminaJump.GetCost());
+            case Ability.DOUBLE_JUMP:
+                return Stamina.Instance().TrySpendStamina(StaminaDoubleJump.GetCost());
+            case Ability.WALL_JUMP:
+                return Stamina.Instance().TrySpendStamina(StaminaWallJump.GetCost());
+            case Ability.WALL_RUN:
+                return Stamina.Instance().TrySpendStamina(StaminaWallRun.GetCost());
+            case Ability.SLIDE:
+                return Stamina.Instance().TrySpendStamina(StaminaSlide.GetCost());
+
+            default:
+                return false;
         }
     }
 }
