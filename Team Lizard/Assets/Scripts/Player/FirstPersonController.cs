@@ -320,7 +320,8 @@ public class FirstPersonController : MonoBehaviour
         float snap = m_snapDistance + new Vector2(m_horizontalVelocity.x, m_horizontalVelocity.z).magnitude * Time.deltaTime;
 
         if (Physics.Raycast(origin, Vector3.down, out RaycastHit hit, half + snap)
-            && Vector3.Angle(hit.normal, Vector3.up) <= m_characterController.slopeLimit)
+            && Vector3.Angle(hit.normal, Vector3.up) <= m_characterController.slopeLimit
+            && !m_isGrappling)
         {
             m_characterController.Move(Vector3.down * (hit.distance - half));
             m_verticalVelocity = -2f;
