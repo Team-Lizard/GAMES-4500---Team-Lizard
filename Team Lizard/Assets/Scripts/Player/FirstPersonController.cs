@@ -167,7 +167,7 @@ public class FirstPersonController : MonoBehaviour
         }
         else
         {
-        UpdateHorizontalVelocity(target);
+            UpdateHorizontalVelocity(target);
         }
 
         // If player wants to jump, override vertical velocity.
