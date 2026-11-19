@@ -17,6 +17,10 @@ namespace Interactable
         [SerializeField]
         private float m_transitTime;
 
+        [Tooltip("Location of path start relative to object's position.")]
+        [SerializeField]
+        private Vector3 m_relativeStartPosition;
+
         private Vector3 m_initialPosition;
         private Vector3 m_finalPosition;
         private Vector3 m_controlPosition;
@@ -24,7 +28,7 @@ namespace Interactable
         private bool m_isMoving = false;
 
         void Awake() {
-            m_initialPosition = transform.position;
+            m_initialPosition = transform.position + m_relativeStartPosition;
             m_finalPosition = m_initialPosition + m_movementAmount;
             m_controlPosition = m_initialPosition + m_curveAmount;
             
