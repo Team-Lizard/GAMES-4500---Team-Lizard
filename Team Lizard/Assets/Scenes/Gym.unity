@@ -5678,13 +5678,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StaminaManager
   StaminaRun:
-    m_cost: 0.05
-    m_isEnabledOnStart: 1
-  StaminaJump:
     m_cost: 0
     m_isEnabledOnStart: 1
-  StaminaDoubleJump:
+  StaminaJump:
     m_cost: 10
+    m_isEnabledOnStart: 1
+  StaminaDoubleJump:
+    m_cost: 20
     m_isEnabledOnStart: 1
   StaminaWallJump:
     m_cost: 0
