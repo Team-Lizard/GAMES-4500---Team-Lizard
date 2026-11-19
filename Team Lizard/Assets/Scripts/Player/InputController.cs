@@ -199,6 +199,9 @@ public class InputController : MonoBehaviour
         // Take the movement of the mouse and scale it by the look sensitivity. We'll calculate rotations additively, so we just need to know how far the mouse moved.
         m_movementRequest.LookDelta = new Vector2(m_lookInput.x, m_lookInput.y) * m_lookSensitivity;
 
+        m_grappleController.Tick(transform.position, Time.deltaTime);
+        m_movementRequest.Grapple = m_grappleController.State;
+
         // Ask player controller to apply the movement the player wants.
         m_firstPersonController.ApplyMovement(m_movementRequest);
     }
