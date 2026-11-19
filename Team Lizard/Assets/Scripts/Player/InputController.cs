@@ -6,6 +6,7 @@ using UnityEditor.Build.Pipeline;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.ProBuilder;
+using static UnityEngine.ProBuilder.AutoUnwrapSettings;
 
 [Serializable]
 public struct MovementRequest
@@ -202,8 +203,8 @@ public class InputController : MonoBehaviour
         m_grappleController.Tick(transform.position, Time.deltaTime);
         m_movementRequest.Grapple = m_grappleController.State;
 
-        // Ask player controller to apply the movement the player wants.
-        m_firstPersonController.ApplyMovement(m_movementRequest);
+    // Ask player controller to apply the movement the player wants.
+    m_firstPersonController.ApplyMovement(m_movementRequest);
     }
 
     /// <summary>
@@ -301,6 +302,12 @@ public class InputController : MonoBehaviour
 
         if (m_isJumping)
         {
+            if (m_grappleController.IsGrappling)
+            {
+                m_grappleController.Release();
+                m_extraJumps = m_maxExtraJumps;
+                return HandleJump();
+            }
 
             if (m_isWallRunning)
             {
