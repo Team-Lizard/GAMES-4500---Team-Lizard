@@ -50,7 +50,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -927199367670048503, guid: deb6a05846646274f9683ad74eaa516d, type: 3}
       propertyPath: m_Name
-      value: CS_C_Door_A
+      value: PF_C_Door_A
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -84,5 +84,5 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 76.84033, y: 547.9, z: 350}
-  m_Center: {x: 0, y: 270.3709, z: 175}
+  m_Size: {x: 0.7684033, y: 5.479, z: 3.5}
+  m_Center: {x: 0, y: 2.7037091, z: 1.75}

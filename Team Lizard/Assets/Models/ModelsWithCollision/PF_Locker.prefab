@@ -58,7 +58,7 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: aaf0a842e7f69d34b9f0556e16c36586, type: 2}
     - target: {fileID: 919132149155446097, guid: f28dfe25c96e0bd45bb578b35561760b, type: 3}
       propertyPath: m_Name
-      value: CS_Locker
+      value: PF_Locker
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -92,5 +92,5 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.6153305, y: 1.95, z: 0.54923666}
-  m_Center: {x: -0.01733473, y: 0.975, z: 0.018118337}
+  m_Size: {x: 0.006153305, y: 0.0195, z: 0.005492367}
+  m_Center: {x: -0.0001733473, y: 0.00975, z: 0.00018118334}

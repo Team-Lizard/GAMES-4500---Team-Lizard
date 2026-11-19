@@ -50,7 +50,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -927199367670048503, guid: 01acb2032e2d8214994abd8165d5fd5e, type: 3}
       propertyPath: m_Name
-      value: CS_Piller_B
+      value: PF_Piller_B
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -84,5 +84,5 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 126.77594, y: 547.9, z: 126.59418}
-  m_Center: {x: 0, y: 273.09064, z: 51.054474}
+  m_Size: {x: 1.2677593, y: 5.4790006, z: 1.2659417}
+  m_Center: {x: 0, y: 2.7309062, z: 0.5105447}

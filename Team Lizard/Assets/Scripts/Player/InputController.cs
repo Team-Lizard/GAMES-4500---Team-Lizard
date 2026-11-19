@@ -137,11 +137,16 @@ public class InputController : MonoBehaviour
         [Tooltip("How much stamina should be spent to slide.")]
         private StaminaSetting m_staminaSlide;
 
+        [SerializeField]
+        [Tooltip("Force to keep players to curved walls.")]
+        private float m_wallStickSpeed = 2f;
+
     private float m_wallGraceTimer;
     private float m_wallLockoutTimer;
     private bool m_isWallRunning;
     private Vector3 m_wallNormal;
     private Vector3 m_wallJumpVelocity;
+    private Vector3 m_wallRunAlong;
     private bool m_sprintUsesToggle;
     private bool m_slideUsesToggle;
     private bool m_isSprintToggled;
@@ -280,7 +285,7 @@ public class InputController : MonoBehaviour
 
         if (canWallRun)
         {
-            WallHitInfo wall = m_parkourManager.CheckWall();
+            WallHitInfo wall = m_parkourManager.CheckWall(m_wallNormal);
             if (wall.HitWall && Stamina.Instance().TrySpendStamina(m_staminaWallRun.GetCost()))
             {
                 m_wallGraceTimer = m_wallRunGraceTime;
@@ -301,6 +306,7 @@ public class InputController : MonoBehaviour
         if (!m_isWallRunning)
         {
             m_wallNormal = Vector3.zero;
+            m_wallRunAlong = Vector3.zero;
         }
 
         m_movementRequest.IsWallRunning = m_isWallRunning;
@@ -416,15 +422,17 @@ public class InputController : MonoBehaviour
         // Calculate wall running horizontal speed.
         if (m_isWallRunning)
         {
-            // Direction along the wall, facing the way the player is looking.
             Vector3 along = Vector3.Cross(m_wallNormal, Vector3.up);
-            if (Vector3.Dot(along, transform.forward) < 0f)
+            // Pick direction from where the player faced on latch, then stay consistent along the curve.
+            Vector3 reference = m_wallRunAlong != Vector3.zero ? m_wallRunAlong : transform.forward;
+            if (Vector3.Dot(along, reference) < 0f)
             {
                 along = -along;
             }
+            m_wallRunAlong = along;
 
             m_movementRequest.IsSliding = false;
-            return along * (m_moveSpeed * m_wallRunSpeedMultiplier);
+            return along * (m_moveSpeed * m_wallRunSpeedMultiplier) + (-m_wallNormal * m_wallStickSpeed);
         }
 
         // Create movement vector based on stored player input.
@@ -433,7 +441,7 @@ public class InputController : MonoBehaviour
 
         // Make sure diagonal movement isn't faster than unidirectional movement.
         move = Vector3.ClampMagnitude(move, 1f);
-        if ((m_isSlideToggled || autoSlide) && m_firstPersonController.IsGrounded)
+        if (m_isSlideToggled || autoSlide)
         {
             m_movementRequest.IsSliding = true;
 

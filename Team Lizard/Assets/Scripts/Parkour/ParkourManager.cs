@@ -41,7 +41,7 @@ public class ParkourManager : MonoBehaviour
             StartingPosition = transform.position
         };
 
-        HitInfo hitInfo = m_obstacleSensor.DetectObstacle();
+        HitInfo hitInfo = m_obstacleSensor.DetectObstacle(transform.forward, 0);
 
         if (hitInfo.HitObstacle)
         {
@@ -70,9 +70,9 @@ public class ParkourManager : MonoBehaviour
     /// <summary>
     /// Checks for a wall-runnable surface to either side of the player.
     /// </summary>
-    public WallHitInfo CheckWall()
+    public WallHitInfo CheckWall(Vector3 lastNormal)
     {
-        return m_obstacleSensor.DetectWall(transform.right);
+        return m_obstacleSensor.DetectWall(transform.right, transform.forward, lastNormal);
     }
 
     /// <summary>
