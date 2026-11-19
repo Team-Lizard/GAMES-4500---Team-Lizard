@@ -14,8 +14,19 @@ public struct MovementRequest
     public Vector2 LookDelta;
     public bool IsSliding;
     public bool IsWallRunning;
+    public GrappleState Grapple;
     public Vector3 WallNormal;
     public bool IsInteracting;
+}
+
+[Serializable]
+public struct GrappleState
+{
+    public bool IsActive;
+    public Vector3 Anchor;
+    public float RopeLength;
+    public float ReelSpeed;
+    public float ReelAcceleration;
 }
 
 public class InputController : MonoBehaviour
