@@ -388,7 +388,7 @@ public class InputController : MonoBehaviour
             {
                 m_grappleController.Release();
                 m_extraJumps = m_maxExtraJumps;
-                return HandleJump();
+                return HandleJump(m_jumpHeight);
             }
 
             if (m_isWallRunning)
