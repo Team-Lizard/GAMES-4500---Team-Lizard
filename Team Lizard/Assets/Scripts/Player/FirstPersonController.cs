@@ -333,6 +333,44 @@ public class FirstPersonController : MonoBehaviour
     }
 
     /// <summary>
+    /// Shoots the grappling hook.
+    /// </summary>
+    /// <param name="request">Request with grappling information.</param>
+    private void ApplyGrapple(MovementRequest request)
+    {
+        Vector3 center = transform.position + m_characterController.center;
+        Vector3 toAnchor = request.Grapple.Anchor - transform.position;
+        float distance = toAnchor.magnitude;
+
+        if (distance < 0.01f)
+        {
+            return;
+        }
+
+        Vector3 direction = toAnchor / distance;
+        Vector3 velocity = new Vector3(m_horizontalVelocity.x, m_verticalVelocity, m_horizontalVelocity.z);
+        float radial = Vector3.Dot(velocity, direction);
+
+        if (distance >= request.Grapple.RopeLength - 0.05f)
+        {
+            if (radial < 0f)
+            {
+                velocity -= direction * radial;
+                radial = 0f;
+            }
+
+            if (radial < request.Grapple.ReelSpeed)
+            {
+                velocity += direction * Mathf.Min(request.Grapple.ReelAcceleration * Time.deltaTime, request.Grapple.ReelSpeed - radial);
+            }
+        }
+
+        velocity = Vector3.ClampMagnitude(velocity, request.Grapple.ReelSpeed);
+        m_horizontalVelocity = new Vector3(velocity.x, 0f, velocity.z);
+        m_verticalVelocity = velocity.y;
+    }
+
+    /// <summary>
     /// Calculate the height of the camera based on if the player is sliding or standing.
     /// </summary>
     /// <returns>Height of the camera</returns>
