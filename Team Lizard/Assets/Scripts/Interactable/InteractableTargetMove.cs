@@ -17,8 +17,8 @@ namespace Interactable
         [SerializeField]
         private float m_transitTime;
 
-        [Tooltip("Location of path start relative to object's position.")]
         [SerializeField]
+        [Tooltip("Location of path start relative to object's position.")]
         private Vector3 m_relativeStartPosition;
 
         private Vector3 m_initialPosition;
