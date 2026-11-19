@@ -167,7 +167,15 @@ public class FirstPersonController : MonoBehaviour
 
         Vector3 desired = request.DesiredVelocity;
         Vector3 target = new Vector3(desired.x, 0f, desired.z);
-        UpdateHorizontalVelocity(target);
+
+        if (request.IsWallRunning)
+        {
+            m_horizontalVelocity = target;
+        }
+        else
+        {
+            UpdateHorizontalVelocity(target);
+        }
 
         // If player wants to jump, override vertical velocity.
         if (desired.y != 0)

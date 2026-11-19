@@ -28,7 +28,7 @@ public class ObstacleSensor : MonoBehaviour
     [Header("Wall Running")]
         [SerializeField]
         [Tooltip("Distance to check for a wall to the player's side.")]
-        private float m_wallCheckDistance = 0.7f;
+        private float m_wallCheckDistance = 1f;
 
     [Header("Auto Slide")]
         [SerializeField]
@@ -88,22 +88,32 @@ public class ObstacleSensor : MonoBehaviour
     /// Checks for a wall-runnable surface on either side of the player.
     /// </summary>
     /// <param name="right">The player's right-facing direction.</param>
+    /// <param name="forward">The player's forward-facing direction.</param>
+    /// <param name="lastNormal">The previously hit wall's normal.</param>
     /// <returns>WallHitInfo struct representing info about a nearby wall.</returns>
-    public WallHitInfo DetectWall(Vector3 right)
+    public WallHitInfo DetectWall(Vector3 right, Vector3 forward, Vector3 lastNormal)
     {
-        if (Physics.Raycast(transform.position, right, out RaycastHit rightHit, m_wallCheckDistance, m_wallRunnableLayerMask))
+        RaycastHit hit;
+        bool found;
+
+        if (lastNormal != Vector3.zero)
         {
-            m_wallHitInfo.HitWall = true;
-            m_wallHitInfo.Normal = rightHit.normal;
-            return m_wallHitInfo;
+            Vector3 into = -lastNormal;
+            found = TryWallRay(into, out hit)
+                 || TryWallRay((into + forward * 0.6f).normalized, out hit)
+                 || TryWallRay((into - forward * 0.6f).normalized, out hit);
         }
-        if (Physics.Raycast(transform.position, -right, out RaycastHit leftHit, m_wallCheckDistance, m_wallRunnableLayerMask))
+        else
         {
-            m_wallHitInfo.HitWall = true;
-            m_wallHitInfo.Normal = leftHit.normal;
-            return m_wallHitInfo;
+            found = TryWallRay(right, out hit) || TryWallRay(-right, out hit);
         }
-        m_wallHitInfo.HitWall = false;
+
+        m_wallHitInfo.HitWall = found;
+        if (found)
+        {
+            Vector3 flat = new Vector3(hit.normal.x, 0f, hit.normal.z);
+            m_wallHitInfo.Normal = flat.normalized;
+        }
         return m_wallHitInfo;
     }
 
@@ -114,5 +124,10 @@ public class ObstacleSensor : MonoBehaviour
     {
         Vector3 origin = transform.position + Vector3.up * 0.1f;
         return Physics.Raycast(origin, Vector3.down, m_autoSlideCheckDistance, m_autoSlideLayerMask);
+    }
+
+    private bool TryWallRay(Vector3 dir, out RaycastHit hit)
+    {
+        return Physics.Raycast(transform.position, dir, out hit, m_wallCheckDistance, m_wallRunnableLayerMask);
     }
 }
