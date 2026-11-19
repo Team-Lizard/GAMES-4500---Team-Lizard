@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Specialized;
 using System.Net.Http.Headers;
+using Interactable;
 using Unity.VisualScripting;
 using UnityEditor.Build.Pipeline;
 using UnityEngine;
@@ -15,6 +16,8 @@ public struct MovementRequest
     public Vector2 LookDelta;
     public bool IsSliding;
     public bool IsWallRunning;
+    public float ParkourRoll;
+    public float ParkourRollLerp;
     public GrappleState Grapple;
     public Vector3 WallNormal;
     public bool IsInteracting;
@@ -30,6 +33,16 @@ public struct GrappleState
     public float ReelAcceleration;
 }
 
+public enum Ability
+{
+    RUN,
+    JUMP,
+    DOUBLE_JUMP,
+    WALL_JUMP,
+    WALL_RUN,
+    SLIDE
+}
+
 public class InputController : MonoBehaviour
 {
     [Header("Movement")]
@@ -40,6 +53,36 @@ public class InputController : MonoBehaviour
         [SerializeField]
         [Tooltip("Amount that speed is multiplied by when player is sprinting.")]
         private float m_sprintMultiplier = 1.8f;
+
+        [Space]
+
+        [SerializeField]
+        [Tooltip("Height that player can jump.")]
+        private float m_jumpHeight = 1.5f;
+
+        [SerializeField]
+        [Tooltip("Height that player can jump for their dadditional jumps.")]
+        private float m_extraJumpHeight = 1.5f;
+
+        [SerializeField]
+        [Tooltip("Height that player can jump off of a wall.")]
+        private float m_wallJumpHeight = 1.5f;
+
+        [SerializeField]
+        [Tooltip("Number of jumps the player can perform while not touching the ground.")]
+        private int m_maxExtraJumps = 1;
+
+        [Space]
+
+        [SerializeField]
+        [Tooltip("Mouse sensitivity when controlling the camera.")]
+        private float m_lookSensitivity = 1.5f;
+
+        [SerializeField]
+        [Tooltip("Time in seconds after leaving the ground where the player can still jump.")]
+        private float m_coyoteTime = 0.15f;
+
+    [Header("Sliding")]
 
         [SerializeField]
         [Tooltip("Amount that speed is multiplied by when player is sliding.")]
@@ -56,22 +99,9 @@ public class InputController : MonoBehaviour
         [SerializeField]
         [Tooltip("How fast slide decays.")]
         private float m_slideDecay = 1.8f;
-
         [SerializeField]
-        [Tooltip("Height that player can jump.")]
-        private float m_jumpHeight = 1.5f;
-
-        [SerializeField]
-        [Tooltip("Mouse sensitivity when controlling the camera.")]
-        private float m_lookSensitivity = 1.5f;
-
-        [SerializeField]
-        [Tooltip("Number of jumps the player can perform while not touching the ground.")]
-        private int m_maxExtraJumps = 1;
-
-        [SerializeField]
-        [Tooltip("Time in seconds after leaving the ground where the player can still jump.")]
-        private float m_coyoteTime = 0.15f;
+        [Tooltip("How much player input can steer an auto slide, as a percentage. If 1, player can do what they want on auto slide surface. If 0, they are forced in that direction.")]
+        private float m_autoSlideSteering = 0.3f;
 
     [Header("Wall Running")]
         [SerializeField]
@@ -94,14 +124,42 @@ public class InputController : MonoBehaviour
         [Tooltip("Time after a wall jump before the player can latch onto a wall again.")]
         private float m_wallJumpLockoutTime = 0.25f;
 
+    [Header("Stamina")]
+        [SerializeField]
+        [Tooltip("How much stamina should be spent to run.")]
+        private StaminaSetting m_staminaRun;
+
+        [SerializeField]
+        [Tooltip("How much stamina should be spent to jump regularly.")]
+        private StaminaSetting m_staminaJump;
+
+        [SerializeField]
+        [Tooltip("How much stamina should be spent to double jump.")]
+        private StaminaSetting m_staminaDoubleJump;
+
+        [SerializeField]
+        [Tooltip("How much stamina should be spent to jump off of a wall.")]
+        private StaminaSetting m_staminaWallJump;
+
+        [SerializeField]
+        [Tooltip("How much stamina should be spent to wall run.")]
+        private StaminaSetting m_staminaWallRun;
+
+        [SerializeField]
+        [Tooltip("How much stamina should be spent to slide.")]
+        private StaminaSetting m_staminaSlide;
+
     private float m_wallGraceTimer;
     private float m_wallLockoutTimer;
     private bool m_isWallRunning;
     private Vector3 m_wallNormal;
     private Vector3 m_wallJumpVelocity;
+    private bool m_sprintUsesToggle;
+    private bool m_slideUsesToggle;
     private bool m_isSprintToggled;
     private bool m_isSlideToggled;
     private bool m_isJumping;
+    private bool m_wasAutoSliding;
     private int m_extraJumps;
     private Vector2 m_moveInput;
     private Vector2 m_lookInput;
@@ -128,6 +186,9 @@ public class InputController : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         m_extraJumps = m_maxExtraJumps;
         m_currentSlideMultiplier = m_slideMultiplier;
+
+        m_sprintUsesToggle = PlayerPrefs.GetInt("SprintToggle") != 0;
+        m_slideUsesToggle = PlayerPrefs.GetInt("SlideToggle") != 0;
     }
 
     // Update is called once per frame
@@ -156,6 +217,7 @@ public class InputController : MonoBehaviour
             if (m_parkourState.AnimationTime > m_parkourState.AnimationLength)
             {
                 m_parkourState.CurrentAction = null;
+                m_movementRequest.ParkourRoll = 0.0f;
             }
 
             // Clear wall running and sliding variables if a parkour action is taken.
@@ -181,8 +243,21 @@ public class InputController : MonoBehaviour
                 m_parkourState = m_parkourManager.CheckParkourAction();
                 if (m_parkourState.CurrentAction != null)
                 {
-                    m_isJumping = false;
-                    return;
+                    // Remove current parkour action if we don't have the stamina.
+                    // Player will default to jumping if we don't have the stamina for an action.
+                    if (!Stamina.Instance().TrySpendStamina(m_parkourState.Stamina.GetCost()))
+                    {
+                        m_parkourState.CurrentAction = null;
+                    }
+                    // Don't let player jump if we're going to do a parkour action.
+                    else
+                    {
+                        m_movementRequest.ParkourRoll = m_parkourState.RollAmount;
+                        m_movementRequest.ParkourRollLerp = m_parkourState.RollLerp;
+                        m_isJumping = false;
+                        return;
+                    }
+
                 }
             }
 
@@ -218,13 +293,16 @@ public class InputController : MonoBehaviour
                           && m_moveInput.y >= m_wallRunMinForwardInput
                           && m_wallLockoutTimer <= 0f;
 
+
+
         if (canWallRun)
         {
             WallHitInfo wall = m_parkourManager.CheckWall();
-            if (wall.HitWall)
+            if (wall.HitWall && Stamina.Instance().TrySpendStamina(m_staminaWallRun.GetCost()))
             {
                 m_wallGraceTimer = m_wallRunGraceTime;
                 m_wallNormal = wall.Normal;
+
             }
             else
             {
@@ -251,7 +329,7 @@ public class InputController : MonoBehaviour
     /// </summary>
     /// <param name="moveSpeed">How fast the player is moving originally.</param>
     /// <returns>Float representing slide speed.</returns>
-    private float HandleSlide(float moveSpeed, Vector3 moveDirection)
+    private float HandleSlide(float moveSpeed, Vector3 moveDirection, bool skipStaminaCost = false)
     {
         float slopeAcceleration = 0f;
         Vector3 ground = m_firstPersonController.GroundNormal;
@@ -268,7 +346,7 @@ public class InputController : MonoBehaviour
 
         float multiplierChange = slopeAcceleration / moveSpeed;
         if (multiplierChange > 0f)
-    {
+        {
             m_currentSlideMultiplier += multiplierChange * Time.deltaTime;
         }
         else
@@ -277,17 +355,21 @@ public class InputController : MonoBehaviour
         }
 
         m_currentSlideMultiplier = Mathf.Clamp(m_currentSlideMultiplier, m_minimumSlideMultiplier, m_maximumSlideMultiplier);
-        return moveSpeed * m_currentSlideMultiplier;
+
+        // Slide if we have the stamina, otherwise move at crawling speed.
+        return (skipStaminaCost || Stamina.Instance().TrySpendStamina(m_staminaSlide.GetCost()))
+                ? moveSpeed * m_currentSlideMultiplier
+                : moveSpeed * m_minimumSlideMultiplier;
     }
 
     /// <summary>
     /// Handles calculating jump velocity and cancels player input.
     /// </summary>
     /// <returns>Float velocity of jump.</returns>
-    private float HandleJump()
+    private float HandleJump(float height)
     {
         // Jump calculation from Unity Documentation for Character Controller
-        float verticalVelocity = Mathf.Sqrt(m_jumpHeight * 2.0f);
+        float verticalVelocity = Mathf.Sqrt(height * 2.0f);
         m_isJumping = false;
         return verticalVelocity;
     }
@@ -319,15 +401,20 @@ public class InputController : MonoBehaviour
                 m_wallGraceTimer = 0f;
                 m_wallLockoutTimer = m_wallJumpLockoutTime;
 
-                return HandleJump();
+                if (Stamina.Instance().TrySpendStamina(m_staminaWallJump.GetCost()))
+                {
+                    return HandleJump(m_wallJumpHeight);
+                }
+
             }
-            else if (m_firstPersonController.IsGrounded || m_coyoteTimer > 0f)
+            else if ((m_firstPersonController.IsGrounded || m_coyoteTimer > 0f) && Stamina.Instance().TrySpendStamina(m_staminaJump.GetCost()))
             {
-                verticalVelocity = HandleJump();
+                verticalVelocity = HandleJump(m_jumpHeight);
             }
-            else if (m_extraJumps > 0)
+            // Don't allow double jump unless we have the stamina.
+            else if (m_extraJumps > 0 && Stamina.Instance().TrySpendStamina(m_staminaDoubleJump.GetCost()))
             {
-                verticalVelocity = HandleJump();
+                verticalVelocity = HandleJump(m_extraJumpHeight);
                 m_extraJumps--;
             }
         }
@@ -341,6 +428,14 @@ public class InputController : MonoBehaviour
     /// <returns>Vector3 representing movement velocity.</returns>
     private Vector3 HandleHorizontalMovement()
     {
+        bool autoSlide = m_firstPersonController.IsGrounded && m_parkourManager.CheckAutoSlideSurface();
+
+        if (m_wasAutoSliding && !autoSlide && !m_isSlideToggled)
+        {
+            m_currentSlideMultiplier = m_slideMultiplier;
+        }
+        m_wasAutoSliding = autoSlide;
+
         // Calculate wall running horizontal speed.
         if (m_isWallRunning)
         {
@@ -357,23 +452,84 @@ public class InputController : MonoBehaviour
 
         // Create movement vector based on stored player input.
         Vector3 move = transform.forward * m_moveInput.y + transform.right * m_moveInput.x;
+        move = Vector3.ClampMagnitude(move, 1f);
 
         // Make sure diagonal movement isn't faster than unidirectional movement.
         move = Vector3.ClampMagnitude(move, 1f);
-
-        float finalSpeed;
-        if (m_isSlideToggled && m_firstPersonController.IsGrounded)
+        if ((m_isSlideToggled || autoSlide) && m_firstPersonController.IsGrounded)
         {
             m_movementRequest.IsSliding = true;
-            finalSpeed = HandleSlide(m_moveSpeed, move);
+
+            Vector3 slideDirection = move;
+
+            if (autoSlide)
+            {
+                Vector3 ground = m_firstPersonController.GroundNormal;
+                Vector3 downhill = Vector3.ProjectOnPlane(Vector3.down, ground);
+                Vector3 downhillFlat = new Vector3(downhill.x, 0f, downhill.z);
+
+                // Only override the direction if there's an actual slope.
+                if (downhillFlat.sqrMagnitude > 0.0001f)
+                {
+                    slideDirection = downhillFlat.normalized + move * m_autoSlideSteering;
+                    slideDirection = Vector3.ClampMagnitude(slideDirection, 1f);
+                }
+            }
+
+            return slideDirection * HandleSlide(m_moveSpeed, slideDirection, autoSlide);
         }
         else
         {
             m_movementRequest.IsSliding = false;
-            finalSpeed = m_isSprintToggled ? m_moveSpeed * m_sprintMultiplier : m_moveSpeed;
-        }
+            float forwardAmount = Vector3.Dot(move, transform.forward);
 
-        return move * finalSpeed;
+            // We should only apply a sprint boost to forward momentum.
+            if (forwardAmount > 0)
+            {
+                // Turn off sprinting if we don't have the stamina to sprint.
+                if (m_isSprintToggled && !Stamina.Instance().TrySpendStamina(m_staminaRun.GetCost())) {
+                    Debug.Log("Sprint turned off because stamina was too low.");
+                    m_isSprintToggled = false;
+                }
+
+                float adjustedSpeed = m_isSprintToggled ? m_moveSpeed * m_sprintMultiplier : m_moveSpeed;
+
+                Vector3 forwardMove = (forwardAmount * transform.forward) * adjustedSpeed;
+                Vector3 sidewaysMove = (move - forwardAmount * transform.forward) * m_moveSpeed;
+
+                return forwardMove + sidewaysMove;
+            }
+            // If there's no forward momentum, move at a normal speed.
+            else
+            {
+                return move * m_moveSpeed;
+            }
+        }
+    }
+
+    public void ActivateAbility(Ability ability)
+    {
+        switch (ability)
+        {
+            case Ability.RUN:
+                m_staminaRun.Enable();
+                break;
+            case Ability.JUMP:
+                m_staminaJump.Enable();
+                break;
+            case Ability.DOUBLE_JUMP:
+                m_staminaDoubleJump.Enable();
+                break;
+            case Ability.WALL_JUMP:
+                m_staminaWallJump.Enable();
+                break;
+            case Ability.WALL_RUN:
+                m_staminaWallRun.Enable();
+                break;
+            case Ability.SLIDE:
+                m_staminaSlide.Enable();
+                break;
+        }
     }
 
     /// ---------------
@@ -404,11 +560,24 @@ public class InputController : MonoBehaviour
     /// <param name="value">Information about input being passed to controller.</param>
     public void OnSprint(InputAction.CallbackContext value)
     {
-        if (value.started)
+        if (m_sprintUsesToggle)
         {
-            m_isSprintToggled = !m_isSprintToggled;
+            if (value.started)
+            {
+                m_isSprintToggled = !m_isSprintToggled;
+            }
         }
-      
+        else
+        {
+            m_isSprintToggled = value.ReadValueAsButton();
+        }
+    }
+
+    public void SetSprintToggleMode(bool useToggle)
+    {
+        m_sprintUsesToggle = useToggle;
+        m_isSprintToggled = false;
+        PlayerPrefs.SetInt("SprintToggle", useToggle ? 1 : 0);
     }
 
     /// <summary>
@@ -433,15 +602,39 @@ public class InputController : MonoBehaviour
     /// <param name="value">Information about input being passed to controller.</param>
     public void OnSlide(InputAction.CallbackContext value)
     {
-        if (value.started)
+        if (m_slideUsesToggle)
         {
-            m_isSlideToggled = !m_isSlideToggled;
-
-            if (!m_isSlideToggled)
+            if (value.started)
             {
+                m_isSlideToggled = !m_isSlideToggled;
+
+                if (!m_isSlideToggled)
+                {
+                    m_currentSlideMultiplier = m_slideMultiplier;
+                }
+            }
+        }
+        else
+        {
+            if (value.started)
+            {
+                m_isSlideToggled = true;
+            }
+            else if (value.canceled)
+            {
+                m_isSlideToggled = false;
                 m_currentSlideMultiplier = m_slideMultiplier;
             }
         }
+    }
+
+    public void SetSlideToggleMode(bool useToggle)
+    {
+        m_slideUsesToggle = useToggle;
+        m_isSlideToggled = false;
+        m_currentSlideMultiplier = m_slideMultiplier;
+        PlayerPrefs.SetInt("SlideToggle", useToggle ? 1 : 0);
+
     }
 
     public void OnInteract(InputAction.CallbackContext value)
@@ -455,4 +648,24 @@ public class InputController : MonoBehaviour
             m_movementRequest.IsInteracting = false;
         }
     }
+
+    public void UpdateDebugData(DebugMenu.DebugData data)
+    {
+        data.m_moveSpeed = m_moveSpeed;
+        data.m_sprintMultiplier = m_sprintMultiplier;
+        data.m_jumpHeight = m_jumpHeight;
+        data.m_extraJumpHeight = m_extraJumpHeight;
+        data.m_lookSensitivity = m_lookSensitivity;
+    }
+
+    public void UpdateViaDebugData(DebugMenu.DebugData data)
+    {
+        m_moveSpeed = data.m_moveSpeed;
+        m_sprintMultiplier = data.m_sprintMultiplier;
+        m_jumpHeight = data.m_jumpHeight;
+        m_extraJumpHeight = data.m_extraJumpHeight;
+        m_lookSensitivity = data.m_lookSensitivity;
+    }
+
+
 }

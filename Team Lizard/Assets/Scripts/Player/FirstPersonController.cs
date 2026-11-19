@@ -1,8 +1,10 @@
 using System;
+using Interactable;
 using Unity.Multiplayer.PlayMode;
 using Unity.VisualScripting;
 using UnityEditor.Build.Pipeline;
 using UnityEngine;
+using UnityEngine.Assemblies;
 using UnityEngine.InputSystem;
 
 public class FirstPersonController : MonoBehaviour
@@ -54,7 +56,7 @@ public class FirstPersonController : MonoBehaviour
         private float m_wallRunCameraRoll = 15f;
 
         [SerializeField]
-        [Tooltip("How fast the camera rolls into/out of a wall run.")]
+        [Tooltip("How fast the camera rolls into/out of a roll.")]
         private float m_wallRunRollLerp = 10f;
 
         [SerializeField]
@@ -64,6 +66,16 @@ public class FirstPersonController : MonoBehaviour
         [SerializeField]
         [Tooltip("Seconds over which gravity ramps from zero to full wall-run gravity after the hang.")]
         private float m_wallRunSlideRampTime = 0.5f;
+
+    [Header("Collisions")]
+        [SerializeField]
+        private float m_headCollisionDistance = 1.55f;
+
+    [Header("Wwise Object")]
+        [SerializeField]
+        private AK.Wwise.Event m_jumpEvent;
+
+    private float m_movementThreshold = 0.0001f;
 
     [Header("Snap Distance")]
         [SerializeField]
@@ -75,6 +87,7 @@ public class FirstPersonController : MonoBehaviour
     private float m_roll;
 
     private CharacterController m_characterController;
+    private ObstacleSensor m_obstacleSensor;
 
     private float m_verticalVelocity;
     private float m_pitch = 0f;
@@ -117,6 +130,8 @@ public class FirstPersonController : MonoBehaviour
     private void Awake()
     {
         m_characterController = gameObject.GetComponent<CharacterController>();
+        m_obstacleSensor = gameObject.GetComponent<ObstacleSensor>();
+
         m_standHeight = m_characterController.height;
         m_standRadius = m_characterController.radius;
         m_standCameraY = m_cameraTransform.localPosition.y;
@@ -132,9 +147,20 @@ public class FirstPersonController : MonoBehaviour
     /// <param name="request">MovementRequest struct holding a movement vector and a look vector.</param>
     public void ApplyMovement(MovementRequest request)
     {
-        UpdateSlidePose(request.IsSliding);
+       UpdateSlidePose(request.IsSliding);
 
-        UpdateWallRunRoll(request.IsWallRunning, request.WallNormal);
+        if (request.IsWallRunning)
+        {
+            UpdateRoll(request.IsWallRunning, request.WallNormal, m_wallRunCameraRoll, m_wallRunRollLerp);
+        }
+        else if (request.ParkourRoll != 0)
+        {
+            UpdateRoll(true, transform.right, request.ParkourRoll, request.ParkourRollLerp);
+        }
+        else
+        {
+            UpdateRoll(false, Vector3.zero, 0f, m_wallRunRollLerp);
+        }
 
         ApplyLook(request.LookDelta);
 
@@ -155,6 +181,11 @@ public class FirstPersonController : MonoBehaviour
         if (desired.y != 0)
         {
             m_verticalVelocity = desired.y * Mathf.Sqrt(-1*m_gravity);
+            m_jumpEvent.Post(gameObject);
+        }
+        if (m_verticalVelocity > 0 && m_obstacleSensor.ObstacleInDir(transform.up, m_headCollisionDistance))
+        {
+            m_verticalVelocity = m_gravity * Time.deltaTime;
         }
 
         // Inertia comes from player input and friction.
@@ -162,6 +193,7 @@ public class FirstPersonController : MonoBehaviour
         if (m_currentPlatform != null)
         {
             displacement += m_currentPlatform.GetTotalDelta();
+            m_currentPlatform.ActivatePlatform();
         }
 
         bool wasGrounded = IsGrounded;
@@ -213,6 +245,7 @@ public class FirstPersonController : MonoBehaviour
         m_wasWallRunning = isWallRunning;
 
         IsGrounded = m_characterController.isGrounded || m_snappedLastFrame;
+
         if (IsGrounded && m_verticalVelocity < 0)
         {
             // Player needs to be pressed into the ground for isGrounded to work correctly.
@@ -221,8 +254,8 @@ public class FirstPersonController : MonoBehaviour
         else
         {
             // Player is not on ground, accelerate downwards.
-            m_verticalVelocity += gravity * Time.deltaTime;
-
+             m_verticalVelocity += gravity * Time.deltaTime;
+        
             // Player also isn't touching a platform
             m_currentPlatform = null;
         }
@@ -234,7 +267,7 @@ public class FirstPersonController : MonoBehaviour
     /// <param name="target">Target direction and velocity to reach.</param>
     private void UpdateHorizontalVelocity(Vector3 target)
     {
-        bool hasInput = target.sqrMagnitude > 0.0001f;
+        bool hasInput = target.sqrMagnitude > m_movementThreshold;
         float dt = Time.deltaTime;
         
         if (IsGrounded && !m_isGrappling)
@@ -276,16 +309,16 @@ public class FirstPersonController : MonoBehaviour
     /// <summary>
     /// Rolls the camera toward or away from the wall while wall running.
     /// </summary>
-    private void UpdateWallRunRoll(bool isWallRunning, Vector3 wallNormal)
+    private void UpdateRoll(bool shouldRoll, Vector3 normalDirection, float rollAmount, float rollLerp)
     {
         float targetRoll = 0f;
-        if (isWallRunning)
+        if (shouldRoll)
         {
-            float side = Vector3.Dot(wallNormal, transform.right);
-            targetRoll = -side * m_wallRunCameraRoll;
+            float side = Vector3.Dot(normalDirection, transform.right);
+            targetRoll = -side * rollAmount;
         }
 
-        m_roll = Mathf.Lerp(m_roll, targetRoll, m_wallRunRollLerp * Time.deltaTime);
+        m_roll = Mathf.Lerp(m_roll, targetRoll, rollLerp * Time.deltaTime);
     }
 
     /// <summary>
@@ -297,7 +330,6 @@ public class FirstPersonController : MonoBehaviour
 
         // If sliding or under a short roof, do not get up.
         m_isCrouched = shouldCrouch;
-
 
         float targetHeight = m_isCrouched ? m_standHeight * m_slideHeight : m_standHeight;
         m_characterController.height = targetHeight;
@@ -423,6 +455,14 @@ public class FirstPersonController : MonoBehaviour
         if (platform != null)
         {
             m_currentPlatform = platform;
+
+            InteractablePlatformAcquired inter = platform.GetComponent<InteractablePlatformAcquired>();
+
+            if (inter)
+            {
+                inter.OnPlatformAcquired();
+            }
+
             m_currentPlatform.GetTotalDelta();
         }
     }
@@ -458,4 +498,18 @@ public class FirstPersonController : MonoBehaviour
     {
         m_interactableAction -= action;
     }
+
+    public void UpdateDebugData(DebugMenu.DebugData data)
+    {
+        data.m_airFriction = m_airFriction;
+        data.m_groundFriction = m_groundFriction;
+    }
+
+    public void UpdateViaDebugData(DebugMenu.DebugData data)
+    {
+        m_airFriction = data.m_airFriction;
+        m_groundFriction = data.m_groundFriction;
+    }
+
+
 }

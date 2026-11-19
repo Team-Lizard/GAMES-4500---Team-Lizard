@@ -1,0 +1,131 @@
+{
+ "SoundBanksInfo": {
+  "Platform": "Windows",
+  "BasePlatform": "Windows",
+  "SchemaVersion": "16",
+  "SoundBankVersion": "172",
+  "SoundBanks": [
+   {
+    "Id": "1328360421",
+    "Type": "User",
+    "GUID": "{CD3D6455-DCC1-4237-9C61-032794AC3DF0}",
+    "Language": "SFX",
+    "Hash": "{CCDBA1C3-3E82-5619-72DC-D6A1E79C46B4}",
+    "ObjectPath": "\\SoundBanks\\Default Work Unit\\MainSB",
+    "ShortName": "MainSB",
+    "Path": "MainSB.bnk",
+    "Media": [
+     {
+      "Id": "274940980",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Memory",
+      "ShortName": "Steps2.wav",
+      "CachePath": "52/{52072137-7B25-C395-29C3-BB8DB573FF43}.wem"
+     },
+     {
+      "Id": "375308905",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Memory",
+      "ShortName": "Synth practice-2.wav",
+      "CachePath": "25/{25E12934-2E7A-DE8D-AF2B-C2560DF6EE02}.wem"
+     },
+     {
+      "Id": "375769755",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Memory",
+      "ShortName": "Steps1.wav",
+      "CachePath": "FA/{FACF3EBE-7E8D-6549-FEFD-BDD8221AEDA1}.wem"
+     },
+     {
+      "Id": "584248227",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Memory",
+      "ShortName": "Synth practice-1.wav",
+      "CachePath": "92/{9201488C-0EA3-ABCB-73F4-A78C5F2453F2}.wem"
+     },
+     {
+      "Id": "858705555",
+      "Language": "SFX",
+      "Streaming": "false",
+      "Location": "Memory",
+      "ShortName": "Steps3.wav",
+      "CachePath": "DC/{DCD64649-83B7-555F-5675-59BE62CB2689}.wem"
+     }
+    ],
+    "Events": [
+     {
+      "Id": "2323405115",
+      "Name": "Play_Landing",
+      "ObjectPath": "\\Events\\Default Work Unit\\Landing\\Play_Landing",
+      "GUID": "{0CCFF376-2940-4881-BF0C-7EFC7B921DB4}",
+      "DurationType": "OneShot",
+      "DurationMin": "0.3317",
+      "DurationMax": "0.3317",
+      "MediaRefs": [
+       {
+        "Id": "274940980"
+       },
+       {
+        "Id": "375769755"
+       }
+      ]
+     },
+     {
+      "Id": "2600469463",
+      "Name": "Play_steps",
+      "ObjectPath": "\\Events\\Default Work Unit\\Play_steps",
+      "GUID": "{B25E7231-474D-482D-8C2A-15E7D649C0FC}",
+      "MaxAttenuation": "20",
+      "DurationType": "OneShot",
+      "DurationMin": "0.18481922",
+      "DurationMax": "0.37773618",
+      "MediaRefs": [
+       {
+        "Id": "274940980"
+       },
+       {
+        "Id": "375769755"
+       },
+       {
+        "Id": "858705555"
+       }
+      ]
+     },
+     {
+      "Id": "3874450860",
+      "Name": "Play_Synth_practice_1",
+      "ObjectPath": "\\Events\\Default Work Unit\\Play_Synth_practice_1",
+      "GUID": "{937F6783-CF27-4B79-9EAE-2488DA0775F5}",
+      "MaxAttenuation": "100",
+      "DurationType": "OneShot",
+      "DurationMin": "4.0865307",
+      "DurationMax": "4.0865307",
+      "MediaRefs": [
+       {
+        "Id": "584248227"
+       }
+      ]
+     },
+     {
+      "Id": "3874450863",
+      "Name": "Play_Synth_practice_2",
+      "ObjectPath": "\\Events\\Default Work Unit\\Play_Synth_practice_2",
+      "GUID": "{FC3ACDE6-9C34-453F-9101-20293FDDC9EF}",
+      "MaxAttenuation": "25",
+      "DurationType": "Infinite",
+      "MediaRefs": [
+       {
+        "Id": "375308905"
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "FileHash": "{AD62B708-716A-45E1-44CE-B23F510C37CD}"
+ }
+}

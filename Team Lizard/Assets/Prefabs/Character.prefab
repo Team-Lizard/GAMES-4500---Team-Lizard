@@ -687,6 +687,11 @@ MonoBehaviour:
   m_wallRunRollLerp: 10
   m_wallRunHangTime: 0.7
   m_wallRunSlideRampTime: 0.5
+  m_headCollisionDistance: 1.6
+  m_jumpEvent:
+    idInternal: 0
+    valueGuidInternal: 
+    WwiseObjectReference: {fileID: 0}
   m_snapDistance: 0.3
 --- !u!114 &3848311692467163602
 MonoBehaviour:
@@ -702,19 +707,40 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::InputController
   m_moveSpeed: 5
   m_sprintMultiplier: 1.8
+  m_jumpHeight: 1.5
+  m_extraJumpHeight: 1.5
+  m_wallJumpHeight: 1.5
+  m_maxExtraJumps: 1
+  m_lookSensitivity: 0.5
+  m_coyoteTime: 0.15
   m_slideMultiplier: 1.8
   m_minimumSlideMultiplier: 0.5
   m_maximumSlideMultiplier: 4
   m_slideDecay: 1.8
-  m_jumpHeight: 1.5
-  m_lookSensitivity: 0.5
-  m_maxExtraJumps: 1
-  m_coyoteTime: 0.15
+  m_autoSlideSteering: 0.3
   m_wallRunSpeedMultiplier: 1.2
   m_wallJumpSideForce: 6
   m_wallRunMinForwardInput: 0.3
   m_wallRunGraceTime: 0.2
   m_wallJumpLockoutTime: 0.25
+  m_staminaRun:
+    m_cost: 0
+    m_isEnabledOnStart: 1
+  m_staminaJump:
+    m_cost: 0
+    m_isEnabledOnStart: 1
+  m_staminaDoubleJump:
+    m_cost: 0
+    m_isEnabledOnStart: 1
+  m_staminaWallJump:
+    m_cost: 0
+    m_isEnabledOnStart: 1
+  m_staminaWallRun:
+    m_cost: 0
+    m_isEnabledOnStart: 1
+  m_staminaSlide:
+    m_cost: 0
+    m_isEnabledOnStart: 1
 --- !u!114 &4909697338132854454
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -760,6 +786,7 @@ MonoBehaviour:
   m_rayHeight: -0.5
   m_rayLength: 1.75
   m_wallCheckDistance: 0.7
+  m_autoSlideCheckDistance: 1.5
 --- !u!114 &2351986856077383698
 MonoBehaviour:
   m_ObjectHideFlags: 0

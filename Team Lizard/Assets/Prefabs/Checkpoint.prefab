@@ -98,5 +98,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7dfe9fd64acb6fb458f7654a6b23533b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Checkpoint
-  m_spawnPoint: {fileID: 4055765434849607678}
-  m_order: 0
+  m_spawnpoint: {fileID: 4055765434849607678}

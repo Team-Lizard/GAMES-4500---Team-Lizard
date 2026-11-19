@@ -1,5 +1,6 @@
 using Unity.VisualScripting;
 using UnityEngine;
+using static UnityEditor.ShaderGraph.Internal.KeywordDependentCollection;
 public struct HitInfo
 {
     public bool HitObstacle;
@@ -29,9 +30,15 @@ public class ObstacleSensor : MonoBehaviour
         [Tooltip("Distance to check for a wall to the player's side.")]
         private float m_wallCheckDistance = 0.7f;
 
+    [Header("Auto Slide")]
+        [SerializeField]
+        [Tooltip("Distance below player's feet to check for an auto-slide surface.")]
+        private float m_autoSlideCheckDistance = 1.5f;
+
     private Vector3 m_rayOrigin;
     private LayerMask m_obstacleLayerMask;
     private LayerMask m_wallRunnableLayerMask;
+    private LayerMask m_autoSlideLayerMask;
     private HitInfo m_hitInfo = new HitInfo();
     private WallHitInfo m_wallHitInfo = new WallHitInfo();
 
@@ -40,17 +47,31 @@ public class ObstacleSensor : MonoBehaviour
     {
         m_obstacleLayerMask = LayerMask.GetMask("Obstacle");
         m_wallRunnableLayerMask = LayerMask.GetMask("Wallrunnable");
+        m_autoSlideLayerMask = LayerMask.GetMask("AutoSlide");
+    }
+
+    public bool ObstacleInDir(Vector3 dir, float rayLen)
+    {
+        return DetectObstacle(dir, rayLen, false).HitObstacle;
     }
 
     /// <summary>
     /// Checks if an obstacle is in front of the player.
     /// </summary>
     /// <returns>HitInfo struct representing info about what obstacle is in front of the player.</returns>
-    public HitInfo DetectObstacle()
+    public HitInfo DetectObstacle(Vector3 dir, float rayLen, bool mask = true)
     {
         m_rayOrigin = transform.position + Vector3.up * m_rayHeight;
 
-        m_hitInfo.HitObstacle = Physics.Raycast(m_rayOrigin, transform.forward, out m_hitInfo.HitData, m_rayLength, m_obstacleLayerMask);
+        if (mask)
+        {
+            m_hitInfo.HitObstacle = Physics.Raycast(m_rayOrigin, dir, out m_hitInfo.HitData, rayLen <= 0 ? m_rayLength : rayLen, m_obstacleLayerMask);
+        }
+        else
+        {
+            m_hitInfo.HitObstacle = Physics.Raycast(m_rayOrigin, dir, out m_hitInfo.HitData, rayLen <= 0 ? m_rayLength : rayLen);
+        }
+        
 
         if (m_hitInfo.HitObstacle)
         {
@@ -84,5 +105,14 @@ public class ObstacleSensor : MonoBehaviour
         }
         m_wallHitInfo.HitWall = false;
         return m_wallHitInfo;
+    }
+
+    /// <summary>
+    /// Checks whether the player is standing on a surface that forces a slide.
+    /// </summary>
+    public bool DetectAutoSlideSurface()
+    {
+        Vector3 origin = transform.position + Vector3.up * 0.1f;
+        return Physics.Raycast(origin, Vector3.down, m_autoSlideCheckDistance, m_autoSlideLayerMask);
     }
 }
