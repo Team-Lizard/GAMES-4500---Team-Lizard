@@ -41,7 +41,7 @@ public class ParkourManager : MonoBehaviour
             StartingPosition = transform.position
         };
 
-        HitInfo hitInfo = m_obstacleSensor.DetectObstacle();
+        HitInfo hitInfo = m_obstacleSensor.DetectObstacle(transform.forward, 0);
 
         if (hitInfo.HitObstacle)
         {

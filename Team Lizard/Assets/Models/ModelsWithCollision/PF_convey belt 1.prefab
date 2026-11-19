@@ -50,7 +50,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: dccd81929915168409f205b0f7d1e8e9, type: 3}
       propertyPath: m_Name
-      value: CS_convey belt 1
+      value: PF_convey belt 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -84,5 +84,5 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 925.38806, y: 191.56883, z: 194.31815}
+  m_Size: {x: 9.2538805, y: 1.9156883, z: 1.9431814}
   m_Center: {x: 0, y: 0, z: 0}

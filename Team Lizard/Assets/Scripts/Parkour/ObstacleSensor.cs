@@ -50,15 +50,28 @@ public class ObstacleSensor : MonoBehaviour
         m_autoSlideLayerMask = LayerMask.GetMask("AutoSlide");
     }
 
+    public bool ObstacleInDir(Vector3 dir, float rayLen)
+    {
+        return DetectObstacle(dir, rayLen, false).HitObstacle;
+    }
+
     /// <summary>
     /// Checks if an obstacle is in front of the player.
     /// </summary>
     /// <returns>HitInfo struct representing info about what obstacle is in front of the player.</returns>
-    public HitInfo DetectObstacle()
+    public HitInfo DetectObstacle(Vector3 dir, float rayLen, bool mask = true)
     {
         m_rayOrigin = transform.position + Vector3.up * m_rayHeight;
 
-        m_hitInfo.HitObstacle = Physics.Raycast(m_rayOrigin, transform.forward, out m_hitInfo.HitData, m_rayLength, m_obstacleLayerMask);
+        if (mask)
+        {
+            m_hitInfo.HitObstacle = Physics.Raycast(m_rayOrigin, dir, out m_hitInfo.HitData, rayLen <= 0 ? m_rayLength : rayLen, m_obstacleLayerMask);
+        }
+        else
+        {
+            m_hitInfo.HitObstacle = Physics.Raycast(m_rayOrigin, dir, out m_hitInfo.HitData, rayLen <= 0 ? m_rayLength : rayLen);
+        }
+        
 
         if (m_hitInfo.HitObstacle)
         {

@@ -1,5 +1,4 @@
-﻿using UnityEditor.PackageManager;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
 
@@ -12,6 +11,7 @@ namespace Menus
         /// </summary>
         private MonoBehaviour m_inputBindingsMenu;
         private MonoBehaviour m_debugMenu;
+        private MonoBehaviour m_optionsMenu;
 
         private PanelRenderer m_panelRenderer;
         private VisualElement m_menuContainer;
@@ -36,6 +36,7 @@ namespace Menus
             m_panelRenderer = GetComponent<PanelRenderer>();
             m_inputBindingsMenu = GetComponent<InputBindingsMenu>();
             m_debugMenu = GetComponent<DebugMenu>();
+            m_optionsMenu = GetComponent<OptionsMenu>();
 
             m_panelRenderer.RegisterUIReloadCallback(OnUIReload);
             m_visible = false;
@@ -57,6 +58,10 @@ namespace Menus
 
             root.Q<Button>("BindingMenuButton").clicked +=
                 () => ShowSubmenu(m_inputBindingsMenu as ISubMenu);
+
+            root.Q<Button>("OptionsMenuButton").clicked +=
+                () => ShowSubmenu(m_optionsMenu as ISubMenu);
+
 
             root.Q<Button>("DebugMenuButton").clicked +=
                 () => ShowSubmenu(m_debugMenu as ISubMenu);

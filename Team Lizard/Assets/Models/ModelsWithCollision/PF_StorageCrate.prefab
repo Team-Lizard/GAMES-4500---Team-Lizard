@@ -62,7 +62,7 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: 9e4437c7f03de204a98dbef232d75cc6, type: 2}
     - target: {fileID: 919132149155446097, guid: fded14adfd68e3d48a244d1523634c95, type: 3}
       propertyPath: m_Name
-      value: CS_StorageCrate
+      value: PF_StorageCrate
       objectReference: {fileID: 0}
     - target: {fileID: 5432893425869001001, guid: fded14adfd68e3d48a244d1523634c95, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
@@ -100,5 +100,5 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1.21, y: 0.8, z: 0.855}
-  m_Center: {x: 0, y: 0.39, z: 0.0024999827}
+  m_Size: {x: 0.0121, y: 0.007125, z: 0.008549999}
+  m_Center: {x: 0, y: 0.0035625, z: 0.000024999725}
