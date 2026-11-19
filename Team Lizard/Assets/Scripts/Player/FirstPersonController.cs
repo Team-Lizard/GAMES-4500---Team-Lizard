@@ -84,6 +84,7 @@ public class FirstPersonController : MonoBehaviour
     private float m_standRadius;
     private Vector3 m_standCenter;
     private bool m_isCrouched = false;
+    private bool m_isGrappling = false;
     private bool m_snappedLastFrame;
 
     // item-specific data
