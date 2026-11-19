@@ -109,6 +109,7 @@ public class InputController : MonoBehaviour
     private float m_coyoteTimer;
 
     private FirstPersonController m_firstPersonController;
+    private GrappleController m_grappleController;
     private ParkourManager m_parkourManager;
 
     private MovementRequest m_movementRequest;
@@ -117,6 +118,7 @@ public class InputController : MonoBehaviour
     {
         m_firstPersonController = gameObject.GetComponent<FirstPersonController>();
         m_parkourManager = gameObject.GetComponent<ParkourManager>();
+        m_grappleController = gameObject.GetComponent<GrappleController>();
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
