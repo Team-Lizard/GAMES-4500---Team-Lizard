@@ -428,7 +428,7 @@ public class InputController : MonoBehaviour
 
         // Make sure diagonal movement isn't faster than unidirectional movement.
         move = Vector3.ClampMagnitude(move, 1f);
-        if ((m_isSlideToggled || autoSlide) && m_firstPersonController.IsGrounded)
+        if (m_isSlideToggled || autoSlide)
         {
             m_movementRequest.IsSliding = true;
 
