@@ -142,7 +142,14 @@ public class FirstPersonController : MonoBehaviour
 
         Vector3 desired = request.DesiredVelocity;
         Vector3 target = new Vector3(desired.x, 0f, desired.z);
+
         UpdateHorizontalVelocity(target);
+        m_isGrappling = request.Grapple.IsActive;
+
+        if (m_isGrappling)
+        {
+            ApplyGrapple(request);
+        }
 
         // If player wants to jump, override vertical velocity.
         if (desired.y != 0)
