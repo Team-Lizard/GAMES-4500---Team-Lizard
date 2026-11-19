@@ -237,7 +237,7 @@ public class FirstPersonController : MonoBehaviour
         bool hasInput = target.sqrMagnitude > 0.0001f;
         float dt = Time.deltaTime;
         
-        if (IsGrounded)
+        if (IsGrounded && !m_isGrappling)
         {
             float rate = hasInput ? m_groundAcceleration : m_groundFriction;
             m_horizontalVelocity = Vector3.MoveTowards(m_horizontalVelocity, target, rate * dt);
@@ -251,7 +251,7 @@ public class FirstPersonController : MonoBehaviour
             m_horizontalVelocity += target.normalized * (m_airAcceleration * dt);
             m_horizontalVelocity = Vector3.ClampMagnitude(m_horizontalVelocity, speedCap);
         }
-        else
+        else if (!m_isGrappling)
         {
             // This is separate because we don't need to clamp our velocity as we move towards zero.
             m_horizontalVelocity = Vector3.MoveTowards(m_horizontalVelocity, Vector3.zero, m_airFriction * dt);
