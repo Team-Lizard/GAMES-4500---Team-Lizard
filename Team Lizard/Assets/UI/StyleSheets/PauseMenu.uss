@@ -2,12 +2,19 @@
 :root {
     --background: rgba(8, 12, 28, 0.94);
     --item-background: rgba(255, 255, 255, 0.08);
-    --selected: rgba(255, 255, 255, 0.12);
+    --selected: rgba(255, 255, 255, 0.18);
 
 }
 
 /* Pause menu */
-#MenuContainer {
+#PauseMenuContainer {
+    display: flex;
+    flex-direction: row;
+
+}
+
+/* Settings menu */
+.TopLevelMenu {
     flex-grow: 1;
     background-color: var(--background);
 }
@@ -20,7 +27,7 @@
     margin: 10px 12px 6px;
 }
 
-.MenuSelectorButton {
+.MenuButton {
     flex-grow: 1;
     height: auto;
     min-height: 20px;
@@ -30,6 +37,10 @@
     border-width: 1px;
     border-color: var(--item-background);
     border-radius: 4px;
+    color: white;
+}
+
+.unity-label {
     color: white;
 }
 
