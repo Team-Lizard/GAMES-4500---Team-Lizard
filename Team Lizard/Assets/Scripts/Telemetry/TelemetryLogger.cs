@@ -67,6 +67,7 @@ public class TelemetryLogger : MonoBehaviour
         }
 
         // Invariant culture ensures decimals always use '.' regardless of OS region settings
+        // Help from https://discussions.unity.com/t/creating-a-heat-map-to-track-where-players-go/15861
         string line = string.Format(
             System.Globalization.CultureInfo.InvariantCulture,
             "{0:F2},{1},{2:F3},{3:F3},{4:F3}",
