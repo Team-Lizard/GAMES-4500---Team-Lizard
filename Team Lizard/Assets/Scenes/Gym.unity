@@ -1135,8 +1135,6 @@ MonoBehaviour:
   m_cellSize: 1
   m_minPointScale: 0.5
   m_maxPointScaleIncrease: 0.75
-  m_loadedSessions: 2
-  m_totalPoints: 72
 --- !u!4 &422792144
 Transform:
   m_ObjectHideFlags: 0

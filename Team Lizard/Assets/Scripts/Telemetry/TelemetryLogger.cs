@@ -13,6 +13,9 @@ public class TelemetryLogger : MonoBehaviour
     [SerializeField]
     private bool m_recordMovement = true;
 
+    [SerializeField]
+    private bool m_recordTelemetry = true;
+
     private string m_filePath;
     private float m_timer;
     private StreamWriter m_writer;
@@ -60,9 +63,9 @@ public class TelemetryLogger : MonoBehaviour
         }
     }
 
-    private void Record(string eventName, Vector3 pos)
+    public void Record(string eventName, Vector3 pos)
     {
-        if (m_writer == null) {
+        if (m_writer == null || !m_recordTelemetry) {
             return;
         }
 
