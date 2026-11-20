@@ -36,6 +36,8 @@ public class CheckpointManager : MonoBehaviour
     /// </summary>
     public void Respawn()
     {
+        TelemetryLogger.Instance.Record("Death", transform.position);
+        
         GetComponent<FirstPersonController>().ResetVelocity();
         m_characterController.enabled = false;
         transform.SetPositionAndRotation(m_checkpointPosition, m_checkpointRotation);
