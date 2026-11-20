@@ -1,12 +1,7 @@
 using System;
 using System.IO;
 using System.Text;
-using System.Threading;
-using Mono.Cecil;
-using TreeEditor;
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.Profiling;
 
 public class TelemetryLogger : MonoBehaviour
 {
