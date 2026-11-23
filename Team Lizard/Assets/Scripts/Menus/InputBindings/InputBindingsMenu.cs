@@ -50,7 +50,7 @@ public class InputBindingsMenu : MonoBehaviour, ISubMenu
                 TemplateContainer bindingElement = m_bindingUI.Instantiate();
 
                 bindingElement.name = action.name;
-                bindingElement.Q<Label>().text = action.name;
+                UpdateBindingText();
 
                 Button button = bindingElement.Q<Button>();
                 button.clicked += Onclicked;
@@ -70,8 +70,24 @@ public class InputBindingsMenu : MonoBehaviour, ISubMenu
                             action.Enable();
                             button.text = "Rebind";
                             SyncBindings();
+
+                            UpdateBindingText();
                         })
                         .Start();
+                }
+
+                void UpdateBindingText()
+                {
+                    string bindingText = action.name + " (";
+                    foreach (InputControl b in action.controls)
+                    {
+                        bindingText += b.displayName;
+                    }
+
+                    bindingText += ")";
+
+                    bindingElement.Q<Label>().text = bindingText;
+
                 }
 
                 list.Add(bindingElement);
