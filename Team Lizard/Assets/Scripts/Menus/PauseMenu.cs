@@ -1,117 +1,103 @@
-﻿using UnityEngine;
+using Unity.VectorGraphics;
+using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 
 namespace Menus
 {
-    public class PauseMenu: MonoBehaviour
+    public class PauseMenu : MonoBehaviour
     {
-        /// <summary>
-        /// Stores script components containing the logic for each submenu
-        /// </summary>
-        private MonoBehaviour m_inputBindingsMenu;
-        private MonoBehaviour m_debugMenu;
-        private MonoBehaviour m_optionsMenu;
-
-        private PanelRenderer m_panelRenderer;
-        private VisualElement m_menuContainer;
-        private VisualElement m_submenuContainer;
-        private bool m_visible;
-
-        // pausing should deactivate the player's input so we will need a reference to it
-        private PlayerInput m_playerInput;
-
-        // if we ever want a slo-mo effect, it may be wise to hold the previous gamespeed
-        private float m_prevTimeScale;
 
         [SerializeField]
-        [Tooltip("The player object associated with this scene")]
-        private MonoBehaviour m_playerObject;
+        [Tooltip("The player object that will be paused when in the pause menu.")]
+        private FirstPersonController m_playerObject;
+
+        [SerializeField]
+        [Tooltip("The Pause Menu UI.")]
+        private VisualTreeAsset m_menuUI;
+
+        private PanelRenderer m_panelRenderer;
+        // The PanelRenderer's root, used when swapping between pause and settings UI.
+        private VisualElement m_root;
+        private VisualElement m_pauseMenuContainer;
+
+        private PlayerInput m_playerInput;
+        private bool m_visible;
+        private float m_prevTimeScale;
+
+        private Button m_respawnButton;
+        private Button m_restartButton;
+        private Button m_settingsButton;
+
+        private bool m_shouldEscShowMenu;
 
         /// <summary>
-        /// Called when the object is first loaded
+        /// Ran when the menu is first created;
+        /// DON'T REPLACE THIS WITH START IF IT CAN BE AVOIDED; using Start for this code
+        /// causes a lot of sillies with the ReloadScene calls when restarting the lvl
         /// </summary>
-        private void Start()
+        private void Awake()
         {
             m_panelRenderer = GetComponent<PanelRenderer>();
-            m_inputBindingsMenu = GetComponent<InputBindingsMenu>();
-            m_debugMenu = GetComponent<DebugMenu>();
-            m_optionsMenu = GetComponent<OptionsMenu>();
-
-            m_panelRenderer.RegisterUIReloadCallback(OnUIReload);
-            m_visible = false;
-
             m_playerInput = m_playerObject.GetComponent<PlayerInput>();
 
             m_prevTimeScale = Time.timeScale;
+            m_visible = false;
+
+            m_panelRenderer.RegisterUIReloadCallback(OnUIReload);
+
+            m_shouldEscShowMenu = true;
         }
 
         /// <summary>
-        /// called whenever the UI is reloaded, sets up button callbacks to load submenus
+        /// unregisters the UICallBack to avoid unnecessary resource allocation :P
         /// </summary>
-        /// <param name="panelRenderer"> the MonoBehaviour containing this script </param>
-        /// <param name="root"> this UI's root node </param>
+        private void OnDestroy()
+        {
+            if (m_panelRenderer != null)
+            {
+                m_panelRenderer.UnregisterUIReloadCallback(OnUIReload);
+            }
+        }
+
         private void OnUIReload(PanelRenderer panelRenderer, VisualElement root)
         {
-            m_menuContainer = root.Q<VisualElement>("MenuContainer");
-            m_submenuContainer = root.Q<VisualElement>("SubmenuContainer");
+            m_root = root;
+            m_pauseMenuContainer = root.Q<VisualElement>("PauseMenuContainer");
 
-            root.Q<Button>("BindingMenuButton").clicked +=
-                () => ShowSubmenu(m_inputBindingsMenu as ISubMenu);
-
-            root.Q<Button>("OptionsMenuButton").clicked +=
-                () => ShowSubmenu(m_optionsMenu as ISubMenu);
-
-
-            root.Q<Button>("DebugMenuButton").clicked +=
-                () => ShowSubmenu(m_debugMenu as ISubMenu);
-
-            ShowSubmenu(m_inputBindingsMenu as ISubMenu);
-
-            // making sure that the menu is disabled whenever it's first loaded
-            SetVisibility(false);
-        }
-
-        /// <summary>
-        /// Sets up the submenu UI
-        /// </summary>
-        /// <param name="submenu"> the submenu script used to set up the submenu </param>
-        private void ShowSubmenu(ISubMenu submenu)
-        {
-            m_submenuContainer.Clear();
-
-            if (submenu == null)
+            if (m_pauseMenuContainer == null)
             {
-                Debug.LogError("PauseMenu submenu is not assigned or does not implement ISubMenu.");
                 return;
             }
 
-            VisualTreeAsset submenuAsset = submenu.GetVisualTreeAsset();
-            if (submenuAsset == null)
-            {
-                Debug.LogError("PauseMenu submenu does not have a UXML asset assigned.");
-                return;
-            }
+            m_respawnButton = root.Q<Button>("RespawnButton");
+            m_respawnButton.clicked += RespawnPlayer;
 
-            TemplateContainer submenuRoot = submenuAsset.Instantiate();
-            m_submenuContainer.Add(submenuRoot);
+            m_restartButton = root.Q<Button>("RestartButton");
+            m_restartButton.clicked += RestartLevel;
 
-            // any UI elements loaded via C# code should be in the Build function, so this sets up the submenu
-            submenu.Build(submenuRoot);
+            m_settingsButton = root.Q<Button>("SettingsButton");
+            m_settingsButton.clicked += LoadSettingsMenu;
 
+            SetVisibility(m_visible);
         }
 
         /// <summary>
-        /// pauses / unpauses the game
+        /// Pauses or unpauses the game when the pause action is performed.
         /// </summary>
-        /// <param name="value"> stores the pause key press </param>
         public void OnPause(InputAction.CallbackContext value)
         {
+            // if we cancel the pause action for example, don't toggle pause
+            if (!value.performed || !m_shouldEscShowMenu)
+            {
+                return;
+            }
             TogglePauseMenu();
         }
 
         /// <summary>
-        /// toggles the visibility var and sets the visibility respectively
+        /// Sets the visibility of the menu and pauses/unpauses the game
         /// </summary>
         private void TogglePauseMenu()
         {
@@ -121,37 +107,86 @@ namespace Menus
         }
 
         /// <summary>
-        /// turns on/off the menu
+        /// sets the visibility of the menu UI
         /// </summary>
-        /// <param name="visible"> whether the menu should be visible </param>
+        /// <param name="visible"> should the menu UI be made visible or not </param>
         private void SetVisibility(bool visible)
         {
-            if (m_menuContainer != null)
+            if (m_pauseMenuContainer != null)
             {
-                m_menuContainer.style.display = visible ? DisplayStyle.Flex : DisplayStyle.None;
+                m_pauseMenuContainer.style.display = visible ? DisplayStyle.Flex : DisplayStyle.None;
             }
         }
 
         /// <summary>
-        /// Pauses or unpauses the gameplay
+        /// pauses or unpauses player input and overall game state
         /// </summary>
-        /// <param name="visible"> determines whether the game should be paused:
-        /// true -> pause menu is shown -> pause game
-        /// false -> pause menu is not shown -> resume game
-        /// </param>
+        /// <param name="visible"> should the game be paused or not (is the menu currently visible) </param>
         private void PauseUnpause(bool visible)
         {
             if (!visible)
             {
                 Time.timeScale = m_prevTimeScale;
-                m_playerInput.ActivateInput();
+                m_playerInput?.ActivateInput();
             }
             else
             {
                 m_prevTimeScale = Time.timeScale;
                 Time.timeScale = 0;
-                m_playerInput.DeactivateInput();
+                m_playerInput?.DeactivateInput();
             }
+        }
+
+        /// <summary>
+        /// respawns the player... yea this is good
+        /// </summary>
+        private void RespawnPlayer()
+        {
+            if (m_playerObject == null)
+            {
+                return;
+            }
+
+            if (m_playerObject.TryGetComponent(out CheckpointManager checkpointManager))
+            {
+                checkpointManager.Respawn();
+                TogglePauseMenu();
+            }
+        }
+
+        /// <summary>
+        /// Resets some pause data before reloading the scene
+        /// </summary>
+        private void RestartLevel()
+        {
+            m_visible = false;
+            SetVisibility(false);
+            Time.timeScale = 1f;
+            m_playerInput?.ActivateInput();
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        }
+
+        /// <summary>
+        /// Loads the pause menu into a panel renderer
+        /// </summary>
+        /// <param name="panelRenderer"> the panel renderer which should render the pause UI </param>
+        /// <param name="root"> the root element of the panel renderer </param>
+        private void LoadPauseMenu(PanelRenderer panelRenderer, VisualElement root)
+        {
+            root.Clear();
+            m_menuUI.CloneTree(root);
+            OnUIReload(panelRenderer, root);
+            m_shouldEscShowMenu = true;
+        }
+
+        /// <summary>
+        /// Swaps from the base pause menu to the settings menu
+        /// </summary>
+        private void LoadSettingsMenu()
+        {
+            m_root.Clear();
+            m_shouldEscShowMenu = false;
+            GetComponent<SettingsMenu>().LoadMenuUI(m_panelRenderer, m_root, LoadPauseMenu);
         }
     }
 }

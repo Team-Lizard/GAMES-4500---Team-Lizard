@@ -2,13 +2,36 @@
 :root {
     --background: rgba(8, 12, 28, 0.94);
     --item-background: rgba(255, 255, 255, 0.08);
-    --selected: rgba(255, 255, 255, 0.12);
+    --selected: rgba(255, 255, 255, 0.18);
+    --font-size-small: 12px;
+    --font-size-large: 56px;
 
 }
 
 /* Pause menu */
-#MenuContainer {
+#PauseMenuContainer {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 10%;
+
+}
+
+#PauseTextContainer {
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+/* Settings menu */
+.TopLevelMenu {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: space-around;
     flex-grow: 1;
+    width: 100%;
+    height: 100%;
     background-color: var(--background);
 }
 
@@ -20,20 +43,67 @@
     margin: 10px 12px 6px;
 }
 
+#SubmenuContainer {
+    flex-grow: 1;
+    width: 100%;
+    min-height: 0;
+}
+
+.MenuButton {
+    flex-grow: 0;
+    height: 52px;
+    min-width: 260px;
+    margin: 5px 0;
+    padding: 10px 16px;
+    background-color: var(--item-background);
+    border-width: 1px;
+    border-color: var(--item-background);
+    border-radius: 6px;
+    color: white;
+    -unity-font-style: bold;
+    font-size: 18px;
+}
+
+.TopLevelMenuButton {
+    min-height: 52px;
+    max-height: 52px;
+}
+
+#PauseButtonsContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 280px;
+}
+
+.MenuButton:hover {
+    background-color: var(--selected);
+    border-color: var(--selected);
+}
+
 .MenuSelectorButton {
     flex-grow: 1;
+    flex-shrink: 1;
+    min-width: 0;
     height: auto;
     min-height: 20px;
     margin: 0 3px;
     padding: 6px 10px;
-    background-color: var(--item-background);
-    border-width: 1px;
-    border-color: var(--item-background);
-    border-radius: 4px;
+}
+
+.unity-label {
     color: white;
+}
+#PauseText {
+    font-size: var(--font-size-large);
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
 }
 
 #SubmenuScrollView {
+    flex-grow: 1;
+    width: 100%;
+    min-height: 0;
     padding: 4px 8px 8px;
 }
 

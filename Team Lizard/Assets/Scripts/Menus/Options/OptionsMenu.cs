@@ -6,7 +6,6 @@ using UnityEngine.UIElements;
 
 public class OptionsMenu : MonoBehaviour, ISubMenu
 {
-
     [SerializeField]
     [Tooltip("The UXML file containing the options submenu")]
     private VisualTreeAsset m_menuUI;
@@ -17,14 +16,12 @@ public class OptionsMenu : MonoBehaviour, ISubMenu
 
     [SerializeField]
     [Tooltip("The player object associated with this scene")]
-    private Behaviour m_playerObject;
+    private MonoBehaviour m_playerObject;
 
-    private FirstPersonController m_firstPersonController;
     private InputController m_inputController;
 
     private const string SPRINT_TOGGLE_TEXT = "Hold to sprint";
     private const string SLIDE_TOGGLE_TEXT = "Hold to slide";
-
 
     public VisualTreeAsset GetVisualTreeAsset()
     {
@@ -37,10 +34,7 @@ public class OptionsMenu : MonoBehaviour, ISubMenu
         options.Add(new OptionData(SPRINT_TOGGLE_TEXT, ToggleSprint, "SprintToggle"));
         options.Add(new OptionData(SLIDE_TOGGLE_TEXT, ToggleSlide, "SlideToggle"));
 
-
-        m_firstPersonController = m_playerObject.GetComponent<FirstPersonController>();
         m_inputController = m_playerObject.GetComponent<InputController>();
-
 
         foreach (OptionData data in options)
         {
@@ -56,8 +50,6 @@ public class OptionsMenu : MonoBehaviour, ISubMenu
 
             root.Add(bindingElement);
         }
-
-
     }
 
     private void ToggleSprint(bool holdToSprint)

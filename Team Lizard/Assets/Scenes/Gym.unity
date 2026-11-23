@@ -1897,9 +1897,17 @@ PrefabInstance:
       value: PauseMenuUI
       objectReference: {fileID: 0}
     - target: {fileID: 2703727010440317695, guid: 2085b81fc99fa5c4dac6862e2b3c821c, type: 3}
+      propertyPath: m_menuUI
+      value: 
+      objectReference: {fileID: 9197481963319205126, guid: 2a4ee679afdf7ac46aafadce9c7b37b4, type: 3}
+    - target: {fileID: 2703727010440317695, guid: 2085b81fc99fa5c4dac6862e2b3c821c, type: 3}
       propertyPath: m_playerObject
       value: 
       objectReference: {fileID: 2097107901}
+    - target: {fileID: 3802814054175529063, guid: 2085b81fc99fa5c4dac6862e2b3c821c, type: 3}
+      propertyPath: m_ActionEvents.Array.data[5].m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 2045134000}
     - target: {fileID: 4614795970324628052, guid: 2085b81fc99fa5c4dac6862e2b3c821c, type: 3}
       propertyPath: m_LocalPosition.x
       value: 50.4413
@@ -1940,6 +1948,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5492744906460156084, guid: 2085b81fc99fa5c4dac6862e2b3c821c, type: 3}
+      propertyPath: sourceAsset
+      value: 
+      objectReference: {fileID: 9197481963319205126, guid: cb15c3221c1f6a744baaaab8835b9daa, type: 3}
     - target: {fileID: 6000000000000000002, guid: 2085b81fc99fa5c4dac6862e2b3c821c, type: 3}
       propertyPath: m_bindingUI
       value: 
@@ -1948,10 +1960,17 @@ PrefabInstance:
       propertyPath: m_playerObject
       value: 
       objectReference: {fileID: 2097107901}
+    - target: {fileID: 7749228471309054515, guid: 2085b81fc99fa5c4dac6862e2b3c821c, type: 3}
+      propertyPath: m_playerObject
+      value: 
+      objectReference: {fileID: 2097107901}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 701428655326167618, guid: 2085b81fc99fa5c4dac6862e2b3c821c, type: 3}
+      insertIndex: 3
+      addedObject: {fileID: 2045134000}
   m_SourcePrefab: {fileID: 100100000, guid: 2085b81fc99fa5c4dac6862e2b3c821c, type: 3}
 --- !u!1 &728886458
 GameObject:
@@ -5589,6 +5608,25 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1010044815774339986, guid: b289b7ea638eedf43868c6e76b7c1986, type: 3}
   m_PrefabInstance: {fileID: 1987329384}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &2045133992 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 701428655326167618, guid: 2085b81fc99fa5c4dac6862e2b3c821c, type: 3}
+  m_PrefabInstance: {fileID: 723968488}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2045134000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2045133992}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28bb194a5f0c42458af5e4125807d9d1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Menus.PauseMenu
+  m_playerObject: {fileID: 2097107920}
+  m_menuUI: {fileID: 9197481963319205126, guid: cb15c3221c1f6a744baaaab8835b9daa, type: 3}
 --- !u!1 &2097107885 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8985268930540334528, guid: 55d28c6e4ca51ab49aa8d59553278bef, type: 3}
@@ -5680,6 +5718,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerStateController
   m_startingHealth: 3
+--- !u!114 &2097107920 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6610288824303935535, guid: 55d28c6e4ca51ab49aa8d59553278bef, type: 3}
+  m_PrefabInstance: {fileID: 1321044448}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2097107885}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 067b705f339e6ea4fbccc4eb75011a76, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FirstPersonController
 --- !u!1 &2121407280
 GameObject:
   m_ObjectHideFlags: 0
