@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
 
 namespace Menus
@@ -20,6 +21,8 @@ namespace Menus
 
         private PanelRenderer m_panelRenderer;
         private VisualElement m_submenuContainer;
+
+        private Action m_backButtonCallback;
 
         /// <summary>
         /// Called when the object is first loaded
@@ -96,8 +99,18 @@ namespace Menus
 
             OnUIReload(panelRenderer, root);
 
-            root.Q<Button>("BackButton").clicked +=
-                () => backButtonCallback(panelRenderer, root);
+            m_backButtonCallback = () => backButtonCallback(panelRenderer, root);
+            root.Q<Button>("BackButton").clicked += m_backButtonCallback;
+        }
+
+        public void OnPause(InputAction.CallbackContext value)
+        {
+            if (!value.performed)
+            {
+                return;
+            }
+
+            m_backButtonCallback?.Invoke();
         }
     }
 }

@@ -30,6 +30,8 @@ namespace Menus
         private Button m_restartButton;
         private Button m_settingsButton;
 
+        private bool m_shouldEscShowMenu;
+
         /// <summary>
         /// Ran when the menu is first created;
         /// DON'T REPLACE THIS WITH START IF IT CAN BE AVOIDED; using Start for this code
@@ -44,6 +46,8 @@ namespace Menus
             m_visible = false;
 
             m_panelRenderer.RegisterUIReloadCallback(OnUIReload);
+
+            m_shouldEscShowMenu = true;
         }
 
         /// <summary>
@@ -85,7 +89,7 @@ namespace Menus
         public void OnPause(InputAction.CallbackContext value)
         {
             // if we cancel the pause action for example, don't toggle pause
-            if (!value.performed)
+            if (!value.performed || !m_shouldEscShowMenu)
             {
                 return;
             }
@@ -162,11 +166,17 @@ namespace Menus
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
 
+        /// <summary>
+        /// Loads the pause menu into a panel renderer
+        /// </summary>
+        /// <param name="panelRenderer"> the panel renderer which should render the pause UI </param>
+        /// <param name="root"> the root element of the panel renderer </param>
         private void LoadPauseMenu(PanelRenderer panelRenderer, VisualElement root)
         {
             root.Clear();
             m_menuUI.CloneTree(root);
             OnUIReload(panelRenderer, root);
+            m_shouldEscShowMenu = true;
         }
 
         /// <summary>
@@ -175,6 +185,7 @@ namespace Menus
         private void LoadSettingsMenu()
         {
             m_root.Clear();
+            m_shouldEscShowMenu = false;
             GetComponent<SettingsMenu>().LoadMenuUI(m_panelRenderer, m_root, LoadPauseMenu);
         }
     }
