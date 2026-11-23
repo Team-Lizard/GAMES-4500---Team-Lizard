@@ -92,6 +92,12 @@ namespace Menus
             submenu.Build(submenuRoot);
         }
 
+        /// <summary>
+        /// places this menu inside the panel renderer
+        /// </summary>
+        /// <param name="panelRenderer"> the panel renderer this UI is being placed in </param>
+        /// <param name="root"> the root element of the panel renderer </param>
+        /// <param name="backButtonCallback"> what should happen when we leave this menu (open another menu, close the menu, etc) </param>
         public void LoadMenuUI(PanelRenderer panelRenderer, VisualElement root, Action<PanelRenderer, VisualElement> backButtonCallback)
         {
             m_panelRenderer = panelRenderer;
@@ -103,6 +109,10 @@ namespace Menus
             root.Q<Button>("BackButton").clicked += m_backButtonCallback;
         }
 
+        /// <summary>
+        /// called whenever the pause button (Esc key) is pressed
+        /// </summary>
+        /// <param name="value"> metadata for the input action </param>
         public void OnPause(InputAction.CallbackContext value)
         {
             if (!value.performed)
