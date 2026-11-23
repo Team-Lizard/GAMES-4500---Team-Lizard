@@ -13,9 +13,9 @@
         </ui:VisualElement>
 
         <ui:VisualElement name="PauseButtonsContainer">
-            <ui:Button name="RestartButton" class="MenuButton" text="Restart Level"/>
-            <ui:Button name="RespawnButton" class="MenuButton" text="Respawn"/>
-            <ui:Button name="RestartLevelButton" class="MenuButton" text="Settings"/>
+            <ui:Button name="RestartButton" class="MenuButton TopLevelMenuButton" text="Restart Level"/>
+            <ui:Button name="RespawnButton" class="MenuButton TopLevelMenuButton" text="Respawn"/>
+            <ui:Button name="SettingsButton" class="MenuButton TopLevelMenuButton" text="Settings"/>
         </ui:VisualElement>
 
     </ui:VisualElement>
