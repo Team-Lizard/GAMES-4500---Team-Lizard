@@ -76,6 +76,9 @@ public class InputBindingsMenu : MonoBehaviour, ISubMenu
                         .Start();
                 }
 
+                // updates the text of the given binding to show the currently bound input
+                // using and internal function like this means that we don't need to worry about
+                // parameters
                 void UpdateBindingText()
                 {
                     string bindingText = action.name + " (";
