@@ -1,9 +1,4 @@
-using Unity.Transforms;
-using UnityEditor.UI;
-using UnityEngine;
-
-namespace Interactable
-{
+namespace Interactable{
     public class InteractableTargetMovingPlatform : MovingPlatform, IInteractableTarget
     {
         new public void Start()
