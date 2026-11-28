@@ -4239,9 +4239,6 @@ PrefabInstance:
       insertIndex: 6
       addedObject: {fileID: 2097107907}
     - targetCorrespondingSourceObject: {fileID: 8985268930540334528, guid: 55d28c6e4ca51ab49aa8d59553278bef, type: 3}
-      insertIndex: 7
-      addedObject: {fileID: 2097107917}
-    - targetCorrespondingSourceObject: {fileID: 8985268930540334528, guid: 55d28c6e4ca51ab49aa8d59553278bef, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2097107896}
     - targetCorrespondingSourceObject: {fileID: 8985268930540334528, guid: 55d28c6e4ca51ab49aa8d59553278bef, type: 3}
@@ -6232,36 +6229,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerStateController
   m_startingHealth: 3
---- !u!114 &2097107917
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2097107885}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1004d72eb34cdb84bbd84a694dc91497, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::StaminaManager
-  StaminaRun:
-    m_cost: 0
-    m_isEnabledOnStart: 1
-  StaminaJump:
-    m_cost: 10
-    m_isEnabledOnStart: 1
-  StaminaDoubleJump:
-    m_cost: 20
-    m_isEnabledOnStart: 1
-  StaminaWallJump:
-    m_cost: 0
-    m_isEnabledOnStart: 1
-  StaminaWallRun:
-    m_cost: 0
-    m_isEnabledOnStart: 1
-  StaminaSlide:
-    m_cost: 0.1
-    m_isEnabledOnStart: 1
 --- !u!1 &2121407280
 GameObject:
   m_ObjectHideFlags: 0

@@ -11,8 +11,14 @@ public class StaminaBar : MonoBehaviour
     private Stamina m_stamina;
 
     private float m_timeSinceSpending;
-    private float m_regenThresholdTime;
-    private float m_regenRate;
+
+    [SerializeField]
+    [Tooltip("Time to wait before regenerating stamina.")]
+    private float m_regenThresholdTime = 1f;
+
+    [SerializeField]
+    [Tooltip("Rate at which stamina should regenerate in stamina/sec.")]
+    private float m_regenRate = 50f;
 
     /// <summary>
     /// Called when this is first created; sets up some basic wiring needed to update the UI
@@ -26,10 +32,6 @@ public class StaminaBar : MonoBehaviour
         m_stamina.StaminaGained += UpdateBar;
         m_stamina.StaminaSpent += OnSpend;
         m_timeSinceSpending = 0f;
-        m_regenThresholdTime = 1f;
-
-        // represents the regain in stamina/sec -> 50 = 50%
-        m_regenRate = 50f;
     }
 
     void Update()
