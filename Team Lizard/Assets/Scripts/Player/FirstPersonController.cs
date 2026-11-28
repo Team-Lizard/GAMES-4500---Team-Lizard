@@ -7,6 +7,15 @@ using UnityEngine;
 using UnityEngine.Assemblies;
 using UnityEngine.InputSystem;
 
+public enum PhysicsConstant
+{
+    GRAVITY,
+    GROUND_FRICTION,
+    AIR_FRICTION,
+    GROUND_ACCELERATION,
+    AIR_ACCELERATION
+}
+
 public class FirstPersonController : MonoBehaviour
 {
     [Header("Physics Constants")]
@@ -470,6 +479,28 @@ public class FirstPersonController : MonoBehaviour
     {
         m_airFriction = data.m_airFriction;
         m_groundFriction = data.m_groundFriction;
+    }
+
+    public void ChangePhysicsConstant(PhysicsConstant physicsConstant, float value)
+    {
+        switch (physicsConstant)
+        {
+            case PhysicsConstant.GRAVITY:
+                m_gravity = value;
+                break;
+            case PhysicsConstant.AIR_FRICTION:
+                m_airFriction = value;
+                break;
+            case PhysicsConstant.GROUND_FRICTION:
+                m_groundFriction = value;
+                break;
+            case PhysicsConstant.AIR_ACCELERATION:
+                m_airAcceleration = value;
+                break;
+            case PhysicsConstant.GROUND_ACCELERATION:
+                m_groundAcceleration = value;
+                break;
+        }
     }
 
 
