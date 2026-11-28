@@ -184,6 +184,7 @@ GameObject:
   - component: {fileID: 4864713323900413798}
   - component: {fileID: 7380285322809941162}
   - component: {fileID: 6610288824303935535}
+  - component: {fileID: 1007179577998851822}
   - component: {fileID: 3848311692467163602}
   - component: {fileID: 7984297794713564900}
   - component: {fileID: 2351986856077383698}
@@ -477,6 +478,36 @@ MonoBehaviour:
     valueGuidInternal: 
     WwiseObjectReference: {fileID: 0}
   m_snapDistance: 0.3
+--- !u!114 &1007179577998851822
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8985268930540334528}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1004d72eb34cdb84bbd84a694dc91497, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StaminaManager
+  StaminaRun:
+    m_cost: 0
+    m_isEnabledOnStart: 1
+  StaminaJump:
+    m_cost: 0
+    m_isEnabledOnStart: 1
+  StaminaDoubleJump:
+    m_cost: 0
+    m_isEnabledOnStart: 1
+  StaminaWallJump:
+    m_cost: 0
+    m_isEnabledOnStart: 1
+  StaminaWallRun:
+    m_cost: 0
+    m_isEnabledOnStart: 1
+  StaminaSlide:
+    m_cost: 0
+    m_isEnabledOnStart: 1
 --- !u!114 &3848311692467163602
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -507,24 +538,6 @@ MonoBehaviour:
   m_wallRunMinForwardInput: 0.3
   m_wallRunGraceTime: 0.2
   m_wallJumpLockoutTime: 0.25
-  m_staminaRun:
-    m_cost: 0
-    m_isEnabledOnStart: 1
-  m_staminaJump:
-    m_cost: 0
-    m_isEnabledOnStart: 1
-  m_staminaDoubleJump:
-    m_cost: 0
-    m_isEnabledOnStart: 1
-  m_staminaWallJump:
-    m_cost: 0
-    m_isEnabledOnStart: 1
-  m_staminaWallRun:
-    m_cost: 0
-    m_isEnabledOnStart: 1
-  m_staminaSlide:
-    m_cost: 0
-    m_isEnabledOnStart: 1
   m_wallStickSpeed: 2
 --- !u!114 &7984297794713564900
 MonoBehaviour:
@@ -570,3 +583,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TelemetryLogger
   m_sampleInterval: 0.5
   m_recordMovement: 1
+  m_recordTelemetry: 1

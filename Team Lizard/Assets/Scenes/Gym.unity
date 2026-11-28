@@ -6215,24 +6215,6 @@ MonoBehaviour:
   m_wallRunMinForwardInput: 0.3
   m_wallRunGraceTime: 0.2
   m_wallJumpLockoutTime: 0.25
-  m_staminaRun:
-    m_cost: 0.1
-    m_isEnabledOnStart: 1
-  m_staminaJump:
-    m_cost: 0
-    m_isEnabledOnStart: 1
-  m_staminaDoubleJump:
-    m_cost: 10
-    m_isEnabledOnStart: 0
-  m_staminaWallJump:
-    m_cost: 10
-    m_isEnabledOnStart: 1
-  m_staminaWallRun:
-    m_cost: 0.15
-    m_isEnabledOnStart: 1
-  m_staminaSlide:
-    m_cost: 0.15
-    m_isEnabledOnStart: 1
   m_wallStickSpeed: 2
 --- !u!114 &2097107916
 MonoBehaviour:

@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using Unity.VisualScripting;
 
 /// <summary>
 /// Responsible for storing stamina state and providing an API for others to use.
@@ -42,6 +43,12 @@ public class Stamina : ScriptableObject
     /// <returns> true if there is enough stamina to spend the specified amount, false otherwise </returns>
     public bool TrySpendStamina(float amount)
     {
+        // Don't count stamina as spent if we spend 0 stamina.
+        if (amount <= 0)
+        {
+            return true;
+        }
+
         if (m_currentStamina < amount)
         {
             return false;

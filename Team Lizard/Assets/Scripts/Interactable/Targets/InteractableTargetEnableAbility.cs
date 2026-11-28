@@ -12,11 +12,11 @@ namespace Interactable
 
         [Tooltip("Player input controller to activate ability on.")]
         [SerializeField]
-        private InputController m_inputController;
+        private StaminaManager m_staminaManager;
 
         public void OnActivate()
         {
-            m_inputController.ActivateAbility(m_ability);
+            m_staminaManager.ActivateAbility(m_ability);
         }
     }
 }
