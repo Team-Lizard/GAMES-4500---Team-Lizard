@@ -62,6 +62,31 @@ public class StaminaManager : MonoBehaviour
         }
     }
 
+    public void ChangeAbilityStamina(Ability ability, float value)
+    {
+        switch (ability)
+        {
+            case Ability.RUN:
+                StaminaRun.SetStaminaCost(value);
+                break;
+            case Ability.JUMP:
+                StaminaJump.SetStaminaCost(value);
+                break;
+            case Ability.DOUBLE_JUMP:
+                StaminaDoubleJump.SetStaminaCost(value);
+                break;
+            case Ability.WALL_JUMP:
+                StaminaWallJump.SetStaminaCost(value);
+                break;
+            case Ability.WALL_RUN:
+                StaminaWallRun.SetStaminaCost(value);
+                break;
+            case Ability.SLIDE:
+                StaminaSlide.SetStaminaCost(value);
+                break;
+        }
+    }
+
     public bool CanUseAbility(Ability ability)
     {
         switch (ability)

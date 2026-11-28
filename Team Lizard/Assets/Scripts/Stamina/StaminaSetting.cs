@@ -22,6 +22,14 @@ public class StaminaSetting
     }
 
     /// <summary>
+    /// Makes this ability accessible.
+    /// </summary>
+    public void SetStaminaCost(float value)
+    {
+        m_cost = value;
+    }
+
+    /// <summary>
     /// Cost of ability, cost is above max stamina is ability isn't enabled.
     /// </summary>
     /// <returns></returns>
