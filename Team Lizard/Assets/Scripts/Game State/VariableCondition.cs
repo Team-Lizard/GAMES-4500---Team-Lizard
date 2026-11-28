@@ -1,6 +1,3 @@
-using Unity.GraphToolkit.Editor;
-using Unity.VisualScripting;
-using UnityEngine;
 using System;
 
 public enum ConditionType
